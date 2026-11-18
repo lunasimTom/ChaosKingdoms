@@ -1,6 +1,6 @@
 /* ===== Chaos Kingdoms v3.0 · strategic depth =====
    Enemy roles + damage types, designed waves with a preview, tower combos,
-   aimed abilities, shrines and portal corruption, boss weaknesses, crowns.
+   shrines and portal corruption, boss weaknesses, crowns.
    Runs inside the main game script (shares L, S, TW, etc). */
 const CKDT={arrow:'p',cannon:'p',mage:'m',holy:'m',zap:'m',ice:'e',toxin:'e'};
 const CKDTN={p:['物理','Physical'],m:['魔法','Magic'],e:['元素','Elemental']};
@@ -12,18 +12,11 @@ const CKR={
  split:{g:'✷',c:'#d39bff',lv:17,n:['分裂者','Splitter'],tip:['分裂者：死亡时分裂成两个快速小怪。用范围伤害收尾。','Splitter: bursts into two fast runners on death. Finish them with area damage.']},
  disr:{g:'ϟ',c:'#ff6b6b',lv:23,n:['干扰者','Disruptor'],tip:['干扰者：会让附近的塔短暂失灵。在射程边缘击杀它。','Disruptor: briefly jams nearby towers. Kill it at long range.']}
 };
-const CKAB=[
- {id:'meteor',g:'☄',lv:0,cd:40,aim:1,n:['陨石','Meteor'],d:['点击地图：大范围重击','Tap the map: heavy blast in an area']},
- {id:'nova',g:'❄',lv:2,cd:45,aim:1,n:['冰霜新星','Frost Nova'],d:['点击地图：冻结区域内敌人','Tap the map: freeze enemies in an area']},
- {id:'mark',g:'◎',lv:5,cd:30,aim:1,n:['猎杀标记','Hunter’s Mark'],d:['点击地图：塔优先攻击，伤害+20%','Tap the map: towers focus marked foes, +20% damage']},
- {id:'rally',g:'⚑',lv:9,cd:60,aim:0,n:['战旗','Rally'],d:['所有塔攻速提升 6 秒','All towers attack faster for 6 s']}
-];
 const CKCH=[
  {id:'noleak',n:['无漏','Flawless'],d:['不失去任何生命','Lose no lives']},
  {id:'cap',n:['精兵','Lean army'],d:['同时最多 {0} 座塔','Never have more than {0} towers']},
  {id:'noitem',n:['自力','Self-reliant'],d:['不使用任何道具','Use no items']},
- {id:'ban',n:['禁用','Restriction'],d:['不建造{0}','Build no {0}']},
- {id:'noab',n:['纯塔','Towers only'],d:['不使用技能','Use no abilities']}
+ {id:'ban',n:['禁用','Restriction'],d:['不建造{0}','Build no {0}']}
 ];
 let CK_NR=null;
 function ckIU(id){if(L&&L.iu)L.iu[id]=(L.iu[id]||0)+1}
@@ -32,7 +25,7 @@ function ckCell(x,y){return L.g[y*L.cols+x]}
 function ckChal(i){const c=CKCH[(i*7+3)%CKCH.length];const o={id:c.id,n:c.n,d:c.d,a:''};if(c.id==='cap')o.a=6+(i/12|0);if(c.id==='ban'){const k=['cannon','mage','arrow','holy','ice','zap','toxin'][(i/5|0)%7];o.k=k;o.a=TL(TW[k].n)}return o}
 function ckChalTxt(c){return ckZ(c.d).replace('{0}',c.a)}
 function ckV3Init(){
- L.ckv=L;L.abc={};L.iu={};L.abu=0;L.mtw=0;S.crown=S.crown||{};S.seenR=S.seenR||{};
+ L.ckv=L;L.iu={};L.mtw=0;S.crown=S.crown||{};S.seenR=S.seenR||{};
  L.ch=ckChal(L.i);L.chOk=true;
  // shrines: two empowered tiles beside the road, away from portals (from level 5)
  if(L.i>=4&&L.g){const r=rng(L.i*331+17),G=L.goals||[],seg=(q,a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy||1,k=Math.max(0,Math.min(1,((q.x-a[0])*dx+(q.y-a[1])*dy)/l));return Math.hypot(a[0]+k*dx-q.x,a[1]+k*dy-q.y)};
@@ -77,7 +70,6 @@ function ckOnDeath(e){
  if(L.demo)return;
  if(e.rl==='split'){for(let k=0;k<2;k++){spawn('runner',{x:e.x+(k?.25:-.25),y:e.y+(Math.random()-.5)*.3});const c=L.en[L.en.length-1];c.hp=c.mx=c.mx*.35;c.pro=.35;c.el=0;c.rl=null}}
 }
-function ckPri(e,b,tg){const a=e.kf>0,bb=b.kf>0;if(a!==bb)return a;return SC[tg](e)>SC[tg](b)}
 // designed waves: deterministic per level and wave, themed by pattern and realm
 function ckWave(w){
  if(L.boss&&w===L.waves)return null;
@@ -102,36 +94,15 @@ function ckWave(w){
  return q
 }
 function ckWaveSum(q){const o={n:q.length,b:0,r:{}};for(const s of q){const[t,ro]=s.split('|');if(t==='boss')o.b++;if(ro)o.r[ro]=(o.r[ro]||0)+1}return o}
-// abilities
-function ckAbOpen(a){return L&&!L.demo&&L.i>=a.lv}
-function ckAbHtml(){if(!L||L.demo)return '';const a=CKAB.filter(ckAbOpen);if(!a.length)return '';return '<span class="ivl">'+lvZ('技能','POWERS')+'</span>'+a.map(x=>`<button class="iv ckab${L.ckAim===x.id?' act':''}" data-ckab="${x.id}" data-i="${ckZ(x.n)}: ${ckZ(x.d)}" aria-label="${ckZ(x.n)}"><b class="ckg">${x.g}</b><span class="ckcd"></span></button>`).join('')}
-function ckAbUse(id){
- const a=CKAB.find(x=>x.id===id);if(!a||!L||L.over||L.demo||!ckAbOpen(a))return;
- if(L.paused){toast('Resume to build or interact');return}
- if((L.abc[id]||0)>0){toast(lvZ(ckZ(a.n)+' 冷却中：'+Math.ceil(L.abc[id])+' 秒',ckZ(a.n)+' is recharging: '+Math.ceil(L.abc[id])+'s'));return}
- if(a.aim){if(L.ckAim===id){L.ckAim=null;invR();toast(lvZ('已取消','Cancelled'));return}L.placing=null;L.ckAim=id;invR();toast(a.g+' '+lvZ('点击地图选择目标位置','Tap the battlefield to aim')+' · '+ckZ(a.d));return}
- if(id==='rally'){L.bf.ovc=Math.max(L.bf.ovc,6);L.tr.forEach(t=>{if(!t.building){const s=pp(t.x,t.y);vRing(s.x,s.y,tw*.7,'#ffd36a',.5,3)}});sfx('upgrade',.6)||beep(660,.2,'triangle',.06);toast('⚑ '+lvZ('战旗高举：攻速提升！','Rally! Towers fire faster'))}
- L.abc[id]=a.cd;L.abu++;invR()
-}
-function ckAimAt(q){
- const id=L.ckAim,a=CKAB.find(x=>x.id===id);L.ckAim=null;if(!a){invR();return}
- const s=pp(q.x,q.y),inR=r=>L.en.filter(e=>e.hp>0&&Math.hypot(e.x-q.x,e.y-q.y)<=r);
- if(id==='meteor'){const dm=[.68,.82,1,1.28,1.62][S.dif]*45*(1+L.i*.15)*(1+L.wave*.15)*2.6*DEF_MULT;L.rg.push({x:s.x,y:s.y,r:0,l:.5,k:'#ff8a3a',mr:1.8});burst(s.x,s.y,'#ff9a55',30,200);vGlow(s.x,s.y,tw*1.8,'#ff7a2a',.5);L.shake=Math.max(L.shake,.5);inR(1.8).forEach(e=>{const pro=e.pro;e.pro=0;hurt(e,dm*(e.t==='boss'?.5:1),'#ffb36b');if(e.hp>0)e.pro=pro});sfx('boom',.9)||beep(70,.35,'square',.08)}
- else if(id==='nova'){vRing(s.x,s.y,tw*2,'#bff4ff',.6,4);vGlow(s.x,s.y,tw*2,'#8ff',.4);inR(2).forEach(e=>{if(e.t==='boss')e.sl=Math.max(e.sl,3);else e.fz=Math.max(e.fz,2.4)});sfx('ice',.7)||beep(1200,.2,'triangle',.05)}
- else if(id==='mark'){vRing(s.x,s.y,tw*1.8,'#ff5b7f',.6,3);inR(1.8).forEach(e=>{e.kf=8;e.mk=Math.max(e.mk||0,8)});sfx('upgrade',.4)||beep(880,.15,'square',.05)}
- L.abc[id]=a.cd;L.abu++;invR()
-}
-document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-ckab]');if(!b)return;ev.preventDefault();ev.stopPropagation();ckAbUse(b.dataset.ckab)},true);
 let ckUiT=0,ckChip=null;
 function ckV3Tick(dt){
  if(L.ckv!==L)ckV3Init();
- for(const k in L.abc)if(L.abc[k]>0)L.abc[k]=Math.max(0,L.abc[k]-dt);
  // item use tracking (per-level stock) and challenge bookkeeping
  let nt=0;for(const t of L.tr)if(t&&t.k!=='wall')nt++;L.mtw=Math.max(L.mtw,nt);
- if(L.chOk&&L.ch){const c=L.ch.id;if((c==='noleak'&&L.lives<L.mxl)||(c==='cap'&&L.mtw>L.ch.a)||(c==='noitem'&&Object.keys(L.iu).length)||(c==='noab'&&L.abu>0)||(c==='ban'&&L.tr.some(t=>t&&t.k===L.ch.k))){L.chOk=false;toast('👑 '+lvZ('挑战失败：','Crown lost: ')+ckChalTxt(L.ch))}}
+ if(L.chOk&&L.ch){const c=L.ch.id;if((c==='noleak'&&L.lives<L.mxl)||(c==='cap'&&L.mtw>L.ch.a)||(c==='noitem'&&Object.keys(L.iu).length)||(c==='ban'&&L.tr.some(t=>t&&t.k===L.ch.k))){L.chOk=false;toast('👑 '+lvZ('挑战失败：','Crown lost: ')+ckChalTxt(L.ch))}}
  for(const e of L.en){
   if(e.hp<=0)continue;
-  if(e.mk>0)e.mk-=dt;if(e.ab>0)e.ab-=dt;if(e.kf>0)e.kf-=dt;
+  if(e.mk>0)e.mk-=dt;if(e.ab>0)e.ab-=dt;
   if(e.rl==='heal'&&e.pro<=0){e.hc-=dt;if(e.hc<=0){e.hc=1.2;let n=0;for(const o of L.en)if(o!==e&&o.hp>0&&o.hp<o.mx&&Math.abs(o.x-e.x)<1.7&&Math.abs(o.y-e.y)<1.7){o.hp=Math.min(o.mx,o.hp+o.mx*(o.t==='boss'?.006:.045));n++}if(n){const p=eS(e);vRing(p.x,p.y,tw*1.7,'#7dff9a',.45,2)}}}
   if(e.rl==='disr'&&e.pro<=0&&!(e.fz>0)){e.dt-=dt;if(e.dt<=0){let best=null,bd=2.3;for(const t of L.tr){if(!t||t.building||t.k==='wall')continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d<bd){bd=d;best=t}}if(best){best.st=Math.max(best.st||0,1.6);const s=pp(best.x,best.y);vRing(s.x,s.y,tw*.6,'#ff6b6b',.5,3);ckLbl(e,lvZ('干扰！','JAMMED!'),'#ff8a8a');e.dt=7}else e.dt=1}}
   if(e.t==='boss'&&e.adt&&L.i>=39&&e.pro<=0){e.adw-=dt;if(e.adw<=0){e.adw=10;const a=e.adt,ty=a.p>=a.m&&a.p>=a.e?'p':a.m>=a.e?'m':'e';if(a[ty]>0&&ty!==e.bw&&ty!==e.bad){e.bad=ty;toast(lvZ('首领适应了'+CKDTN[ty][0]+'伤害（-35%）','The boss adapts to '+CKDTN[ty][1]+' damage (-35%)'))}e.adt={p:0,m:0,e:0}}}
@@ -140,33 +111,34 @@ function ckV3Tick(dt){
  ckUiT-=dt;if(ckUiT<=0){ckUiT=.25;ckV3Ui()}
 }
 function ckV3Ui(){
- document.querySelectorAll('#inv [data-ckab]').forEach(b=>{const id=b.dataset.ckab,a=CKAB.find(x=>x.id===id),r=(L.abc[id]||0)/a.cd;b.style.setProperty('--ckr',r);b.classList.toggle('cool',r>0);b.querySelector('.ckcd').textContent=r>0?Math.ceil(L.abc[id]):''});
  if(!ckChip){const bb=document.getElementById('ck-bossbar');if(!bb)return;ckChip=document.createElement('div');ckChip.id='ck-v3';bb.parentNode.appendChild(ckChip)}
  const rail=document.getElementById('rail'),host=ckChip.parentNode;if(!rail||!host)return;
  const hr=host.getBoundingClientRect(),rr=rail.getBoundingClientRect();ckChip.style.top=Math.max(60,rr.top-hr.top-30)+'px';
  let h='';
- const nq=L.wave===0?L.nq:(L.wave<L.waves?L.nq:null);
+ const nq=L.wave<L.waves?L.nq:null;
  if(nq&&nq.q){const o=ckWaveSum(nq.q);h+=`<span class="nw"><i>${lvZ('下一波','Next')}</i> ${o.b?'👑 '+lvZ('首领','Boss'):o.n}${Object.keys(o.r).map(k=>` <em style="color:${CKR[k].c}">${CKR[k].g}${o.r[k]}</em>`).join('')}</span>`}
  if(L.ch){h+=`<span class="cr ${L.chOk?'':'x'}${S.crown&&S.crown[L.i]?' got':''}">👑 ${ckZ(L.ch.n)}<i>${ckChalTxt(L.ch)}</i></span>`}
  if(ckChip._h!==h){ckChip._h=h;ckChip.innerHTML=h}
- ckChip.hidden=!h||L.over;
+ ckChip.hidden=!h||!ckInBattle();
 }
-// ground layer: shrines, portal corruption, aim reticle
+// ground layer: shrines and portal corruption
 function ckV3Ground(){
  if(!L||L.demo||L.ckv!==L)return;
  const u=tw/100;
  if(L.i>=4){c.save();c.setLineDash([5*u,6*u]);c.lineWidth=Math.max(1,2*u);c.strokeStyle='rgba(190,90,255,.35)';for(const p of L.portals){const s=pp(p[0],p[1]);c.beginPath();c.arc(s.x,s.y,2.5*tw,0,7);c.stroke()}c.restore()}
  for(const q of L.g){if(!q.shr)continue;const s=pp(q.x,q.y),a=.55+.25*Math.sin(TM*2.4+q.x);c.save();c.globalAlpha=a;c.strokeStyle='#ffd36a';c.lineWidth=Math.max(1.5,3*u);c.beginPath();c.arc(s.x,s.y,tw*.4,0,7);c.stroke();c.beginPath();for(let k=0;k<6;k++){const an=k*Math.PI/3+TM*.4;c.moveTo(s.x+Math.cos(an)*tw*.18,s.y+Math.sin(an)*tw*.18);c.lineTo(s.x+Math.cos(an)*tw*.36,s.y+Math.sin(an)*tw*.36)}c.stroke();c.globalAlpha=a*.35;c.fillStyle='#ffd36a';c.beginPath();c.arc(s.x,s.y,tw*.4,0,7);c.fill();c.restore()}
- if(L.ckAim&&hov){const a=CKAB.find(x=>x.id===L.ckAim),r=L.ckAim==='nova'?2:1.8,s=pp(hov.x,hov.y);c.save();c.strokeStyle=L.ckAim==='nova'?'#bff4ff':L.ckAim==='mark'?'#ff5b7f':'#ff9a55';c.lineWidth=3*u;c.setLineDash([8*u,6*u]);c.beginPath();c.arc(s.x,s.y,r*tw,0,7);c.stroke();c.restore()}
 }
 // role badges, shield bar, mark reticle (drawn above an enemy's health bar)
 function ckRoleBadge(e,p,bw,by){
  if(e.sh>0&&e.msh){c.fillStyle='#0a0f24';c.fillRect(p.x-bw/2-1,by-6,bw+2,5);c.fillStyle='#ffd36a';c.fillRect(p.x-bw/2,by-5,bw*e.sh/e.msh,3)}
  const R0=e.rl&&CKR[e.rl];
  if(R0||e.bw){const r=Math.max(7,tw*.16),x=p.x-bw/2-r-1,y=by+2;c.fillStyle='#0a0f24e6';c.beginPath();c.arc(x,y,r,0,7);c.fill();c.strokeStyle=R0?R0.c:'#ffd36a';c.lineWidth=1.5;c.stroke();c.fillStyle=R0?R0.c:'#ffd36a';c.font=`900 ${r*1.3|0}px sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(R0?R0.g:({p:'⚔',m:'✦',e:'❄'})[e.bw],x,y+.5)}
- if(e.kf>0){const r=tw*.42;c.strokeStyle='#ff5b7f';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,r,0,7);for(let k=0;k<4;k++){const an=k*Math.PI/2;c.moveTo(p.x+Math.cos(an)*r*.7,p.y+Math.sin(an)*r*.7);c.lineTo(p.x+Math.cos(an)*r*1.2,p.y+Math.sin(an)*r*1.2)}c.stroke()}
- else if(e.mk>0){c.strokeStyle='#ffe08aaa';c.lineWidth=1.5;c.beginPath();c.arc(p.x,p.y-tw*.05,tw*.32,0,7);c.stroke()}
+ if(e.mk>0){c.strokeStyle='#ffe08aaa';c.lineWidth=1.5;c.beginPath();c.arc(p.x,p.y-tw*.05,tw*.32,0,7);c.stroke()}
 }
 // crowns: an optional challenge per level, rewarded once
 function ckCrownEval(){if(!L.ch||L.demo)return;L.chWin=L.chOk;L.chNew=false;L.chGold=0;S.crown=S.crown||{};if(L.chOk&&!S.crown[L.i]){S.crown[L.i]=1;L.chNew=true;L.chGold=Math.round(150+L.i*10);Economy.grantWallet(L.chGold)}}
 function ckCrownHtml(){if(!L.ch)return '';return `<p class="ck-crown ${L.chWin?'ok':'no'}">👑 ${ckZ(L.ch.n)} · ${ckChalTxt(L.ch)} — ${L.chWin?(L.chNew?lvZ('达成！+','Earned! +')+L.chGold:lvZ('已达成','Done')):lvZ('未达成','Missed')}</p>`}
+
+function ckInBattle(){const hud=document.getElementById('hud');return typeof L!=='undefined'&&!!L&&!L.demo&&!L.over&&S.mode==='play'&&!!hud&&hud.classList.contains('on')}
+// keep the battle chip off every non-battle screen (map, menus, demo, result panels)
+setInterval(()=>{if(!ckChip)return;const on=ckInBattle();if(!on&&!ckChip.hidden)ckChip.hidden=true},150);

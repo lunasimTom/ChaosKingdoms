@@ -24,7 +24,7 @@ Monsters can carry a role, shown as a badge next to their health bar. Each role 
 | --- | --- | --- | --- |
 | ⛨ Armoured | 4 | Physical damage halved | Magic towers, Arcane Break |
 | ✦ Warded | 7 | Magic damage halved | Physical or elemental towers |
-| ✚ Healer | 10 | Heals nearby monsters | Kill it first (Hunter's Mark) |
+| ✚ Healer | 10 | Heals nearby monsters | Kill it first (Strong targeting, area damage) |
 | ◈ Shield-bearer | 14 | A shield (45% of HP) soaks damage first | Cannons deal double damage to shields |
 | ✷ Splitter | 18 | Splits into two fast runners on death | Area damage |
 | ϟ Disruptor | 24 | Jams the nearest tower for 1.6 s every 7 s | Long-range towers |
@@ -40,15 +40,6 @@ Resistances never exceed 50%, so every tower still contributes.
 
 The original combos still apply: Cannon +30% vs slowed, Lightning +30% vs poisoned.
 
-**Aimed powers** sit in the new POWERS row. Tap one, then tap the battlefield to aim it.
-
-| Power | From level | Effect | Cooldown |
-| --- | --- | --- | --- |
-| ☄ Meteor | 1 | Heavy area blast (half damage to bosses) | 40 s |
-| ❄ Frost Nova | 3 | Freezes an area (slows bosses) | 45 s |
-| ◎ Hunter's Mark | 6 | Towers focus marked monsters first, and deal +20% to them | 30 s |
-| ⚑ Rally | 10 | All towers fire faster for 6 s (no aiming) | 60 s |
-
 **Terrain.**
 - From level 5, two golden shrines appear on each map. A tower built on a shrine gets +20% damage and +10% range.
 - Portals now corrupt the area around them (dashed purple ring). Towers within it deal 15% less damage, so camping next to a portal is no longer the best plan.
@@ -57,7 +48,7 @@ The original combos still apply: Cannon +30% vs slowed, Lightning +30% vs poison
 - Every boss has a weakness: one damage type deals +30%, announced when the boss arrives and shown on its badge.
 - From level 40, a boss adapts every 10 s, taking 35% less damage from whichever type hurt it most. Mixed defences pay off.
 
-**Crowns.** Each level has one optional challenge, shown in the chip and announced at the start. The challenges are Flawless, Lean army, Self-reliant, Restriction (one tower type banned) and Towers only. Winning while it still holds earns a crown, plus a one-time gold reward, and the result appears on the Victory panel.
+**Crowns.** Each level has one optional challenge, shown in the chip during battle (hidden on the map and menus) and announced at the start. The challenges are Flawless, Lean army, Self-reliant and Restriction (one tower type banned). Winning while it still holds earns a crown, plus a one-time gold reward, and the result appears on the Victory panel.
 
 Tested with headless runs:
 - Every new mechanic exercised in isolation.
