@@ -18,7 +18,6 @@ const CKAB=[
  {id:'mark',g:'◎',lv:5,cd:30,aim:1,n:['猎杀标记','Hunter’s Mark'],d:['点击地图：塔优先攻击，伤害+20%','Tap the map: towers focus marked foes, +20% damage']},
  {id:'rally',g:'⚑',lv:9,cd:60,aim:0,n:['战旗','Rally'],d:['所有塔攻速提升 6 秒','All towers attack faster for 6 s']}
 ];
-const CK_ICAP=3;
 const CKCH=[
  {id:'noleak',n:['无漏','Flawless'],d:['不失去任何生命','Lose no lives']},
  {id:'cap',n:['精兵','Lean army'],d:['同时最多 {0} 座塔','Never have more than {0} towers']},

@@ -348,7 +348,7 @@ rep("function ckSummonTick(dt){",
 #     damage types (physical / magic / elemental, resistances capped at 50%), designed
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), four aimed abilities, shrines and portal corruption, boss weaknesses
-#     and adaptation, a per-level item stock, and an optional crown challenge per level.
+#     and adaptation, and an optional crown challenge per level.
 rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
@@ -364,7 +364,6 @@ rep("L.tr.slice().sort((a,b)=>a.y-b.y).forEach(dTw);", "ckV3Ground();L.tr.slice(
 rep("c.fillStyle='#0a0f24';c.fillRect(p.x-bw/2-1,by-1,bw+2,6);", "if(e.rl||e.bw||e.kf>0||e.mk>0||e.sh>0)ckRoleBadge(e,p,bw,by);c.fillStyle='#0a0f24';c.fillRect(p.x-bw/2-1,by-1,bw+2,6);")
 rep("L.bf.ovc=Math.max(0,L.bf.ovc-dt);", "ckV3Tick(dt);L.bf.ovc=Math.max(0,L.bf.ovc-dt);")
 rep("if(L.placing==='air'){placeAir(q);return}", "if(L.ckAim){ckAimAt(q);return}if(L.placing==='air'){placeAir(q);return}")
-rep("if(L.cdn[id]>0)return toast(", "if(!L.demo&&L.iu&&(L.iu[id]||0)>=CK_ICAP)return toast(lvZ('本关该道具已用完（每关 '+CK_ICAP+' 次）','Item limit reached for this level ('+CK_ICAP+' uses)'));if(L.cdn[id]>0)return toast(")
 rep("e.innerHTML='<span class=\"ivl\">'+TL('ITEMS')", "e.innerHTML=ckAbHtml()+'<span class=\"ivl\">'+TL('ITEMS')")
 rep("L.inv[id]--;L.cdn[id]=CDT[id];", "L.inv[id]--;ckIU(id);L.cdn[id]=CDT[id];")
 for _k in ('river','air','bomb'):

@@ -59,8 +59,6 @@ The original combos still apply: Cannon +30% vs slowed, Lightning +30% vs poison
 
 **Crowns.** Each level has one optional challenge, shown in the chip and announced at the start. The challenges are Flawless, Lean army, Self-reliant, Restriction (one tower type banned) and Towers only. Winning while it still holds earns a crown, plus a one-time gold reward, and the result appears on the Victory panel.
 
-**Item stock.** Each item can be used at most 3 times per level, so powers and towers carry each fight, not bulk item purchases.
-
 Tested with headless runs:
 - Every new mechanic exercised in isolation.
 - Full-level simulations at levels 1–100 (difficulty is comparable to v2.7.2 in the same simulation).

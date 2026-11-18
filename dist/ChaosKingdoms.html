@@ -1541,7 +1541,6 @@ const CKAB=[
  {id:'mark',g:'◎',lv:5,cd:30,aim:1,n:['猎杀标记','Hunter’s Mark'],d:['点击地图：塔优先攻击，伤害+20%','Tap the map: towers focus marked foes, +20% damage']},
  {id:'rally',g:'⚑',lv:9,cd:60,aim:0,n:['战旗','Rally'],d:['所有塔攻速提升 6 秒','All towers attack faster for 6 s']}
 ];
-const CK_ICAP=3;
 const CKCH=[
  {id:'noleak',n:['无漏','Flawless'],d:['不失去任何生命','Lose no lives']},
  {id:'cap',n:['精兵','Lean army'],d:['同时最多 {0} 座塔','Never have more than {0} towers']},
@@ -2970,7 +2969,7 @@ function placeRiver(index){if(!(L.inv.river>0)){L.placing=null;render();return}c
  L.en.forEach(e=>{if(!e.fly){e.tc=null;e.vv=[0,0];e.atk=null;e._nav=e._nav||{};e._nav.wander=null;e._nav.wanderT=0;e._nav.wanderRecent=[];e._nav.stuck=0;e._nav.best=1e9;e._nav.bt=0}});replan();computeDF();vFlash('#5ab8ff',.25);L.shake=.3;
  toast('The river spans the whole map for 30s. Ground enemies can only cross at bridges.');render()}
 function endRiver(){if(!L.rv)return;const r=L.rv; if(r.cells)r.cells.forEach(([x,y,old])=>{cell(x,y).rv=old});else if(r.axis==='col')for(let y=0;y<L.rows;y++)cell(r.index??r.row,y).rv=0;else for(let x=0;x<L.cols;x++)cell(x,r.index??r.row).rv=0;L.rv=null;replan();computeDF();toast('The river dried up')}
-function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;if(!L.demo&&L.iu&&(L.iu[id]||0)>=CK_ICAP)return toast(lvZ('本关该道具已用完（每关 '+CK_ICAP+' 次）','Item limit reached for this level ('+CK_ICAP+' uses)'));if(L.cdn[id]>0)return toast(TL('{0} is cooling down: {1}s',it.n,Math.ceil(L.cdn[id])));let en=L.en.filter(e=>e.hp>0);
+function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;if(L.cdn[id]>0)return toast(TL('{0} is cooling down: {1}s',it.n,Math.ceil(L.cdn[id])));let en=L.en.filter(e=>e.hp>0);
  if(id==='river'){if(L.rv)return toast('A river is already flowing');if(L.placing==='river'){L.placing=null;render();return toast('River placement cancelled')}L.placing='river';render();return toast('River selected: tap any row on the map to place it (Q to cancel)')}
  if(id==='air'||id==='bomb'){if(L.placing===id){L.placing=null;render();return toast('Cancelled')}L.placing=id;render();return toast(id==='air'?'Tap the map where enemies bunch up (Q cancels)':'Tap a lane: the jets fly along it (Q cancels)')}
  if(id==='heli'&&L.hel)return toast('A gunship is already on station');
