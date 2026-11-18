@@ -120,3 +120,18 @@ body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;back
 /* shop open: keep notifications clear of the shop header */
 body:has(#shop:not([hidden])) #toast{top:auto!important;bottom:calc(132px + env(safe-area-inset-bottom,0px))!important}
 body:not(.pt):has(#shop:not([hidden])) #toast{bottom:84px!important}
+
+/* v2.2: the app frame already sits inside the safe area, so the bar needs no extra inset */
+body.pt #rail{padding-bottom:6px!important}
+
+/* ---------- boss reinforcement countdown ---------- */
+#ck-sumcd{position:absolute;left:50%;top:13%;z-index:45;transform:translateX(-50%);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+#ck-sumcd[hidden]{display:none!important}
+#ck-sumcd .cks-ring{position:relative;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#3a0a12f2 0 58%,#1a0408f2 60% 100%);box-shadow:0 0 0 2px #ff6a5a,0 0 26px #ff2a2acc,0 10px 24px #000c}
+#ck-sumcd .cks-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+#ck-sumcd .cks-ring circle{fill:none;stroke:#ffd27a;stroke-width:6;stroke-linecap:round;stroke-dasharray:276.5;transition:stroke-dashoffset .2s linear}
+#ck-sumcd .cks-n{font:900 50px/1 'Cinzel',Georgia,serif;color:#fff0d8;text-shadow:0 3px 0 #4a0a0a,0 0 18px #ff4a3a}
+#ck-sumcd .cks-n.tick{animation:ckTick .5s var(--ck-spring)}
+#ck-sumcd .cks-l{padding:5px 14px;border-radius:99px;background:#2a0710ee;border:1px solid #ff6a5a99;font:900 12px/1.2 'Nunito',system-ui,sans-serif;letter-spacing:.14em;color:#ffd9cc;text-transform:uppercase;white-space:nowrap;box-shadow:0 6px 16px #000a}
+body.zh #ck-sumcd .cks-l{letter-spacing:.2em;font-family:var(--btn-font)}
+@keyframes ckTick{0%{transform:scale(1.5);opacity:.4}100%{transform:none;opacity:1}}

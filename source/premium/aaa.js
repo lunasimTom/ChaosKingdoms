@@ -28,7 +28,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.1 · Premium Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.2 · Premium Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}
@@ -69,16 +69,19 @@ const zh=()=>G('LANG')==='zh';
  const banner=document.createElement('div');banner.id='ck-banner';banner.innerHTML='<div class="ckw-band"><div class="ckw-k"></div><div class="ckw-t"></div></div>';app.appendChild(banner);
  const showBanner=(k,t,boss)=>{if(RM)return;banner.querySelector('.ckw-k').textContent=k;banner.querySelector('.ckw-t').textContent=t;banner.classList.toggle('boss',!!boss);banner.classList.remove('show');void banner.offsetWidth;banner.classList.add('show')};
  window.ckBanner=showBanner;
+ const sumEl=document.createElement('div');sumEl.id='ck-sumcd';sumEl.hidden=true;sumEl.innerHTML='<div class="cks-ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/></svg><span class="cks-n">5</span></div><div class="cks-l"></div>';app.appendChild(sumEl);let sumN=0;
  let lastWave=-1,lastLevel=null;
  const step=ts=>{requestAnimationFrame(step);
   const S=G('S'),L=G('L');
-  if(!S||!L||S.mode!=='play'||L.demo||window.CK_NOFX){if(cv.style.display!=='none'){cv.style.display='none'}lastWave=-1;return}
+  if(!S||!L||S.mode!=='play'||L.demo||window.CK_NOFX){if(!sumEl.hidden){sumEl.hidden=true;sumN=0}if(cv.style.display!=='none'){cv.style.display='none'}lastWave=-1;return}
   if(cv.style.display==='none')cv.style.display='';
   if(document.hidden)return;
   // wave banner
   if(lastLevel!==L){lastLevel=L;lastWave=L.wave;lives=L.lives}
   if(L.wave!==lastWave){if(L.wave>lastWave&&L.wave>0&&!L.over){const boss=L.boss&&L.wave===L.waves;showBanner(boss?(zh()?'最终一波':'Final wave'):(zh()?`第 ${L.wave} / ${L.waves} 波`:`Wave ${L.wave} of ${L.waves}`),boss?(zh()?'首领来袭':'BOSS INCOMING'):(zh()?`第 ${L.wave} 波`:`WAVE ${L.wave}`),boss);if(boss)bossT=4}lastWave=L.wave}
   if(lives!=null&&L.lives<lives){flash=Math.min(1,flash+.55);flashC='255,40,40'}lives=L.lives;
+  // boss reinforcement countdown
+  const sc=L.sc;if(sc&&!L.over){if(sumEl.hidden){sumEl.hidden=false}const n=Math.max(1,Math.ceil(sc.t));if(n!==sumN){sumN=n;const ne=sumEl.querySelector('.cks-n');ne.textContent=n;ne.classList.remove('tick');void ne.offsetWidth;ne.classList.add('tick');sumEl.querySelector('.cks-l').textContent=sc.ph===2?(zh()?'最后援军即将降临':'Final reinforcements'):(zh()?'首领援军即将降临':'Boss reinforcements')}sumEl.querySelector('circle').style.strokeDashoffset=String(276.5*(1-Math.max(0,sc.t)/5))}else if(!sumEl.hidden){sumEl.hidden=true;sumN=0}
   const fr=LOW?40:30;if(ts-last<fr)return;const dt=Math.min(.08,(ts-last)/1e3||.03);last=ts;
   const k=[G('W'),G('H'),G('tw'),G('ox'),G('oy'),G('port'),G('FS'),L.i].join('|');if(k!==key){key=k;try{rebuild()}catch(e){return}}
   const paused=L.paused||G('mOpen')||G('tab')==='s';const sp=paused?.15:1,t=ts/1000;

@@ -7,7 +7,26 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.1.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.1.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as 2.0.0, so it installs as an update. |
+| `dist/ChaosKingdoms-v2.2.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.2.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v2.2
+
+- **Spawn protection** lasts 1.5 s (was 2.5 s). The pale-yellow ring is gone. A protected monster now shimmers with a soft glow on its own body.
+- **Boss Enrage Mode from level 40.** At 20% HP or less the boss:
+  - grows 30% larger;
+  - charges across the map in bursts, smashing towers it runs into;
+  - pulses red;
+  - deals 15% more damage.
+
+  Bosses before level 40 keep the original enrage at 33% HP.
+- **5-second countdown before each boss reinforcement call** (at 50% and 20% HP, level 33 and up). A large ring counts down near the top of the board, with a beep each second. The second call waits for the first, and killing the boss during a countdown cancels the drop.
+- **Screen fit:**
+  - The game measures the real visible area at start-up and on every resize, leaving out notches, camera cut-outs and rounded corners.
+  - Tall phones (20:9, 21:9) use their full height instead of showing bands.
+  - Capable devices render at up to 2× pixel density.
+- **Monster visuals:**
+  - Every monster has a soft dark outline, so it stands out from the ground.
+  - Hit flashes, spawn shimmer and the enrage glow now use cached tinted sprites instead of a canvas filter. A wave of 120 freshly spawned monsters now takes about 19 ms per frame instead of 270 ms.
 
 ## What changed in v2.1
 
@@ -66,7 +85,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.1.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.2.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

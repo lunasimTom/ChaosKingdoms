@@ -114,6 +114,60 @@ rep("const TSP_CACHE=new Map()",
     "const g=document.createElement('canvas');g.width=g.height=S;const y=g.getContext('2d'),gg=y.createRadialGradient(cx,cy,0,cx,cy,cx);gg.addColorStop(0,TC+'aa');gg.addColorStop(1,TC+'00');y.fillStyle=gg;y.fillRect(0,0,S,S);"
     "return CK_GEMS[TC]={b,g,R,S}}\nconst TSP_CACHE=new Map()")
 
+# ---------------------------------------------------------------- v2.2 gameplay + visuals
+# 8. Spawn protection: 1.5 s instead of 2.5 s, no pale-yellow ring; the monster's own body
+#    glows instead. Glows (spawn, hit flash, enrage) use cached tinted silhouettes drawn
+#    additively, which is much cheaper than the per-draw canvas filter it replaces.
+rep("pro:L.demo?0:2.5", "pro:L.demo?0:1.5")
+rep("if(e.pro>0){circ(p.x,p.y,sz*.55,'rgba(255,240,150,'+(.16+.14*Math.sin(TM*16))+')');c.strokeStyle='rgba(255,245,190,.9)';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,sz*.55,0,7);c.stroke()}", "")
+rep("if((e.fl>0||(e.pro>0&&Math.sin(TM*22)>-.2))&&c.filter!==undefined)c.filter='brightness(2.6) saturate(.5)';", "")
+rep("const TRIM={};",
+    "const CK_TINT=new WeakMap();function ckTint(src,col){let m=CK_TINT.get(src);if(!m){m={};CK_TINT.set(src,m)}let o=m[col];if(o)return o;const iw=src.width||1,ih=src.height||1,k=Math.min(1,180/Math.max(iw,ih));o=document.createElement('canvas');o.width=Math.max(1,Math.round(iw*k));o.height=Math.max(1,Math.round(ih*k));const g=o.getContext('2d');g.drawImage(src,0,0,o.width,o.height);g.globalCompositeOperation='source-in';g.fillStyle=col;g.fillRect(0,0,o.width,o.height);return m[col]=o}\n"
+    "const TRIM={};")
+# 9. Monster readability ("2.5D pop"): a soft dark outline behind every monster, then the
+#    glow layer on top (white spawn shimmer, hit flash, red enrage pulse).
+rep("c.drawImage(src,0,0,iw,ih,-w/2,-h,w,h);",
+    "{const pa=c.globalAlpha;c.globalAlpha=pa*.55;const ow=w*1.07,oh=h*1.05;c.drawImage(ckTint(src,'#0b0618'),-ow/2,-oh+h*.02,ow,oh);c.globalAlpha=pa}"
+    "c.drawImage(src,0,0,iw,ih,-w/2,-h,w,h);"
+    "{let ga=0,gc=null;if(e.fl>0){ga=.8;gc='#ffffff'}else if(e.pro>0){ga=.38+.3*Math.sin(TM*14);gc='#fff1b8'}"
+    "if(e.rage){const ra=.3+.4*(.5+.5*Math.sin(TM*16));if(ra>ga){ga=ra;gc='#ff2020'}}"
+    "if(gc){const pc=c.globalCompositeOperation,pa=c.globalAlpha;c.globalCompositeOperation='lighter';c.globalAlpha=pa*ga;c.drawImage(ckTint(src,gc),-w/2,-h,w,h);c.globalCompositeOperation=pc;c.globalAlpha=pa}}")
+# 10. Boss Enrage Mode from level 40: at <=20% HP the boss grows, charges across the map in
+#     bursts (smashing towers it runs into), pulses red and deals +15% damage.
+#     Bosses before level 40 keep their original 33% enrage.
+rep("if(!e.s2&&r<.33){e.s2=1;e.en=1;toast('The boss is enraged')}",
+    "if(!e.s2&&r<(L.i>=39?.2:.33)){e.s2=1;e.en=1;if(L.i>=39){e.rage=1;e.chg=0;e.smash=[];L.shake=Math.max(L.shake||0,.9);sfx('bossalert',.6)||beep(90,.45,'sawtooth',.08);"
+    "toast(lvZ('⚠ 首领狂暴！体型变大、高速冲撞、攻击力 +15%','⚠ The boss is ENRAGED! Bigger, charging, +15% attack'));if(window.ckBanner)ckBanner(lvZ('首领狂暴','Boss enraged'),lvZ('狂暴模式','ENRAGED'),1)}else toast('The boss is enraged')}")
+rep("e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}}",
+    "e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}"
+    "if(e.rage){e.rg=Math.min(1,(e.rg||0)+dt*1.6);const c0=e.chg%2.2<1.3;e.chg=(e.chg||0)+dt;const c1=e.chg%2.2<1.3;if(c1&&!c0)e.smash=[];"
+    "if(c1){e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const sp0=eS(e);burst(sp0.x,sp0.y+tw*.3,'#ff6a3a',3,70)}"
+    "for(const t of L.tr){if(t.building||t.hp<=0||e.smash.includes(t))continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.8){e.smash.push(t);dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}}}}")
+rep("*(e.en?1.7:1)*", "*(e.rage?(e.chg%2.2<1.3?2.7:1.3):e.en?1.7:1)*")
+rep("sz=bs?1.9*tw:.92*tw*d.sz", "sz=bs?1.9*tw*(1+.3*(e.rg||0)):.92*tw*d.sz")
+rep("if(e.en)circ(p.x,p.y,34*u,'#ff2b4a33');",
+    "if(e.rage){const pr=.5+.5*Math.sin(TM*10);circ(p.x,p.y,sz*.62,'rgba(255,30,30,'+(.16+.16*pr)+')');circ(p.x,p.y,sz*.4,'rgba(255,140,60,'+(.1+.12*pr)+')')}else if(e.en)circ(p.x,p.y,34*u,'#ff2b4a33');")
+rep("const hit=(EATK[e.t]||10)*period*(1+L.i*.06)*(e.sl>0?.6:1);",
+    "const hit=(EATK[e.t]||10)*period*(1+L.i*.06)*(e.sl>0?.6:1)*(e.rage?1.15:1);")
+# 11. Boss minion summons (level 33+) now get a 5-second warning countdown each. The
+#     summons queue, so the 20% call waits for the 50% one; killing the boss cancels them.
+rep("if(!L.m50&&r<=.5){L.m50=1;bossSummon(e,1)}if(!L.m20&&r<=.2){L.m20=1;bossSummon(e,2)}}});",
+    "if(!L.m50&&r<=.5){L.m50=1;(L.sq=L.sq||[]).push(1)}if(!L.m20&&r<=.2){L.m20=1;(L.sq=L.sq||[]).push(2)}}});if(L.i>=32&&!L.demo)ckSummonTick(dt);")
+rep("function bossSummon(boss,ph){",
+    "function ckSummonTick(dt){if(!L.sq||!L.sq.length||L.over){L.sc=null;return}const b=L.en.find(x=>x.t==='boss'&&x.hp>0);if(!b){L.sq=[];L.sc=null;return}"
+    "if(!L.sc){L.sc={ph:L.sq[0],t:5,last:6};toast(L.sc.ph===2?lvZ('⚠ 首领将召唤最后的援军！5 秒后降临','⚠ The boss will call its last reinforcements in 5 s!'):lvZ('⚠ 首领将召唤援军！5 秒后降临','⚠ The boss will call reinforcements in 5 s!'))}"
+    "L.sc.t-=dt;const n=Math.ceil(L.sc.t);if(n<L.sc.last&&n>0){L.sc.last=n;beep(n<=2?880:620,.12,'square',.06)}"
+    "if(L.sc.t<=0){const ph=L.sc.ph;L.sq.shift();L.sc=null;bossSummon(b,ph)}}\n"
+    "function bossSummon(boss,ph){")
+# 12. Screen fit: use the real visible area (minus notches / camera cut-outs / rounded
+#     corners via safe-area insets), let tall phones use their full height (portrait design
+#     height 760-1120 instead of 800-960), and render at up to 2x on capable devices.
+rep("function fit(){let[vw,vh]=vpSize();if(vw<40||vh<40){setTimeout(fit,150);return}_vw=vw;_vh=vh;let p=wantPortV(vw,vh),nw=p?450:724,nh=p?Math.round(Math.max(800,Math.min(960,450*vh/vw))):600;port=p;W=nw;H=nh;FS=Math.min(vw/W,vh/H);let a=$('app');a.style.width=W+'px';a.style.height=H+'px';a.style.transformOrigin='0 0';a.style.transform='scale('+FS+')';a.style.left=Math.round((vw-W*FS)/2)+'px';a.style.top=Math.round((vh-H*FS)/2)+'px';",
+    "function ckInsets(){let pr=document.getElementById('ck-inset');if(!pr){pr=document.createElement('div');pr.id='ck-inset';pr.style.cssText='position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';document.body.appendChild(pr)}const cs=getComputedStyle(pr),f=v=>Math.max(0,parseFloat(v)||0);return{t:f(cs.paddingTop),r:f(cs.paddingRight),b:f(cs.paddingBottom),l:f(cs.paddingLeft)}}\n"
+    "function fit(){let[vw0,vh0]=vpSize();if(vw0<40||vh0<40){setTimeout(fit,150);return}const si=ckInsets(),vw=Math.max(40,vw0-si.l-si.r),vh=Math.max(40,vh0-si.t-si.b);_vw=vw;_vh=vh;let p=wantPortV(vw,vh),nw=p?450:724,nh=p?Math.round(Math.max(760,Math.min(1120,450*vh/vw))):600;port=p;W=nw;H=nh;FS=Math.min(vw/W,vh/H);let a=$('app');a.style.width=W+'px';a.style.height=H+'px';a.style.transformOrigin='0 0';a.style.transform='scale('+FS+')';a.style.left=Math.round(si.l+(vw-W*FS)/2)+'px';a.style.top=Math.round(si.t+(vh-H*FS)/2)+'px';")
+rep("let d=Math.min(1.5,(devicePixelRatio||1)*FS)",
+    "let d=Math.min(((navigator.hardwareConcurrency||4)>=6&&(navigator.deviceMemory||4)>=4)?2:1.5,(devicePixelRatio||1)*FS)")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
