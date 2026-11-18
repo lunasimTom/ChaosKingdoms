@@ -7,7 +7,28 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.0.apk` | Android app (package `com.chaoskingdoms.game`, version 3.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.1.apk` | Android app (package `com.chaoskingdoms.game`, version 3.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.1
+
+**Fix: the next-wave preview and crown challenge panels showed through other screens.** The panels' show/hide logic only ran inside the game loop. The shop, the pause menu and every popup pause that loop, so the panels stayed on screen on top of them.
+
+Visibility now has its own check, independent of the game loop. The panels are hidden whenever:
+- the game is not in an active battle (title, world map, level select, Victory and Defeat), or
+- the shop (Items and Treasures), the pause menu, a popup (tips, profile, base upgrades) or the tower panel covers their spot.
+
+They reappear automatically when that screen closes. The map size is unchanged.
+
+**Tested**
+- A scripted walk through 42 interface states, in portrait at 360×740, 390×844, 412×860, 412×915 and 768×1024, and in landscape at 915×412:
+  - title, profile, history, transfer, world map, throne, rank;
+  - level start with its tips popup, building, the tower panel, the shop (both tabs);
+  - pause menu, profile from the pause menu, the pause button, speed, a running wave, item aiming, the base panel, the Back key;
+  - rotation, Chinese, a boss fight with summons;
+  - Victory, Defeat, restart, quit to map, main menu.
+
+  It checks that the panels are hidden whenever anything covers them and visible otherwise. All passed, with no errors.
+- Gameplay regression across levels 1–100, boss summons at 50% and 25%, the v3 mechanics test and the 40-tower frame-time benchmark: all unchanged.
 
 ## What changed in v3.0 · Strategy Edition
 
@@ -234,7 +255,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

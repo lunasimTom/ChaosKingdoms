@@ -1649,7 +1649,7 @@ function ckV3Ui(){
  if(nq&&nq.q){const o=ckWaveSum(nq.q);h+=`<span class="nw"><i>${lvZ('下一波','Next')}</i> ${o.b?'👑 '+lvZ('首领','Boss'):o.n}${Object.keys(o.r).map(k=>` <em style="color:${CKR[k].c}">${CKR[k].g}${o.r[k]}</em>`).join('')}</span>`}
  if(L.ch){h+=`<span class="cr ${L.chOk?'':'x'}${S.crown&&S.crown[L.i]?' got':''}">👑 ${ckZ(L.ch.n)}<i>${ckChalTxt(L.ch)}</i></span>`}
  if(ckChip._h!==h){ckChip._h=h;ckChip.innerHTML=h}
- ckChip.hidden=!h||!ckInBattle();
+ ckChip._has=!!h;ckChipVis();
 }
 // ground layer: shrines and portal corruption
 function ckV3Ground(){
@@ -1671,7 +1671,17 @@ function ckCrownHtml(){if(!L.ch)return '';return `<p class="ck-crown ${L.chWin?'
 
 function ckInBattle(){const hud=document.getElementById('hud');return typeof L!=='undefined'&&!!L&&!L.demo&&!L.over&&S.mode==='play'&&!!hud&&hud.classList.contains('on')}
 // keep the battle chip off every non-battle screen (map, menus, demo, result panels)
-setInterval(()=>{if(!ckChip)return;const on=ckInBattle();if(!on&&!ckChip.hidden)ckChip.hidden=true},150);
+// Visibility is checked on its own timer, because the game loop (which refreshes the chip's
+// content) stops while the shop, pause menu or any popup is open.
+function ckChipCovered(){
+ if(mOpen||tab==='s')return true;
+ for(const id of ['shop','hp','modal']){const e=document.getElementById(id);if(e&&!e.hidden&&(id!=='modal'||e.classList.contains('on'))&&getComputedStyle(e).display!=='none')return true}
+ // anything else drawn over the chip's spot (tower panel, tips, profile, other overlays)
+ const r=ckChip.getBoundingClientRect();if(!r.width||!r.height)return false;
+ const y=r.top+r.height/2;for(const x of [r.left+4,r.left+r.width/2,r.right-4]){const e=document.elementFromPoint(x,y);if(e&&e.id!=='cv')return true}
+ return false}
+function ckChipVis(){if(!ckChip)return;const show=!!ckChip._has&&ckInBattle();ckChip.hidden=!show;if(show)ckChip.style.visibility=ckChipCovered()?'hidden':''}
+setInterval(ckChipVis,120);
 
 function ckSummonTick(dt){const a=L.scs;if(!a||!a.length){L.sc=null;return}if(L.over){L.scs=[];L.sc=null;return}for(const sc of a.slice()){sc.t-=dt;const n=Math.ceil(sc.t);if(sc===a[0]&&n<sc.last&&n>0){sc.last=n;beep(n<=2?880:620,.12,'square',.06)}if(sc.t<=0){a.splice(a.indexOf(sc),1);if(sc.b){sc.b.chan=0;sc.b.pro=0}bossSummon(sc.b,sc.ph)}}L.sc=a[0]||null}
 function bossSummon(boss,ph){
@@ -4718,7 +4728,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.0 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.1 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

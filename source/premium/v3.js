@@ -126,7 +126,7 @@ function ckV3Ui(){
  if(nq&&nq.q){const o=ckWaveSum(nq.q);h+=`<span class="nw"><i>${lvZ('下一波','Next')}</i> ${o.b?'👑 '+lvZ('首领','Boss'):o.n}${Object.keys(o.r).map(k=>` <em style="color:${CKR[k].c}">${CKR[k].g}${o.r[k]}</em>`).join('')}</span>`}
  if(L.ch){h+=`<span class="cr ${L.chOk?'':'x'}${S.crown&&S.crown[L.i]?' got':''}">👑 ${ckZ(L.ch.n)}<i>${ckChalTxt(L.ch)}</i></span>`}
  if(ckChip._h!==h){ckChip._h=h;ckChip.innerHTML=h}
- ckChip.hidden=!h||!ckInBattle();
+ ckChip._has=!!h;ckChipVis();
 }
 // ground layer: shrines and portal corruption
 function ckV3Ground(){
@@ -148,4 +148,14 @@ function ckCrownHtml(){if(!L.ch)return '';return `<p class="ck-crown ${L.chWin?'
 
 function ckInBattle(){const hud=document.getElementById('hud');return typeof L!=='undefined'&&!!L&&!L.demo&&!L.over&&S.mode==='play'&&!!hud&&hud.classList.contains('on')}
 // keep the battle chip off every non-battle screen (map, menus, demo, result panels)
-setInterval(()=>{if(!ckChip)return;const on=ckInBattle();if(!on&&!ckChip.hidden)ckChip.hidden=true},150);
+// Visibility is checked on its own timer, because the game loop (which refreshes the chip's
+// content) stops while the shop, pause menu or any popup is open.
+function ckChipCovered(){
+ if(mOpen||tab==='s')return true;
+ for(const id of ['shop','hp','modal']){const e=document.getElementById(id);if(e&&!e.hidden&&(id!=='modal'||e.classList.contains('on'))&&getComputedStyle(e).display!=='none')return true}
+ // anything else drawn over the chip's spot (tower panel, tips, profile, other overlays)
+ const r=ckChip.getBoundingClientRect();if(!r.width||!r.height)return false;
+ const y=r.top+r.height/2;for(const x of [r.left+4,r.left+r.width/2,r.right-4]){const e=document.elementFromPoint(x,y);if(e&&e.id!=='cv')return true}
+ return false}
+function ckChipVis(){if(!ckChip)return;const show=!!ckChip._has&&ckInBattle();ckChip.hidden=!show;if(show)ckChip.style.visibility=ckChipCovered()?'hidden':''}
+setInterval(ckChipVis,120);
