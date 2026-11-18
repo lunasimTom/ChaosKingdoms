@@ -28,7 +28,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.2 · Premium Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.5 · Premium Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}
@@ -71,18 +71,24 @@ const zh=()=>G('LANG')==='zh';
  window.ckBanner=showBanner;
  const sumEl=document.createElement('div');sumEl.id='ck-sumcd';sumEl.hidden=true;sumEl.innerHTML='<div class="cks-ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/></svg><span class="cks-n">5</span></div><div class="cks-l"></div>';app.appendChild(sumEl);let sumN=0;
  let lastWave=-1,lastLevel=null;
+ let qLast=0,qEma=16,qBad=0,qGood=0,bossT2=0;
+ const bossEl=document.createElement('div');bossEl.id='ck-bossbar';bossEl.hidden=true;bossEl.innerHTML='<div class="ckb-h"><b class="ckb-n"></b><span class="ckb-p"></span></div><div class="ckb-t"><i class="ckb-f"></i><u style="left:50%"></u><u style="left:20%"></u></div>';app.appendChild(bossEl);
  const step=ts=>{requestAnimationFrame(step);
   const S=G('S'),L=G('L');
-  if(!S||!L||S.mode!=='play'||L.demo||window.CK_NOFX){if(!sumEl.hidden){sumEl.hidden=true;sumN=0}if(cv.style.display!=='none'){cv.style.display='none'}lastWave=-1;return}
+  if(!S||!L||S.mode!=='play'||L.demo||window.CK_NOFX){if(!sumEl.hidden){sumEl.hidden=true;sumN=0}if(!bossEl.hidden){bossEl.hidden=true;document.body.classList.remove('ck-boss')}if(cv.style.display!=='none'){cv.style.display='none'}lastWave=-1;return}
   if(cv.style.display==='none')cv.style.display='';
   if(document.hidden)return;
   // wave banner
   if(lastLevel!==L){lastLevel=L;lastWave=L.wave;lives=L.lives}
   if(L.wave!==lastWave){if(L.wave>lastWave&&L.wave>0&&!L.over){const boss=L.boss&&L.wave===L.waves;showBanner(boss?(zh()?'最终一波':'Final wave'):(zh()?`第 ${L.wave} / ${L.waves} 波`:`Wave ${L.wave} of ${L.waves}`),boss?(zh()?'首领来袭':'BOSS INCOMING'):(zh()?`第 ${L.wave} 波`:`WAVE ${L.wave}`),boss);if(boss)bossT=4}lastWave=L.wave}
   if(lives!=null&&L.lives<lives){flash=Math.min(1,flash+.55);flashC='255,40,40'}lives=L.lives;
+  // adaptive quality: watch real frame time; drop optional effects on slow devices
+  {const fdt=ts-qLast;qLast=ts;if(fdt>0&&fdt<250){qEma=qEma*.94+fdt*.06;if(window.CK_Q!==0&&qEma>30){qBad+=fdt;if(qBad>2500){window.CK_Q=0;qBad=0;qGood=0}}else qBad=Math.max(0,qBad-fdt*.5);if(window.CK_Q===0&&qEma<17){qGood+=fdt;if(qGood>6000){window.CK_Q=1;qGood=0}}else qGood=0}}
+  // boss health bar
+  if(ts-bossT2>100){bossT2=ts;const bo=L.en&&L.en.find(e=>e&&e.t==='boss'&&e.hp>0);if(bo&&!L.over){if(bossEl.hidden){bossEl.hidden=false;const BN=G('BOSS')||[];const nm=L.i>=96?BN[13+((L.i-96)%4)]:BN[(L.i/8)|0];bossEl.querySelector('.ckb-n').textContent=(zh()&&G('TL')?G('TL')(nm||'Boss'):(nm||'Boss'))}const pct=Math.max(0,bo.hp/bo.mx);bossEl.querySelector('.ckb-f').style.transform='scaleX('+pct.toFixed(3)+')';bossEl.querySelector('.ckb-p').textContent=Math.ceil(pct*100)+'%';bossEl.classList.toggle('rage',!!(bo.rage||bo.en))}else if(!bossEl.hidden)bossEl.hidden=true;document.body.classList.toggle('ck-boss',!bossEl.hidden)}
   // boss reinforcement countdown
   const sc=L.sc;if(sc&&!L.over){if(sumEl.hidden){sumEl.hidden=false}const n=Math.max(1,Math.ceil(sc.t));if(n!==sumN){sumN=n;const ne=sumEl.querySelector('.cks-n');ne.textContent=n;ne.classList.remove('tick');void ne.offsetWidth;ne.classList.add('tick');sumEl.querySelector('.cks-l').textContent=sc.ph===2?(zh()?'最后援军即将降临':'Final reinforcements'):(zh()?'首领援军即将降临':'Boss reinforcements')}sumEl.querySelector('circle').style.strokeDashoffset=String(276.5*(1-Math.max(0,sc.t)/5))}else if(!sumEl.hidden){sumEl.hidden=true;sumN=0}
-  const fr=LOW?40:30;if(ts-last<fr)return;const dt=Math.min(.08,(ts-last)/1e3||.03);last=ts;
+  const fr=(LOW||window.CK_Q===0)?50:30;if(ts-last<fr)return;const dt=Math.min(.08,(ts-last)/1e3||.03);last=ts;
   const k=[G('W'),G('H'),G('tw'),G('ox'),G('oy'),G('port'),G('FS'),L.i].join('|');if(k!==key){key=k;try{rebuild()}catch(e){return}}
   const paused=L.paused||G('mOpen')||G('tab')==='s';const sp=paused?.15:1,t=ts/1000;
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv.width,cv.height);g.setTransform(q,0,0,q,0,0);
@@ -92,9 +98,9 @@ const zh=()=>G('LANG')==='zh';
   // sun light + vignette
   g.globalCompositeOperation='lighter';g.drawImage(light,bx,by,bw,bh);
   // light shafts
-  if(!LOW){g.globalAlpha=.05+.025*Math.sin(t*.4);g.fillStyle=`rgb(${th.light})`;for(let i=0;i<3;i++){const x0=bx+bw*(.1+i*.28)+Math.sin(t*.12+i*2)*bw*.05,wd=bw*(.07+.03*i);g.beginPath();g.moveTo(x0,by);g.lineTo(x0+wd,by);g.lineTo(x0+wd+bh*.45,by+bh);g.lineTo(x0+bh*.45,by+bh);g.closePath();g.fill()}g.globalAlpha=1}
+  if(!LOW&&window.CK_Q!==0){g.globalAlpha=.05+.025*Math.sin(t*.4);g.fillStyle=`rgb(${th.light})`;for(let i=0;i<3;i++){const x0=bx+bw*(.1+i*.28)+Math.sin(t*.12+i*2)*bw*.05,wd=bw*(.07+.03*i);g.beginPath();g.moveTo(x0,by);g.lineTo(x0+wd,by);g.lineTo(x0+wd+bh*.45,by+bh);g.lineTo(x0+bh*.45,by+bh);g.closePath();g.fill()}g.globalAlpha=1}
   // motes
-  for(const m of motes){m.x+=Math.sin(t*m.sp+m.ph)*8*dt*sp;m.y+=(Math.cos(t*m.sp*.7+m.ph)*6-2)*dt*sp;if(m.y<-6)m.y=bh+6;if(m.x<-6)m.x=bw+6;if(m.x>bw+6)m.x=-6;const a=.25+.5*Math.max(0,Math.sin(t*1.7*m.sp+m.ph));g.globalAlpha=a;const s=m.r*5;g.drawImage(mote,bx+m.x-s/2,by+m.y-s/2,s,s)}
+  if(window.CK_Q!==0)for(const m of motes){m.x+=Math.sin(t*m.sp+m.ph)*8*dt*sp;m.y+=(Math.cos(t*m.sp*.7+m.ph)*6-2)*dt*sp;if(m.y<-6)m.y=bh+6;if(m.x<-6)m.x=bw+6;if(m.x>bw+6)m.x=-6;const a=.25+.5*Math.max(0,Math.sin(t*1.7*m.sp+m.ph));g.globalAlpha=a;const s=m.r*5;g.drawImage(mote,bx+m.x-s/2,by+m.y-s/2,s,s)}
   g.globalAlpha=1;g.globalCompositeOperation='source-over';g.drawImage(vign,bx,by,bw,bh);
   // boss / damage pulses
   if(bossT>0)bossT-=dt;

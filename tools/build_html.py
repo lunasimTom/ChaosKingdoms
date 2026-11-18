@@ -127,12 +127,14 @@ rep("const TRIM={};",
 # 9. Monster readability ("2.5D pop"): a soft dark outline behind every monster, then the
 #    glow layer on top (white spawn shimmer, hit flash, red enrage pulse).
 rep("c.drawImage(src,0,0,iw,ih,-w/2,-h,w,h);",
-    "{const pa=c.globalAlpha;c.globalAlpha=pa*.55;const ow=w*1.07,oh=h*1.05;c.drawImage(ckTint(src,'#0b0618'),-ow/2,-oh+h*.02,ow,oh);c.globalAlpha=pa}"
+    "e._ds=src;e._dw=w;e._dh=h;e._df=flip;e._dy=sz*.34+(fl?0:padB(e.sp,im)*h);"
+    "if(e.el||window.CK_Q!==0){const pa=c.globalAlpha,el=e.el;c.globalAlpha=pa*(el?.62+.33*Math.sin(TM*6+e.o):.55);const ow=w*(el?1.12:1.07),oh=h*(el?1.08:1.05);c.drawImage(ckTint(src,el?'#ffcf4a':'#0b0618'),-ow/2,-oh+h*.03,ow,oh);c.globalAlpha=pa}"
     "c.drawImage(src,0,0,iw,ih,-w/2,-h,w,h);"
     "{let ga=0,gc=null;if(e.fl>0){ga=.8;gc='#ffffff'}else if(e.pro>0){ga=.38+.3*Math.sin(TM*14);gc='#fff1b8'}"
     "if(e.rage){const ra=.3+.4*(.5+.5*Math.sin(TM*16));if(ra>ga){ga=ra;gc='#ff2020'}}"
     "if(gc){const pc=c.globalCompositeOperation,pa=c.globalAlpha;c.globalCompositeOperation='lighter';c.globalAlpha=pa*ga;c.drawImage(ckTint(src,gc),-w/2,-h,w,h);c.globalCompositeOperation=pc;c.globalAlpha=pa}}")
-# 10. Boss Enrage Mode from level 40: at <=20% HP the boss grows, charges across the map in
+# 10. Boss Enrage Mode from level 40: at <=20% HP the boss swells to 3x size for 3 s
+#     (then back to normal), charges across the map in
 #     bursts (smashing towers it runs into), pulses red and deals +15% damage.
 #     Bosses before level 40 keep their original 33% enrage.
 rep("if(!e.s2&&r<.33){e.s2=1;e.en=1;toast('The boss is enraged')}",
@@ -140,11 +142,11 @@ rep("if(!e.s2&&r<.33){e.s2=1;e.en=1;toast('The boss is enraged')}",
     "toast(lvZ('⚠ 首领狂暴！体型变大、高速冲撞、攻击力 +15%','⚠ The boss is ENRAGED! Bigger, charging, +15% attack'));if(window.ckBanner)ckBanner(lvZ('首领狂暴','Boss enraged'),lvZ('狂暴模式','ENRAGED'),1)}else toast('The boss is enraged')}")
 rep("e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}}",
     "e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}"
-    "if(e.rage){e.rg=Math.min(1,(e.rg||0)+dt*1.6);const c0=e.chg%2.2<1.3;e.chg=(e.chg||0)+dt;const c1=e.chg%2.2<1.3;if(c1&&!c0)e.smash=[];"
+    "if(e.rage){e.rgT=(e.rgT||0)+dt;{const rt=e.rgT,ss=x=>x*x*(3-2*x);e.rg=rt<.35?ss(rt/.35):rt<2.65?1:rt<3?ss((3-rt)/.35):0;if(rt>=.35&&rt-dt<.35){const sp2=eS(e);vRing(sp2.x,sp2.y,tw*3.2,'#ff4a3a',.6,8);vGlow(sp2.x,sp2.y,tw*2.4,'#ff3a2a',.5);L.shake=Math.max(L.shake||0,1)}}const c0=e.chg%2.2<1.3;e.chg=(e.chg||0)+dt;const c1=e.chg%2.2<1.3;if(c1&&!c0)e.smash=[];"
     "if(c1){e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const sp0=eS(e);burst(sp0.x,sp0.y+tw*.3,'#ff6a3a',3,70)}"
     "for(const t of L.tr){if(t.building||t.hp<=0||e.smash.includes(t))continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.8){e.smash.push(t);dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}}}}")
 rep("*(e.en?1.7:1)*", "*(e.rage?(e.chg%2.2<1.3?2.7:1.3):e.en?1.7:1)*")
-rep("sz=bs?1.9*tw:.92*tw*d.sz", "sz=bs?1.9*tw*(1+.3*(e.rg||0)):.92*tw*d.sz")
+rep("sz=bs?1.9*tw:.92*tw*d.sz", "sz=bs?1.9*tw*(1+2*(e.rg||0)):.92*tw*d.sz*(e.el?1.22:1)")  # v2.5: enrage = 3x size for 3 s
 rep("if(e.en)circ(p.x,p.y,34*u,'#ff2b4a33');",
     "if(e.rage){const pr=.5+.5*Math.sin(TM*10);circ(p.x,p.y,sz*.62,'rgba(255,30,30,'+(.16+.16*pr)+')');circ(p.x,p.y,sz*.4,'rgba(255,140,60,'+(.1+.12*pr)+')')}else if(e.en)circ(p.x,p.y,34*u,'#ff2b4a33');")
 rep("const hit=(EATK[e.t]||10)*period*(1+L.i*.06)*(e.sl>0?.6:1);",
@@ -167,6 +169,58 @@ rep("function fit(){let[vw,vh]=vpSize();if(vw<40||vh<40){setTimeout(fit,150);ret
     "function fit(){let[vw0,vh0]=vpSize();if(vw0<40||vh0<40){setTimeout(fit,150);return}const si=ckInsets(),vw=Math.max(40,vw0-si.l-si.r),vh=Math.max(40,vh0-si.t-si.b);_vw=vw;_vh=vh;let p=wantPortV(vw,vh),nw=p?450:724,nh=p?Math.round(Math.max(760,Math.min(1120,450*vh/vw))):600;port=p;W=nw;H=nh;FS=Math.min(vw/W,vh/H);let a=$('app');a.style.width=W+'px';a.style.height=H+'px';a.style.transformOrigin='0 0';a.style.transform='scale('+FS+')';a.style.left=Math.round(si.l+(vw-W*FS)/2)+'px';a.style.top=Math.round(si.t+(vh-H*FS)/2)+'px';")
 rep("let d=Math.min(1.5,(devicePixelRatio||1)*FS)",
     "let d=Math.min(((navigator.hardwareConcurrency||4)>=6&&(navigator.deviceMemory||4)>=4)?2:1.5,(devicePixelRatio||1)*FS)")
+
+# ---------------------------------------------------------------- v2.5 presentation + balance
+# 13. Healing Potion: the rising price is intentional (documented in the shop), but it
+#     climbed 150 per purchase with no limit. Now +100 per purchase, capped at 700, still
+#     resetting every level; a potion is no longer used up when lives are already full.
+rep("if(id==='rep')L.price.rep+=150", "if(id==='rep')L.price.rep=Math.min(700,L.price.rep+100)")
+rep("st:'Instant · price rises 150 after each purchase'", "st:'Instant · +100 per purchase this level (max 700)'")
+rep("st:'瞬发 · 每次购买涨价150'", "st:'瞬发 · 本关每次购买+100（最高700）'")
+rep("L.inv[id]--;L.cdn[id]=CDT[id];", "if(id==='rep'&&L.lives>=30)return toast(lvZ('生命值已满','Lives are already full'));L.inv[id]--;L.cdn[id]=CDT[id];")
+# 14. Monster motion: elastic pop-in on spawn, squash on hit, heavier footfalls for brutes
+#     and bosses, softer shadows under flyers. Pure transform math: no extra draws.
+rep("function eUp(e,dt){let d=e.d;e.fl-=dt;", "function eUp(e,dt){let d=e.d;e.fl-=dt;e.age=(e.age||0)+dt;")
+rep("c.translate(p.x,p.y+sz*.34+(fl?0:padB(e.sp,im)*h));",
+    "c.translate(p.x,p.y+sz*.34+(fl?0:padB(e.sp,im)*h));{const ag=e.age||0;if(ag<.32&&!L.demo){const k=ag/.32-1,s2=1+2.4*k*k*k+1.4*k*k;c.scale(s2,s2)}}")
+rep("if(e.kb>0){c.translate((e.kdx||0)*e.kb*tw*.12,(e.kdy||0)*e.kb*tw*.08);c.scale(1+e.kb*.06,1-e.kb*.04)}",
+    "if(e.kb>0){c.translate((e.kdx||0)*e.kb*tw*.12,(e.kdy||0)*e.kb*tw*.08);c.scale(1+e.kb*.06,1-e.kb*.04)}if(e.fl>0){const k=Math.min(1,e.fl/.1);c.scale(1+.13*k,1-.11*k)}")
+rep("c.scale(1,1+Math.cos(ph*2)*.012*moving);", "c.scale(1-(bs||e.t==='brute'?Math.cos(ph*2)*.012*moving:0),1+Math.cos(ph*2)*(bs||e.t==='brute'?.035:.012)*moving);")
+rep("ell(p.x,p.y+sz*.33,sz*.36*(1-hov/tw*.6),sz*.1,'#0007');", "ell(p.x,p.y+sz*.33,sz*.36*(1-hov/tw*.6),sz*.1,fl?'#0004':'#0007');")
+# 15. Elite monsters (from level 7, 3.5% rising to 12%): 2.2x HP, 22% larger, a pulsing gold
+#     outline, a crown and a gold health bar; worth 3x gold.
+rep("hue:t==='boss'?(rb+20)%360:t==='runner'?(rb+50)%360:t==='brute'?215:rb})}", "hue:t==='boss'?(rb+20)%360:t==='runner'?(rb+50)%360:t==='brute'?215:rb});ckElite(L.en[L.en.length-1])}")
+rep("const killGold=e=>e.t==='boss'?400:e.t==='brute'?80:e.fly?50:e.t==='runner'?35:25;",
+    "const killGold=e=>(e.t==='boss'?400:e.t==='brute'?80:e.fly?50:e.t==='runner'?35:25)*(e.el?3:1);")
+rep("let bw=(bs?1.5:.6)*tw,by=p.y-(bs?1.15:.5)*tw-hov;", "let bw=(bs?1.5:.6)*tw,by=p.y-(bs?1.15*(1+2*(e.rg||0)):.5*(e.el?1.22:1))*tw-hov;")
+rep("c.fillStyle=bs?'#ff5b7f':'#8be05a';c.fillRect(p.x-bw/2,by,bw*Math.max(0,e.hp/e.mx),4);",
+    "c.fillStyle=bs?'#ff5b7f':e.el?'#ffcf4a':'#8be05a';c.fillRect(p.x-bw/2,by,bw*Math.max(0,e.hp/e.mx),4);if(e.el)c.drawImage(ckCrown(),p.x-tw*.13,by-tw*.22,tw*.26,tw*.2);")
+# 16. Death effects: the monster flashes white, squashes and dissolves in place with a few
+#     shards in its own colours (bone, slime, embers...). Pooled (max 36), one draw each.
+#     Killing a boss triggers a short slow-motion beat and a banner.
+rep("vDeath(p,e);snd('death_'", "vDeath(p,e);ckCorpse(e);snd('death_'")
+rep("if(e.t==='boss')L.shake=1}}", "if(e.t==='boss'){L.shake=1;if(!L.demo){L.slowT=1.1;window.ckBanner&&ckBanner(lvZ('首领已被击败','Boss defeated'),lvZ('胜利','VICTORY'),0)}}}}")
+rep("let sp=S.mode==='play'?(mOpen||L.paused||tab==='s'?0:L.speed):1;", "let sp=S.mode==='play'?(mOpen||L.paused||tab==='s'?0:L.speed):1;if(L.slowT>0&&sp){L.slowT-=dt;sp*=.3}")
+rep("for(let i=0;i<_o.length;i++)dEn(_o[i][1])}", "for(let i=0;i<_o.length;i++)dEn(_o[i][1])}ckCorpses();")
+# 17. Boss footfalls leave fading ground cracks and dust (bigger while enraged).
+rep("e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}",
+    "if(!e.atk&&!(e.fz>0)&&window.CK_Q!==0&&!L.demo){e.stp=(e.stp||0)-dt;if(e.stp<=0){e.stp=e.rage?.3:.6;const sp1=eS(e),rr=tw*(.3+.45*(e.rg||0));vDecal(sp1.x,sp1.y+tw*.32,rr,'rgba(24,14,8,.32)');burst(sp1.x,sp1.y+tw*.32,'#b9a58a',e.rg?6:3,e.rg?90:50)}}"
+    "e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}")
+# 18. Effect budget: floating combat text is capped so huge fights stay cheap.
+rep("function txt(x,y,s,k){if(!S.dmg)return;", "function txt(x,y,s,k){if(!S.dmg)return;if(L.tx.length>70)L.tx.shift();")
+# helpers used above
+rep("function ckSummonTick(dt){",
+    "const CK_DCOL={e_skeleton:'#efe8d4',e_ghost:'#cdeeff',e_zombie:'#9fdc6a',e_spider:'#b47cff',e_goblin:'#8fdc5a',e_orc:'#86c452',e_ogre:'#d2ad72',e_troll:'#6fa8ff',e_wolf:'#ddd6cc',e_demon:'#ff7040',e_dragon:'#ff8a3a',e_golem:'#bcae98',e_mystic:'#d6a8ff',e_shaman:'#ffd27a',e_assassin:'#c070ff',e_necro:'#9cff9c',e_vampire:'#ff4a6a',e_dknight:'#aab6dc'};\n"
+    "function ckElite(e){if(!e||L.demo||e.t==='boss'||L.i<6)return;if(Math.random()>=Math.min(.12,.035+L.i*.0009))return;e.el=1;e.hp*=2.2;e.mx=e.hp}\n"
+    "let CK_CROWN=null;function ckCrown(){if(CK_CROWN)return CK_CROWN;const o=document.createElement('canvas');o.width=52;o.height=40;const g=o.getContext('2d');g.lineJoin='round';g.beginPath();g.moveTo(4,34);g.lineTo(2,10);g.lineTo(15,22);g.lineTo(26,4);g.lineTo(37,22);g.lineTo(50,10);g.lineTo(48,34);g.closePath();"
+    "const gr=g.createLinearGradient(0,4,0,34);gr.addColorStop(0,'#fff4bf');gr.addColorStop(.5,'#ffcf4a');gr.addColorStop(1,'#b8761a');g.fillStyle=gr;g.fill();g.lineWidth=3;g.strokeStyle='#4a2a06';g.stroke();g.fillStyle='#ff4a6a';g.beginPath();g.arc(26,25,4,0,7);g.fill();return CK_CROWN=o}\n"
+    "function ckCorpse(e){if(L.demo||!e._ds)return;const p=eS(e);(L.cps||(L.cps=[])).push({src:e._ds,x:p.x,y:p.y+(e._dy||0),w:e._dw,h:e._dh,f:e._df,t0:TM,b:e.t==='boss',el:e.el});if(L.cps.length>36)L.cps.shift();"
+    "if(window.CK_Q!==0){const col=CK_DCOL[e.sp]||`hsl(${e.hue} 70% 62%)`,n=e.t==='boss'?16:e.el?9:5;for(let i=0;i<n;i++){const a=Math.random()*6.283,v=60+Math.random()*130;vp(p.x,p.y-(e._dh||tw)*.35,Math.cos(a)*v,Math.sin(a)*v-90,.5+Math.random()*.35,2+Math.random()*2.4,col,'s',420)}}}\n"
+    "function ckCorpses(){const a=L.cps;if(!a||!a.length)return;const pa=c.globalAlpha;for(let i=a.length-1;i>=0;i--){const d=a[i],T=d.b?1.2:.55,ag=TM-d.t0,k=ag/T;if(k>=1||k<0){a.splice(i,1);continue}"
+    "const sy=1-.78*k*k,sx=1+.28*k;c.save();c.translate(d.x,d.y);c.scale(d.f?-sx:sx,sy);"
+    "if(ag<.09){c.globalAlpha=pa;c.drawImage(ckTint(d.src,'#ffffff'),-d.w/2,-d.h,d.w,d.h)}else{const al=1-k;c.globalAlpha=pa*al*.9;c.drawImage(d.src,-d.w/2,-d.h,d.w,d.h);c.globalCompositeOperation='lighter';c.globalAlpha=pa*al*.55;c.drawImage(ckTint(d.src,d.el?'#ffd24a':d.b?'#ff5030':'#ff8a66'),-d.w/2,-d.h,d.w,d.h);c.globalCompositeOperation='source-over'}"
+    "c.restore()}c.globalAlpha=pa}\n"
+    "function ckSummonTick(dt){")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

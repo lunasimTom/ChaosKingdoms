@@ -7,7 +7,32 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.2.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.2.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v2.5.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.5.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v2.5
+
+**Boss battles**
+- **Enrage (level 40+, at 20% HP or less):** the boss swells to **3× its size for 3 seconds**, with a red shockwave and screen shake, then shrinks back to normal. The charging, the red pulse and the +15% damage stay on for the rest of the fight.
+- **Boss health bar** at the top of the board, showing the boss's name, its HP percentage and markers at 50% and 20% (the reinforcement points). The bar turns fiery while the boss is enraged.
+- Each boss footstep leaves a fading ground crack and a puff of dust.
+- The killing blow on a boss plays a short slow-motion beat and a "VICTORY" banner.
+
+**Monsters**
+- **Elite monsters** appear from level 7 (3.5% of spawns, rising to 12%). They have 2.2× HP, are 22% larger, have a pulsing gold outline, a crown and a gold health bar, and are worth 3× gold.
+- **New death effect:** the monster flashes white, then squashes and dissolves in place. A few shards fly off in its own colours (bone, slime, embers and so on).
+- **Livelier motion:**
+  - Monsters pop in with a springy scale when they spawn.
+  - They squash when hit.
+  - Brutes and bosses stomp with heavier footfalls.
+  - Flyers cast lighter shadows.
+
+**Balance**
+- **Healing Potion:** the rising price is intentional, but it went up 150 per purchase with no limit. It now goes up 100 per purchase and stops at 700, and it still resets every level. A potion is no longer used up when your lives are already full (30).
+
+**Performance**
+- **Automatic quality:** the game watches the real frame rate. If a device can't keep about 30 fps, it turns off optional extras until the frame rate recovers: monster outlines, death shards, footstep cracks, light shafts and fireflies. On fast devices everything stays on.
+- All new effects reuse cached images and fixed-size pools: at most 36 dissolving bodies and 70 floating combat numbers at a time.
+- In testing, 120 monsters with outlines and glows render in about 7–8 ms per frame.
 
 ## What changed in v2.2
 
@@ -85,7 +110,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.2.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.5.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
