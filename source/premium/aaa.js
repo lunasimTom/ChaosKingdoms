@@ -28,7 +28,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.8 · Premium Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.7.2 · Premium Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}
@@ -72,7 +72,7 @@ const zh=()=>G('LANG')==='zh';
  const sumEl=document.createElement('div');sumEl.id='ck-sumcd';sumEl.hidden=true;sumEl.innerHTML='<div class="cks-ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/></svg><span class="cks-n">5</span></div><div class="cks-l"></div>';app.appendChild(sumEl);let sumN=0;
  let lastWave=-1,lastLevel=null;
  let qLast=0,qEma=16,qBad=0,qGood=0,bossT2=0;
- const bossEl=document.createElement('div');bossEl.id='ck-bossbar';bossEl.hidden=true;bossEl.innerHTML='<div class="ckb-h"><b class="ckb-n"></b><span class="ckb-p"></span></div><div class="ckb-t"><i class="ckb-f"></i><u style="left:50%"></u><u style="left:20%"></u></div>';app.appendChild(bossEl);
+ const bossEl=document.createElement('div');bossEl.id='ck-bossbar';bossEl.hidden=true;bossEl.innerHTML='<div class="ckb-h"><b class="ckb-n"></b><span class="ckb-p"></span></div><div class="ckb-t"><i class="ckb-f"></i><u style="left:50%"></u><u style="left:25%"></u></div>';app.appendChild(bossEl);
  const step=ts=>{requestAnimationFrame(step);
   const S=G('S'),L=G('L');
   if(!S||!L||S.mode!=='play'||L.demo||window.CK_NOFX){if(!sumEl.hidden){sumEl.hidden=true;sumN=0}if(!bossEl.hidden){bossEl.hidden=true;document.body.classList.remove('ck-boss')}if(cv.style.display!=='none'){cv.style.display='none'}lastWave=-1;return}

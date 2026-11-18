@@ -7,7 +7,23 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.7.1.apk` | Android app (package `com.chaoskingdoms.game`, version 2.7.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v2.7.2.apk` | Android app (package `com.chaoskingdoms.game`, version 2.7.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v2.7.2
+
+**Boss reinforcement summons fixed** (level 40 and up). Bosses often summoned late, only once, or not at all. There were several causes:
+1. The 5-second warning countdown delayed the drop while the boss kept taking damage, so minions arrived at about 20% HP instead of 50%.
+2. Killing the boss during a countdown cancelled the summon.
+3. The second summon waited in a queue behind the first, so it almost never happened.
+4. Every boss level from 40 has **two** bosses, but the triggers were shared per level, so only the first boss to reach a threshold summoned.
+5. The second threshold was 20% instead of the intended 25%.
+
+Now:
+- **Each boss** summons at exactly **50%** and **25%** HP.
+- The boss stops and channels the summon behind a golden shield during the 5-second countdown, and is immune to damage while it does.
+- Its HP can't drop past a threshold until that summon has happened, so even a huge hit can't skip one.
+- To keep the total close to the original design, each boss summons half of the original wave size, as two bosses share each level.
+- The boss health bar marks 50% and 25%.
 
 ## What changed in v2.7.1
 
@@ -170,7 +186,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.7.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.7.2.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

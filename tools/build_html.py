@@ -151,16 +151,32 @@ rep("if(e.en)circ(p.x,p.y,34*u,'#ff2b4a33');",
     "if(e.rage){const pr=.5+.5*Math.sin(TM*10);circ(p.x,p.y,sz*.62,'rgba(255,30,30,'+(.16+.16*pr)+')');circ(p.x,p.y,sz*.4,'rgba(255,140,60,'+(.1+.12*pr)+')')}else if(e.en)circ(p.x,p.y,34*u,'#ff2b4a33');")
 rep("const hit=(EATK[e.t]||10)*period*(1+L.i*.06)*(e.sl>0?.6:1);",
     "const hit=(EATK[e.t]||10)*period*(1+L.i*.06)*(e.sl>0?.6:1)*(e.rage?1.15:1);")
-# 11. Boss minion summons (level 33+) now get a 5-second warning countdown each. The
-#     summons queue, so the 20% call waits for the 50% one; killing the boss cancels them.
+# 11. Boss minion summons (level 33+), v2.8 fix. At 50% and 25% HP the boss stops and
+#     CHANNELS the summon: it is shielded (immune) for the 5-second countdown, then the
+#     minions drop. Its HP cannot fall past a threshold until that summon has happened,
+#     so both summons always fire, exactly at 50% and 25%, however fast it is damaged.
+#     Triggers are tracked PER BOSS: every boss level from 40 has two bosses, and the old
+#     per-level flags let only the first boss to reach a threshold summon.
+#     (v2.2-2.7 delayed the drop while the boss kept taking damage, queued the second
+#     call behind the first and cancelled both if the boss died; second threshold was 20%.)
 rep("if(!L.m50&&r<=.5){L.m50=1;bossSummon(e,1)}if(!L.m20&&r<=.2){L.m20=1;bossSummon(e,2)}}});",
-    "if(!L.m50&&r<=.5){L.m50=1;(L.sq=L.sq||[]).push(1)}if(!L.m20&&r<=.2){L.m20=1;(L.sq=L.sq||[]).push(2)}}});if(L.i>=32&&!L.demo)ckSummonTick(dt);")
+    "if(!(e.chan>0)){if(!e.m50&&r<=.5){e.m50=1;e.hp=Math.max(e.hp,e.mx*.5);ckChannel(e,1)}else if(e.m50&&!e.m25&&r<=.25){e.m25=1;e.hp=Math.max(e.hp,e.mx*.25);ckChannel(e,2)}}}});if(L.i>=32&&!L.demo)ckSummonTick(dt);")
+rep("e.hp-=d;e.fl=.1;",
+    "e.hp-=d;if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25}e.fl=.1;")
+rep("function eUp(e,dt){let d=e.d;e.fl-=dt;", "function eUp(e,dt){let d=e.d;e.fl-=dt;if(e.chan>0){e.chan-=dt;e.pro=Math.max(e.pro||0,e.chan);e.vv[0]*=.8;e.vv[1]*=.8;return}")
 rep("function bossSummon(boss,ph){",
-    "function ckSummonTick(dt){if(!L.sq||!L.sq.length||L.over){L.sc=null;return}const b=L.en.find(x=>x.t==='boss'&&x.hp>0);if(!b){L.sq=[];L.sc=null;return}"
-    "if(!L.sc){L.sc={ph:L.sq[0],t:5,last:6};toast(L.sc.ph===2?lvZ('⚠ 首领将召唤最后的援军！5 秒后降临','⚠ The boss will call its last reinforcements in 5 s!'):lvZ('⚠ 首领将召唤援军！5 秒后降临','⚠ The boss will call reinforcements in 5 s!'))}"
-    "L.sc.t-=dt;const n=Math.ceil(L.sc.t);if(n<L.sc.last&&n>0){L.sc.last=n;beep(n<=2?880:620,.12,'square',.06)}"
-    "if(L.sc.t<=0){const ph=L.sc.ph;L.sq.shift();L.sc=null;bossSummon(b,ph)}}\n"
+    "function ckChannel(b,ph){b.chan=5;b.pro=5;b.atk=null;(L.scs=L.scs||[]).push({ph,t:5,last:6,b});L.sc=L.scs[0];L.shake=Math.max(L.shake||0,.4);const sp=eS(b);vRing(sp.x,sp.y,tw*1.6,'#ffd76a',.6,6);vGlow(sp.x,sp.y,tw*1.4,'#ffd76a',.4);"
+    "toast(ph===2?lvZ('⚠ 首领开始召唤最后的援军（护盾中）！5 秒后降临','⚠ The boss is channelling its last reinforcements (shielded)! 5 s'):lvZ('⚠ 首领开始召唤援军（护盾中）！5 秒后降临','⚠ The boss is channelling reinforcements (shielded)! 5 s'))}\n"
+    "function ckSummonTick(dt){const a=L.scs;if(!a||!a.length){L.sc=null;return}if(L.over){L.scs=[];L.sc=null;return}for(const sc of a.slice()){sc.t-=dt;const n=Math.ceil(sc.t);if(sc===a[0]&&n<sc.last&&n>0){sc.last=n;beep(n<=2?880:620,.12,'square',.06)}"
+    "if(sc.t<=0){a.splice(a.indexOf(sc),1);if(sc.b){sc.b.chan=0;sc.b.pro=0}bossSummon(sc.b,sc.ph)}}L.sc=a[0]||null}\n"
     "function bossSummon(boss,ph){")
+# The summon size is split between the level's bosses (every boss level from 40 has
+# two), so the total reinforcements per level match the original one-pair design.
+rep("let n=Math.round((8+Math.floor(lv/4))*(ph===2?1.5*4:2.5)*dm);n=Math.max(15,Math.min(ph===2?170:80,n));",
+    "let n=Math.round((8+Math.floor(lv/4))*(ph===2?1.5*4:2.5)*dm);n=Math.max(15,Math.min(ph===2?170:80,n));n=Math.max(8,Math.round(n/((L.boss&&L.i>=39)?2:1)));")
+# boss shield ring while channelling
+rep("if(e.rage){const pr=.5+.5*Math.sin(TM*10);",
+    "if(e.chan>0){const pr=.5+.5*Math.sin(TM*8);c.save();c.strokeStyle='rgba(255,215,106,'+(.55+.35*pr)+')';c.lineWidth=3;c.beginPath();c.ellipse(p.x,p.y,sz*.62,sz*.36,0,0,7);c.stroke();c.globalAlpha=.18+.1*pr;c.fillStyle='#ffd76a';c.beginPath();c.ellipse(p.x,p.y-sz*.25,sz*.55,sz*.62,0,0,7);c.fill();c.restore()}if(e.rage){const pr=.5+.5*Math.sin(TM*10);")
 # 12. Screen fit: use the real visible area (minus notches / camera cut-outs / rounded
 #     corners via safe-area insets), let tall phones use their full height (portrait design
 #     height 760-1120 instead of 800-960), and render at up to 2x on capable devices.
@@ -328,29 +344,32 @@ rep("function ckSummonTick(dt){",
     "function ckSummonTick(dt){")
 
 # ---------------------------------------------------------------- v2.8 (pilot) towers
-# 30. Heavy / Rapid branches removed: level 4 is one "Master" tier for every tower
-#     (damage x1.15, reload x0.9, range x1.08: about the average power of the old picks).
-rep("let d=TW[t.k],m=br===1?[1.5,1.25,1.15]:br===2?[.8,.6,1]:[1,1,1]", "let d=TW[t.k],m=lv>=4?[1.15,.9,1.08]:[1,1,1]")
-rep("(t.lv<3?`<button class=\"bt pay\" data-a=\"u\" data-b=\"0\">${TL('Upgrade')}<br>${cs}</button>`:t.lv===3?",
-    "(t.lv<4?`<button class=\"bt pay\" data-a=\"u\" data-b=\"0\">${TL('Upgrade')}<br>${cs}</button>`:false?")
-rep("(t.lv===3&&!w?`<button class=\"bt pay sup\" data-a=\"ua\" data-b=\"1\">", "(false?`<button class=\"bt pay sup\" data-a=\"ua\" data-b=\"1\">")
-rep("${t.lv===3&&!w?'<small class=\"tpn\">'+TL('Level 4: choose a branch')+'</small>':''}", "${t.lv===3&&!w?'<small class=\"tpn\">'+lvZ('下一级：4级大师','Next: Level 4 Master')+'</small>':''}")
-rep("${t.br?' · '+TL(t.br===1?'Heavy':'Rapid'):''}", "${t.lv>=4&&!w?' · '+lvZ('大师','Master'):''}")
-rep("selT.lv<(w?6:3)?upg(selT):toast(selT.lv===3&&!w?'Pick Heavy or Rapid in the panel':'Max level')", "selT.lv<(w?6:4)?upg(selT):toast('Max level')")
-#     Towers without a new model keep their old level-4 look.
-rep("const spr=towerSpr(k,lv,br,a);", "const spr=towerSpr(k,lv,lv>3?(br||1):br,a);")
-#     The tower panel stays up 3 s instead of 1.5 s.
-rep("},1500)}", "},3000)}")
-# 31. CK3D tower renderer (pilot: Cannon and Holy). Real 3D meshes with a static base and
-#     an independently rotating turret (64 facings, cached), recoil, and a true muzzle
-#     point used by projectiles and muzzle flashes. Build-menu paintings are unchanged.
-rep("function tower(k,lv,p,u,a,rc,stun,br){\n if(k==='wall'){dWallT(lv,p,u,rc);return}",
-    "function tower(k,lv,p,u,a,rc,stun,br){\n if(k==='wall'){dWallT(lv,p,u,rc);return}\n if(window.CK3D&&CK3D.has(k)){CK3D.draw(c,k,lv,p,u,a,rc,stun,TM);return}")
-rep("let d=TW[t.k],u=tw/100,p=pp(t.x,t.y),fx=p.x+Math.cos(t.a)*24*u,fy=p.y-20*u+Math.sin(t.a)*12*u,dm=",
-    "let d=TW[t.k],u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],dm=")
-rep("function vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),fx=p.x+Math.cos(t.a)*24*u,fy=p.y-20*u+Math.sin(t.a)*12*u,",
-    "function ckMuzzle(t,p,u){return window.CK3D&&CK3D.has(t.k)?CK3D.muzzle(t,p,u):[p.x+Math.cos(t.a)*24*u,p.y-20*u+Math.sin(t.a)*12*u]}\nfunction vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],")
-rep("<script>const SFXD=", "<script id=\"ck-3d\">\n"+open(os.path.join(SRC,'ck3d.js'),encoding='utf8').read()+"</script>\n<script>const SFXD=")
+# Disabled until the tower pilot / Master tier is approved for release.
+INCLUDE_TOWER_PILOT = False
+if INCLUDE_TOWER_PILOT:
+ # 30. Heavy / Rapid branches removed: level 4 is one "Master" tier for every tower
+ #     (damage x1.15, reload x0.9, range x1.08: about the average power of the old picks).
+ rep("let d=TW[t.k],m=br===1?[1.5,1.25,1.15]:br===2?[.8,.6,1]:[1,1,1]", "let d=TW[t.k],m=lv>=4?[1.15,.9,1.08]:[1,1,1]")
+ rep("(t.lv<3?`<button class=\"bt pay\" data-a=\"u\" data-b=\"0\">${TL('Upgrade')}<br>${cs}</button>`:t.lv===3?",
+     "(t.lv<4?`<button class=\"bt pay\" data-a=\"u\" data-b=\"0\">${TL('Upgrade')}<br>${cs}</button>`:false?")
+ rep("(t.lv===3&&!w?`<button class=\"bt pay sup\" data-a=\"ua\" data-b=\"1\">", "(false?`<button class=\"bt pay sup\" data-a=\"ua\" data-b=\"1\">")
+ rep("${t.lv===3&&!w?'<small class=\"tpn\">'+TL('Level 4: choose a branch')+'</small>':''}", "${t.lv===3&&!w?'<small class=\"tpn\">'+lvZ('下一级：4级大师','Next: Level 4 Master')+'</small>':''}")
+ rep("${t.br?' · '+TL(t.br===1?'Heavy':'Rapid'):''}", "${t.lv>=4&&!w?' · '+lvZ('大师','Master'):''}")
+ rep("selT.lv<(w?6:3)?upg(selT):toast(selT.lv===3&&!w?'Pick Heavy or Rapid in the panel':'Max level')", "selT.lv<(w?6:4)?upg(selT):toast('Max level')")
+ #     Towers without a new model keep their old level-4 look.
+ rep("const spr=towerSpr(k,lv,br,a);", "const spr=towerSpr(k,lv,lv>3?(br||1):br,a);")
+ #     The tower panel stays up 3 s instead of 1.5 s.
+ rep("},1500)}", "},3000)}")
+ # 31. CK3D tower renderer (pilot: Cannon and Holy). Real 3D meshes with a static base and
+ #     an independently rotating turret (64 facings, cached), recoil, and a true muzzle
+ #     point used by projectiles and muzzle flashes. Build-menu paintings are unchanged.
+ rep("function tower(k,lv,p,u,a,rc,stun,br){\n if(k==='wall'){dWallT(lv,p,u,rc);return}",
+     "function tower(k,lv,p,u,a,rc,stun,br){\n if(k==='wall'){dWallT(lv,p,u,rc);return}\n if(window.CK3D&&CK3D.has(k)){CK3D.draw(c,k,lv,p,u,a,rc,stun,TM);return}")
+ rep("let d=TW[t.k],u=tw/100,p=pp(t.x,t.y),fx=p.x+Math.cos(t.a)*24*u,fy=p.y-20*u+Math.sin(t.a)*12*u,dm=",
+     "let d=TW[t.k],u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],dm=")
+ rep("function vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),fx=p.x+Math.cos(t.a)*24*u,fy=p.y-20*u+Math.sin(t.a)*12*u,",
+     "function ckMuzzle(t,p,u){return window.CK3D&&CK3D.has(t.k)?CK3D.muzzle(t,p,u):[p.x+Math.cos(t.a)*24*u,p.y-20*u+Math.sin(t.a)*12*u]}\nfunction vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],")
+ rep("<script>const SFXD=", "<script id=\"ck-3d\">\n"+open(os.path.join(SRC,'ck3d.js'),encoding='utf8').read()+"</script>\n<script>const SFXD=")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):
