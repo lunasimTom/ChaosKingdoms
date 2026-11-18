@@ -21,23 +21,28 @@ const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 /* ---------------- materials ---------------- */
 // c: base colour, s: specular strength, p: shininess, m: metal (tints highlight), r: roughness grain, e: emissive
 const MAT={
- iron:   {c:[58,63,76],  s:.55,p:28,m:1,r:.5},
- gun:    {c:[84,94,112], s:.85,p:42,m:1,r:.35},
- gunDark:{c:[38,42,52],  s:.6, p:30,m:1,r:.4},
- red:    {c:[176,36,42], s:.45,p:30,m:0,r:.25},
- redDark:{c:[118,22,30], s:.35,p:24,m:0,r:.3},
- gold:   {c:[240,188,78],s:1.0,p:34,m:1,r:.25},
- goldDark:{c:[184,128,44],s:.85,p:26,m:1,r:.3},
- stone:  {c:[96,99,110], s:.08,p:8, m:0,r:1},
- stoneL: {c:[146,149,160],s:.1,p:8, m:0,r:1},
- wood:   {c:[104,64,36], s:.12,p:10,m:0,r:.8},
- marble: {c:[236,232,224],s:.35,p:22,m:0,r:.35},
- marbleS:{c:[206,200,190],s:.25,p:18,m:0,r:.45},
- glass:  {c:[60,130,235],s:1.0,p:60,m:0,r:0,e:.55},
- crystal:{c:[255,236,160],s:1.0,p:70,m:0,r:0,e:.8},
- feather:{c:[252,252,255],s:.2,p:10,m:0,r:.25,e:.5},
- ember:  {c:[255,150,60], s:0, p:1, m:0,r:0,e:1}
+ iron:   {c:[86,94,112], s:.7, p:32,m:1,r:.3},
+ gun:    {c:[118,130,152],s:1.0,p:48,m:1,r:.2},
+ gunDark:{c:[56,62,76],  s:.75,p:34,m:1,r:.25},
+ bore:   {c:[14,14,20],  s:.25,p:20,m:1,r:0},
+ red:    {c:[206,44,50], s:.6, p:36,m:0,r:.15},
+ redDark:{c:[146,28,38], s:.45,p:28,m:0,r:.2},
+ gold:   {c:[255,204,92],s:1.15,p:36,m:1,r:.12},
+ goldDark:{c:[208,148,52],s:.95,p:28,m:1,r:.15},
+ stone:  {c:[120,126,142],s:.18,p:14,m:0,r:.6},
+ stoneL: {c:[168,174,190],s:.22,p:14,m:0,r:.6},
+ wood:   {c:[132,84,46], s:.2, p:12,m:0,r:.5},
+ marble: {c:[246,244,238],s:.45,p:26,m:0,r:.15},
+ marbleS:{c:[220,216,208],s:.35,p:22,m:0,r:.2},
+ glass:  {c:[80,160,255],s:1.0,p:60,m:0,r:0,e:.7},
+ crystal:{c:[255,240,176],s:1.0,p:70,m:0,r:0,e:.85},
+ feather:{c:[252,252,255],s:.2,p:10,m:0,r:.15,e:.55},
+ ember:  {c:[255,150,60], s:0, p:1, m:0,r:0,e:1},
+ // level gems (same colour language as the previous towers): blue, cyan, violet, gold
+ gem1:{c:[112,184,255],s:1,p:60,m:0,r:0,e:.8},gem2:{c:[85,230,255],s:1,p:60,m:0,r:0,e:.8},
+ gem3:{c:[197,139,255],s:1,p:60,m:0,r:0,e:.8},gem4:{c:[255,212,92],s:1,p:60,m:0,r:0,e:.85}
 };
+const GEMC=['#70b8ff','#55e6ff','#c58bff','#ffd45c'];
 const SKY=[150,170,205],GROUND=[70,58,48];
 function shade(mat,n,z,zTop){
  const M=MAT[mat]||MAT.stone,c=M.c;
@@ -153,115 +158,109 @@ function raster(mesh,yaw,R,W,H,ox,oy,opt={}){
 // Units: 100 = one tile. Origin = tile centre on the ground. Turret pivot = (0,0,pz).
 const DEF={};
 
-/* ===== CANNON: iron-banded stone emplacement + red & gold bronze-age cannon on a carriage ===== */
+/* ===== CANNON: low iron-banded stone emplacement + a big red & gold banded cannon (hollow bore) ===== */
 DEF.cannon={
  base(lv){
-  const m=new Mesh();
-  // stone plinth (chamfered), iron cap plate
-  m.merge(bevelBlock(33,9,0,9,'stone','stoneL'));
-  m.merge(bevelBlock(30,8,9,17,'stone','stoneL'));
-  m.merge(lathe([[25,17],[25,19],[23.5,20],[23.5,21],[21,22]],20,['iron','gold','gold','iron'],{capMat:'iron'}));
-  // corner iron straps + rivets
-  if(lv>=2)for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]]){m.merge(box(sx*30-4,sy*30-4,0,sx*30+4,sy*30+4,18,'iron','gunDark').map(T.move(0,0,0)));m.merge(sphere(1.8,3,'gold').map(T.move(sx*33,sy*29,13)))}
-  // gold trim course
-  if(lv>=3){m.merge(prism([[30,-22],[30,22],[22,30],[-22,30],[-30,22],[-30,-22],[-22,-30],[22,-30]].map(p=>[p[0]*1.02,p[1]*1.02]),9,10.6,'gold'));
-   for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[4.5,18],[4.5,26],[3,28],[0,31]],8,['stoneL','gold','gold'],{}).map(T.move(sx*27,sy*27,0)))}
-  // master: taller corner obelisks with gold flame tips + red & gold banners on every face
-  if(lv>=4){for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[3.4,28],[3.4,33],[2.2,35],[0,40]],8,['stoneL','gold','gold'],{}).map(T.move(sx*27,sy*27,0)));
-   for(let f=0;f<4;f++){const a=f*Math.PI/2,ban=extrudeXZ([[-6,16],[6,16],[6,6],[0,3],[-6,6]],1,'red','gold');
-    m.merge(ban.map(T.rotZ(Math.PI/2)).map(T.move(31.2,0,0)).map(T.rotZ(a)));m.merge(extrudeXZ([[-7,16],[7,16],[7,17.6],[-7,17.6]],1.4,'gold').map(T.rotZ(Math.PI/2)).map(T.move(31.4,0,0)).map(T.rotZ(a)))}}
+  const m=new Mesh(),gem='gem'+lv;
+  m.merge(bevelBlock(31,8,0,7,'stone','stoneL'));
+  m.merge(bevelBlock(28,7,7,12,'stoneL','stoneL'));
+  m.merge(lathe([[24,12],[24,13.5],[22.5,14.5],[22.5,15.5],[20,16]],24,['iron','gold','gold','iron'],{capMat:'iron'}));
+  // glowing level gems set into each face of the plinth (radiant, like the previous towers)
+  for(let f=0;f<4;f++){const a=f*Math.PI/2+Math.PI/4;
+   m.merge(extrudeXZ([[-4.2,2.2],[4.2,2.2],[4.2,6],[-4.2,6]],1.2,'gold').map(T.rotZ(Math.PI/2)).map(T.move(22.2,0,0)).map(T.rotZ(a)));
+   m.merge(lathe([[.1,-1.8],[1.9,0],[.1,1.8]],6,gem,{cap:false}).map(T.rotY(Math.PI/2)).map(T.move(23.4,0,4.1)).map(T.rotZ(a)))}
+  if(lv>=2)for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]]){m.merge(box(sx*28-3.5,sy*28-3.5,0,sx*28+3.5,sy*28+3.5,14,'iron','gold'));m.merge(sphere(1.6,3,'gold').map(T.move(sx*31,sy*26,10)))}
+  if(lv>=3)for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[3.8,14],[3.8,20],[2.4,22],[0,27]],8,['stoneL','gold','gold'],{}).map(T.move(sx*27,sy*27,0)));
+  if(lv>=4){for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[2.6,26],[1.2,29],[0,33]],6,['gold','gold'],{}).map(T.move(sx*27,sy*27,0)));
+   for(let f=0;f<4;f++){const a=f*Math.PI/2;m.merge(extrudeXZ([[-6,12],[6,12],[6,5],[0,2.5],[-6,5]],1,'red','gold').map(T.rotZ(Math.PI/2)).map(T.move(29.6,0,0)).map(T.rotZ(a)))}}
   return m},
+ glowBase(lv){const g=[];for(let f=0;f<4;f++){const a=f*Math.PI/2+Math.PI/4;g.push({x:Math.cos(a)*24,y:Math.sin(a)*24,z:4.1,r:7,c:GEMC[lv-1]})}if(lv>=2)g.push({ring:21.5,z:15.2,c:GEMC[lv-1]});return g},
  turret(lv){
-  const m=new Mesh();
-  const L=[30,34,38,42][lv-1],Rb=[7.5,8.2,9,10][lv-1];
-  // turntable
-  m.merge(lathe([[19,0],[19,3],[17,4.5]],18,'gunDark',{capMat:'iron'}));
-  m.merge(bolts(15.5,4.6,8,1.2,'gold'));
-  // carriage cheeks (red lacquer, gold edging) - extruded side profiles
-  const cheek=[[-15,4],[13,4],[13,9],[6,20],[-6,22],[-15,14]];
-  for(const s of[-1,1]){m.merge(extrudeXZ(cheek,3.2,'red','redDark').map(T.move(0,s*(Rb+3),0)));
-   m.merge(extrudeXZ([[-15,4],[13,4],[13,5.6],[-15,5.6]],3.6,'gold').map(T.move(0,s*(Rb+3),0)));
-   // gold medallion on the outer face
-   m.merge(lathe([[4.6,0],[4.6,1.2],[3,2]],12,['goldDark','gold'],{}).map(T.rotX(-s*Math.PI/2)).map(T.move(-2,s*(Rb+4.9),13)));
-   m.merge(lathe([[2,0],[1.4,1]],8,'red',{}).map(T.rotX(-s*Math.PI/2)).map(T.move(-2,s*(Rb+6.2),13)))}
-  // barrel along +X, elevated 9 degrees, trunnion at (0,0,18)
-  const Rm=Rb*1.18;
-  const prof=[[0.1,-12],[Rb*.55,-12],[Rb*.7,-10.5],[Rb,-9],[Rb,-6],[Rb*1.1,-6],[Rb*1.1,-3],[Rb*.94,-3],[Rb*.9,L*.45],[Rb*1.02,L*.45],[Rb*1.02,L*.55],[Rb*.86,L*.55],[Rb*.84,L-6],[Rm,L-5],[Rm,L],[Rb*.62,L]];
-  const mats=['gold','gold','gun','gun','red','red','gun','gun','gold','gold','gun','gun','gold','gold','gunDark'];
-  let barrel=lathe(prof,22,mats,{capMat:'gunDark'}).map(T.rotY(Math.PI/2));       // axis -> +X
-  // bore
-  barrel.merge(lathe([[Rb*.62,L-.01],[Rb*.62,L+.05]],18,'gunDark',{capMat:'gunDark'}).map(T.rotY(Math.PI/2)));
-  if(lv>=2)barrel.merge(lathe([[Rb*1.12,L*.2],[Rb*1.12,L*.28]],22,'red',{}).map(T.rotY(Math.PI/2)));
-  if(lv>=3)barrel.merge(lathe([[Rb*1.14,L*.7],[Rb*1.14,L*.76]],22,'gold',{}).map(T.rotY(Math.PI/2)));
-  if(lv>=4){barrel.merge(lathe([[Rm*1.12,L-2.5],[Rm*1.12,L+1.2],[Rm*.9,L+1.2]],22,'gold',{}).map(T.rotY(Math.PI/2)));
-   for(let i=0;i<6;i++){const a=i/6*Math.PI*2;barrel.merge(box(L-1,-1.2,Rm*1.1,L+4,1.2,Rm*1.1+3,'gold').map(T.rotX(a)))}}
-  barrel=barrel.map(T.rotY(-.16)).map(T.move(0,0,18));
+  const m=new Mesh(),gem='gem'+lv;
+  const L=[42,46,50,55][lv-1],Rb=[10,11,12,13.2][lv-1],Rm=Rb*1.22,bore=Rb*.6;
+  // turntable with a glowing rune ring
+  m.merge(lathe([[21,0],[21,3],[19,4.5]],24,'gunDark',{capMat:'iron'}));
+  m.merge(lathe([[17.5,4.5],[18.5,4.5],[18.5,5.1],[17.5,5.1]],24,[gem,gem,gem],{cap:false}));
+  m.merge(bolts(15,4.8,8,1.3,'gold'));
+  // big carriage cheeks (red lacquer, gold edging, gold medallion with a gem)
+  const cheek=[[-17,4],[15,4],[15,10],[7,24],[-7,26],[-17,16]];
+  for(const s of[-1,1]){const y=s*(Rb+3.4);
+   m.merge(extrudeXZ(cheek,3.6,'red','redDark').map(T.move(0,y,0)));
+   m.merge(extrudeXZ([[-17,4],[15,4],[15,6],[-17,6]],4,'gold').map(T.move(0,y,0)));
+   m.merge(extrudeXZ([[7,24],[-7,26],[-7,27.6],[7,25.6]],4,'gold').map(T.move(0,y,0)));
+   m.merge(lathe([[5.6,0],[5.6,1.3],[3.6,2.2]],14,['goldDark','gold'],{}).map(T.rotX(-s*Math.PI/2)).map(T.move(-3,y+s*1.9,14)));
+   m.merge(lathe([[.1,0],[2.2,.8],[.1,2.4]],8,gem,{cap:false}).map(T.rotX(-s*Math.PI/2)).map(T.move(-3,y+s*3.6,14)))}
+  // barrel (axis +X): cascabel knob, reinforce rings, red & gold bands, flared muzzle with a HOLLOW bore
+  const prof=[[0.1,-15],[2.6,-15],[3.4,-13],[Rb*.6,-12.5],[Rb*.75,-11],[Rb,-9.5],[Rb,-6],[Rb*1.12,-6],[Rb*1.12,-2.5],[Rb*.95,-2.5],
+   [Rb*.9,L*.42],[Rb*1.04,L*.42],[Rb*1.04,L*.52],[Rb*.86,L*.52],[Rb*.84,L-7],[Rm*.95,L-5.5],[Rm,L-2.5],[Rm*1.04,L],
+   [bore,L],[bore,L-12],[0.1,L-12]];
+  const mats=['gold','gold','gun','gun','gun','gun','red','red','gun','gun','gold','gold','gun','gun','gold','gold','gold','gold','bore','bore'];
+  let barrel=lathe(prof,24,mats,{cap:false}).map(T.rotY(Math.PI/2));
+  const band=(z0,z1,r,mt)=>barrel.merge(lathe([[r,z0],[r,z1]],24,mt,{cap:false}).map(T.rotY(Math.PI/2)));
+  band(L*.18,L*.25,Rb*1.08,'red');
+  band(L*.62,L*.67,Rb*1.0,gem);                               // glowing energy band
+  if(lv>=3){band(L*.3,L*.34,Rb*1.1,'gold');for(let i=0;i<4;i++){const a=i/4*Math.PI*2+Math.PI/4;barrel.merge(box(-4,-1.4,Rb*.95,8,1.4,Rb*.95+2.6,'gold').map(T.rotX(a)))}}
+  if(lv>=4){barrel.merge(lathe([[Rm*1.08,L-3],[Rm*1.08,L+.8]],24,'gold',{cap:false}).map(T.rotY(Math.PI/2)));
+   for(let i=0;i<8;i++){const a=i/8*Math.PI*2;barrel.merge(box(L-2.5,-1,Rm*1.04,L+2,1,Rm*1.04+2,'gold').map(T.rotX(a)))}}
+  barrel=barrel.map(T.rotY(-.14)).map(T.move(0,0,20));
   m.merge(barrel);
-  // trunnion axle + gold caps
-  m.merge(lathe([[2.4,-(Rb+5)],[2.4,Rb+5]],10,'iron',{}).map(T.rotX(Math.PI/2)).map(T.move(0,0,18)));
-  // master: twin powder kegs on the carriage rear
-  if(lv>=4)for(const s of[-1,1])m.merge(lathe([[3.6,0],[4.2,3],[3.6,6]],10,['wood','wood'],{}).map(T.rotX(Math.PI/2)).map(T.move(-12,s*4,10)));
+  m.merge(lathe([[2.8,-(Rb+6)],[2.8,Rb+6]],10,'iron',{}).map(T.rotX(Math.PI/2)).map(T.move(0,0,20)));
+  if(lv>=4)for(const s of[-1,1])m.merge(lathe([[3.8,0],[4.4,3.2],[3.8,6.4]],10,['wood','wood'],{}).map(T.rotX(Math.PI/2)).map(T.move(-14,s*4.4,10)));
   return m},
- pz:[20,20,21,23],                    // turret pivot height on the base
- muzzle:lv=>{const L=[30,34,38,42][lv-1];return{x:L*Math.cos(.16),z:18+L*Math.sin(.16)}},
- kick:7,                             // recoil distance (units)
- scale:1.15
+ glowTurret(lv){const L=[42,46,50,55][lv-1],c=GEMC[lv-1],k=Math.cos(.14),sn=Math.sin(.14);const x=L*.645*k,z=20+L*.645*sn;return[{x,y:0,z,r:9+lv,c},{x:-3,y:([10,11,12,13.2][lv-1]+7),z:14,r:5,c},{x:-3,y:-([10,11,12,13.2][lv-1]+7),z:14,r:5,c}]},
+ pz:[15.5,15.5,15.5,15.5],
+ muzzle:lv=>{const L=[42,46,50,55][lv-1];return{x:L*Math.cos(.14),z:20+L*Math.sin(.14)}},
+ kick:8,
+ scale:1.12
 };
 
-/* ===== HOLY: white-marble shrine with gold pillars, sapphire windows and wings; rotating seraph lance ===== */
+/* ===== HOLY: radiant white-marble & gold shrine; a large rotating crown, sun crystal, seraph lance and halo ===== */
 DEF.holy={
  base(lv){
-  const m=new Mesh(),H=[40,45,50,55][lv-1],w=12.5;
-  // stepped marble plinth with a gold course
-  m.merge(bevelBlock(27,6,0,5,'marbleS','marble'));
-  m.merge(bevelBlock(23.5,5,5,6.2,'gold'));
-  m.merge(bevelBlock(22,5,6.2,10,'marble','marble'));
-  // slender shrine body
-  m.merge(prism([[w,-w],[w,w],[-w,w],[-w,-w]].reverse(),10,H,'marble','marbleS'));
-  // sapphire arched windows with gold frames on every face
+  const m=new Mesh(),H=[30,33,36,39][lv-1],w=12,gem='gem'+lv;
+  m.merge(bevelBlock(26,6,0,5,'marbleS','marble'));
+  m.merge(bevelBlock(23,5,5,6.2,'gold'));
+  m.merge(bevelBlock(21,5,6.2,9,'marble','marble'));
+  // glowing gems at the plinth corners
+  for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[.1,6],[2.3,7.6],[.1,10.6]],6,gem,{cap:false}).map(T.move(sx*19.5,sy*19.5,0)));
+  m.merge(prism([[w,-w],[w,w],[-w,w],[-w,-w]].reverse(),9,H,'marble','marbleS'));
   for(let f=0;f<4;f++){const a=f*Math.PI/2;
-   m.merge(extrudeXZ([[-5.2,14],[5.2,14],[5.2,H-12],[3.7,H-8.2],[0,H-6.6],[-3.7,H-8.2],[-5.2,H-12]],1.4,'gold').map(T.rotZ(Math.PI/2)).map(T.move(w+.3,0,0)).map(T.rotZ(a)));
-   m.merge(extrudeXZ([[-3.8,15.2],[3.8,15.2],[3.8,H-12.4],[2.6,H-9.4],[0,H-8.2],[-2.6,H-9.4],[-3.8,H-12.4]],1.2,'glass','goldDark').map(T.rotZ(Math.PI/2)).map(T.move(w+1,0,0)).map(T.rotZ(a)))}
-  // gold corner pillars with capitals and finials
-  for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[3.4,10],[2.7,12],[2.7,H-2],[3.8,H],[3.8,H+2],[2.2,H+4],[0,H+9]],10,['gold','gold','gold','gold','gold','gold'],{}).map(T.move(sx*w,sy*w,0)));
-  // cornice and tall gold spire
+   m.merge(extrudeXZ([[-5,12],[5,12],[5,H-9],[3.5,H-5.6],[0,H-4.2],[-3.5,H-5.6],[-5,H-9]],1.4,'gold').map(T.rotZ(Math.PI/2)).map(T.move(w+.3,0,0)).map(T.rotZ(a)));
+   m.merge(extrudeXZ([[-3.6,13.2],[3.6,13.2],[3.6,H-9.4],[2.4,H-6.6],[0,H-5.6],[-2.4,H-6.6],[-3.6,H-9.4]],1.2,'glass','goldDark').map(T.rotZ(Math.PI/2)).map(T.move(w+1,0,0)).map(T.rotZ(a)))}
+  for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[3.3,9],[2.6,11],[2.6,H-2],[3.7,H],[3.7,H+2],[2.1,H+4],[0,H+9]],10,['gold','gold','gold','gold','gold','gold'],{}).map(T.move(sx*w,sy*w,0)));
   m.merge(bevelBlock(w+3.5,3,H,H+3,'gold','goldDark'));
-  m.merge(lathe([[w+1,H+3],[w-1,H+6],[4,H+16],[1.6,H+24],[.2,H+30]],8,['gold','marble','gold','gold'],{a0:Math.PI/8}));
-  // wings: large white feather fans sweeping up and out (as in the build-menu art)
-  if(lv>=2){const sc=[0,1,1.15,1.3][lv-1];
+  // short gold dome that the crown sits on
+  m.merge(lathe([[w+.5,H+3],[w-1.5,H+6],[8,H+9],[5,H+11]],10,['gold','marble','gold'],{a0:Math.PI/10,capMat:'gold'}));
+  if(lv>=2){const sc=[0,1,1.14,1.28][lv-1];
    for(const s of[-1,1]){const fan=new Mesh();
-    for(let i=0;i<6;i++){const len=(13+i*3.4)*sc,ang=.15+i*.19;
+    for(let i=0;i<6;i++){const len=(13+i*3.4)*sc,ang=.12+i*.2;
      fan.merge(extrudeXZ([[0,0],[len*.16,2.6],[len,1.4],[len*1.05,-.4],[len*.18,-2.2]],1.1,'feather','marbleS').map(T.rotY(-ang)).map(T.move(0,i*.5,i*.4)))}
-    m.merge(fan.map(T.rotZ(s>0?0:Math.PI)).map(T.rotZ(s*.55)).map(T.move(s*(w+1),3,H*.58)))}}
-  // second tier: marble pinnacles on the plinth corners
-  if(lv>=3)for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[2.6,0],[2.6,7],[1.4,9],[0,16]],6,['marble','gold','gold'],{}).map(T.move(sx*21,sy*21,6)));
-  // master: flying buttresses + sun disc behind the spire
-  if(lv>=4){for(const a of[Math.PI/4,3*Math.PI/4,5*Math.PI/4,7*Math.PI/4])m.merge(box(-1.4,-1.4,6,1.4,1.4,H*.7,'marble','gold').map(T.move(19,0,0)).map(T.rotZ(a)));
-   m.merge(lathe([[10,0],[11.4,0],[11.4,1],[10,1]],24,['gold','gold','gold'],{cap:false}).map(T.rotX(Math.PI/2)).map(T.move(0,-3,H+18)))}
+    m.merge(fan.map(T.rotZ(s>0?0:Math.PI)).map(T.rotZ(s*.55)).map(T.move(s*(w+1),3,H*.6)))}}
+  if(lv>=3)for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])m.merge(lathe([[2.4,0],[2.4,6],[1.3,8],[0,14]],6,['marble','gold','gold'],{}).map(T.move(sx*20,sy*20,6)));
+  if(lv>=4)for(const a of[Math.PI/4,3*Math.PI/4,5*Math.PI/4,7*Math.PI/4])m.merge(box(-1.3,-1.3,6,1.3,1.3,H*.75,'marble','gold').map(T.move(18.5,0,0)).map(T.rotZ(a)));
   return m},
+ glowBase(lv){const H=[30,33,36,39][lv-1],c=GEMC[lv-1],g=[];for(const[sx,sy]of[[1,1],[1,-1],[-1,1],[-1,-1]])g.push({x:sx*19.5,y:sy*19.5,z:8,r:6,c});for(let f=0;f<4;f++){const a=f*Math.PI/2;g.push({x:Math.cos(a)*13.5,y:Math.sin(a)*13.5,z:H*.55,r:8,c:'#8fc8ff'})}return g},
  turret(lv){
-  const m=new Mesh();
-  // gold crown ring with spikes
-  m.merge(lathe([[11,0],[12,2],[11,4],[9,4]],16,['gold','gold','gold'],{capMat:'goldDark'}));
-  const ns=[6,6,8,8][lv-1];
-  for(let i=0;i<ns;i++){const a=i/ns*Math.PI*2;if(Math.abs(Math.cos(a)-1)<.01)continue;
-   m.merge(lathe([[2.2,3],[0.1,13+(i%2?0:4)]],5,'gold',{}).map(T.move(Math.cos(a)*10,Math.sin(a)*10,0)))}
-  // central sun crystal on a spindle
-  m.merge(lathe([[2,3],[2,10]],8,'gold',{}));
-  const cr=lathe([[0.1,8],[4.5,13],[0.1,22]],6,'crystal',{cap:false});
-  m.merge(cr);
-  // seraph lance: forward arm along +X holding the emitter crystal (aims at the target)
-  const arm=extrudeXZ([[4,6],[20,8.5],[24,10],[20,11.5],[4,9.5]],2.4,'gold','goldDark');
-  m.merge(arm);
-  m.merge(lathe([[0.1,-3],[2.6,0],[0.1,5]],6,'crystal',{cap:false}).map(T.rotY(Math.PI/2)).map(T.move(25,0,10)));
-  // halo (tilted toward the aim direction)
-  const halo=lathe([[8.5,0],[9.6,0],[9.6,1.2],[8.5,1.2]],24,['gold','gold','gold'],{cap:false});
-  m.merge(halo.map(T.rotY(.35)).map(T.move(-1,0,26)));
-  if(lv>=3)m.merge(lathe([[11.5,0],[12.3,0],[12.3,.9],[11.5,.9]],24,['gold','gold','gold'],{cap:false}).map(T.rotY(-.3)).map(T.move(0,0,29)));
-  if(lv>=4)for(const s of[-1,1])m.merge(extrudeXZ([[4,8],[16,13],[18,16],[6,12]],1.6,'feather','marbleS').map(T.rotZ(s*.5)));
+  const m=new Mesh(),gem='gem'+lv,K=[1,1.08,1.16,1.25][lv-1];
+  // crown ring with alternating spikes
+  m.merge(lathe([[13*K,0],[14.5*K,2.5],[13*K,5],[10.5*K,5]],20,['gold','gold','gold'],{capMat:'goldDark'}));
+  m.merge(lathe([[13.3*K,2],[13.8*K,2],[13.8*K,3],[13.3*K,3]],20,[gem,gem,gem],{cap:false}));
+  const ns=[6,8,8,10][lv-1];
+  for(let i=0;i<ns;i++){const a=i/ns*Math.PI*2+Math.PI/ns;m.merge(lathe([[2.4*K,4],[0.1,(14+(i%2?0:5))*K]],5,'gold',{}).map(T.move(Math.cos(a)*12*K,Math.sin(a)*12*K,0)))}
+  // large central sun crystal
+  m.merge(lathe([[2.4,4],[2.4,9]],8,'gold',{}));
+  m.merge(lathe([[0.1,7],[6.5*K,14*K],[0.1,30*K]],6,'crystal',{cap:false}));
+  // seraph lance: a long gold arm with wing guards and a big crystal head, aimed along +X
+  m.merge(extrudeXZ([[4,7],[26*K,9.5],[30*K,11.5],[26*K,13.5],[4,11]],3,'gold','goldDark'));
+  for(const s of[-1,1])m.merge(extrudeXZ([[8,10],[18*K,16*K],[22*K,15*K],[12,10]],1.4,'feather','marbleS').map(T.rotX(s*.5)));
+  m.merge(lathe([[0.1,-4.5*K],[4*K,0],[0.1,7*K]],6,'crystal',{cap:false}).map(T.rotY(Math.PI/2)).map(T.move(32*K,0,11.5)));
+  // halos
+  m.merge(lathe([[11*K,0],[12.6*K,0],[12.6*K,1.4],[11*K,1.4]],28,['gold','gold','gold'],{cap:false}).map(T.rotY(.35)).map(T.move(-1,0,31*K)));
+  if(lv>=3)m.merge(lathe([[14.5*K,0],[15.5*K,0],[15.5*K,1],[14.5*K,1]],28,[gem,gem,gem],{cap:false}).map(T.rotY(-.3)).map(T.move(0,0,34*K)));
   return m},
- pz:[66,71,76,81],
- muzzle:lv=>({x:27,z:10}),
+ glowTurret(lv){const K=[1,1.08,1.16,1.25][lv-1];return[{x:0,y:0,z:16*K,r:16*K,c:'#fff0b0'},{x:32*K,y:0,z:11.5,r:10*K,c:'#fff3c0'},{ring:11.8*K,z:31*K,c:'#ffe7a0',tilt:.35}]},
+ pz:[44,47,50,53],
+ muzzle:lv=>{const K=[1,1.08,1.16,1.25][lv-1];return{x:34*K,z:11.5}},
  kick:2,
  scale:1.0
 };
@@ -273,7 +272,7 @@ function mesh(k,part,lv){const key=k+part+lv;return meshC[key]||(meshC[key]=DEF[
 function bounds(ms){let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(const f of ms.f)for(const p of f.v){const r=Math.hypot(p[0],p[1]);x0=Math.min(x0,-r);x1=Math.max(x1,r);const sy0=-p[2]*CE-r*SE,sy1=-p[2]*CE+r*SE;y0=Math.min(y0,sy0);y1=Math.max(y1,sy1)}return{x0,x1,y0,y1}}
 function sprite(k,part,lv,yaw){
  const ms=mesh(k,part,lv),b=bounds(ms),pad=3,W=Math.ceil((b.x1-b.x0)*RPX)+pad*2,H=Math.ceil((b.y1-b.y0)*RPX)+pad*2,ox=-b.x0*RPX+pad,oy=-b.y0*RPX+pad;
- return{c:raster(ms,yaw,RPX,W,H,ox,oy,{zTop:part==='base'?40:30,grain:part==='base'?(k==='holy'?.22:.38):.28}),ox,oy}}
+ return{c:raster(ms,yaw,RPX,W,H,ox,oy,{zTop:part==='base'?40:30,grain:part==='base'?(k==='holy'?.1:.18):.1}),ox,oy}}
 let budget=0,frame=-1;
 function base(k,lv){const key=k+lv;return baseC[key]||(baseC[key]=sprite(k,'base',lv,0))}
 function turret(k,lv,yaw){
@@ -283,6 +282,7 @@ function turret(k,lv,yaw){
  budget++;s=sprite(k,'turret',lv,d/NA*Math.PI*2);turC.set(key,s);if(turC.size>TUR_MAX)turC.delete(turC.keys().next().value);return s}
 // screen aim angle -> world yaw (ground is foreshortened by SE on screen)
 const yawOf=a=>Math.atan2(Math.sin(a)/SE,Math.cos(a));
+const GLC={};function glowC(col){let o=GLC[col];if(o)return o;o=document.createElement('canvas');o.width=o.height=64;const g=o.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.18,col);gr.addColorStop(.5,col+'55');gr.addColorStop(1,col+'00');g.fillStyle=gr;g.fillRect(0,0,64,64);return GLC[col]=o}
 let GLOW=null;function glow(){if(GLOW)return GLOW;const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,240,190,1)');gr.addColorStop(.35,'rgba(255,214,120,.55)');gr.addColorStop(1,'rgba(255,200,90,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return GLOW=c}
 
 window.CK3D={
@@ -296,9 +296,16 @@ window.CK3D={
   // turret: pivot sits on top of the base; recoil slides it back along the aim
   const pz=d.pz[lv-1]*sz,kick=(rc>0?Math.pow(rc,1.6):0)*d.kick*u*sz,cx=p.x-Math.cos(yaw)*kick,cy=footY-pz*CE*u-Math.sin(yaw)*SE*kick;
   const t=turret(k,lv,yaw);ctx.drawImage(t.c,cx-t.ox*s,cy-t.oy*s,t.c.width*s,t.c.height*s);
-  // living light: holy crystal pulse / cannon fuse ember (tiny, additive, cached sprite)
-  if(k==='holy'){const mz=this.muzzle({k,lv,a,rc:0,x:0,y:0},p,u),pulse=.55+.45*Math.sin(T*3+p.x*.01);ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.35+.35*pulse+(rc>0?rc*.5:0);const r=u*(9+4*pulse)*sz;ctx.drawImage(glow(),mz[0]-r,mz[1]-r,2*r,2*r);ctx.globalAlpha=.25+.15*pulse;const r2=u*14*sz;ctx.drawImage(glow(),cx-r2,cy-u*20*sz-r2,2*r2,2*r2);ctx.restore()}
-  else if(k==='cannon'&&rc>.55){const mz=this.muzzle({k,lv,a,rc},p,u);ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=(rc-.55)*2;const r=u*12*sz;ctx.drawImage(glow(),mz[0]-r,mz[1]-r,2*r,2*r);ctx.restore()}
+  // radiant light: pulsing gems, rune rings and crystals (cached additive sprites)
+  if(window.CK_Q!==0){const ph=p.x*.013+p.y*.007,pl=.5+.5*Math.sin(T*2.4+ph),A=.42+.28*pl+(rc>0?rc*.35:0);
+   ctx.save();ctx.globalCompositeOperation='lighter';
+   const put=(q,ox2,oy2,rot)=>{let x=q.x||0,y=q.y||0;if(rot){const c0=Math.cos(yaw),s0=Math.sin(yaw);const xx=x*c0-y*s0;y=x*s0+y*c0;x=xx}
+    if(q.ring){ctx.globalAlpha=A*.8;ctx.strokeStyle=q.c;ctx.lineWidth=Math.max(1,1.6*u*sz);ctx.beginPath();ctx.ellipse(ox2,oy2-q.z*CE*u*sz,q.ring*u*sz,q.ring*SE*u*sz,0,0,7);ctx.stroke();ctx.globalAlpha=A*.25;ctx.lineWidth=Math.max(2,5*u*sz);ctx.stroke();return}
+    const X=ox2+x*u*sz,Y=oy2+(y*SE-q.z*CE)*u*sz,r=q.r*u*sz*(.85+.3*pl);ctx.globalAlpha=A;ctx.drawImage(glowC(q.c),X-r,Y-r,2*r,2*r)};
+   if(d.glowBase)for(const q of d.glowBase(lv))put(q,p.x,footY,false);
+   if(d.glowTurret)for(const q of d.glowTurret(lv))put(q,cx,cy,true);
+   ctx.restore()}
+  if(rc>.55){const mz=this.muzzle({k,lv,a,rc},p,u);ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=(rc-.55)*2.2;const r=u*(k==='cannon'?16:13)*sz;ctx.drawImage(glowC(k==='cannon'?'#ffb347':'#fff0b0'),mz[0]-r,mz[1]-r,2*r,2*r);ctx.restore()}
   if(stun){ctx.save();ctx.fillStyle='#ffd34a';for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(p.x+Math.cos(T*5+i*2.1)*26*u,footY-80*u*sz+Math.sin(T*5+i*2.1)*7*u,3.8*u,0,7);ctx.fill()}ctx.restore()}
  },
  // screen position of the firing point for tower t (projectiles + muzzle flash start here)
