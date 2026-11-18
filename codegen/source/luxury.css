@@ -1,0 +1,177 @@
+/* =====================================================================
+   CHAOS KINGDOMS · CODE FORGE — luxury presentation layer
+   Styling only: loaded after the original stylesheet, no markup or logic changes.
+   ===================================================================== */
+:root{
+  --onyx0:#050506;--onyx1:#0c0b0e;--onyx2:#15131a;--onyx3:#1d1a22;
+  --au1:#fff6d6;--au2:#f4d58a;--au3:#d4a849;--au4:#9c6f22;--au5:#5a3c10;
+  --champ:#efe2c2;--smoke:#9a937f;--ruby:#ff6b7f;--jade:#8fe0a8;
+  --foil:linear-gradient(115deg,#7a5418 0%,#f6dd96 18%,#b98a33 34%,#fff4cf 50%,#c4943c 66%,#f2d27f 82%,#7a5418 100%);
+  --ink:var(--champ);--mut:var(--smoke);--gold2:var(--au2);--ok:var(--jade);--bad:var(--ruby);--line:var(--au3);
+}
+html{background:#050506}
+body{
+  color:var(--champ);
+  background:
+    radial-gradient(ellipse 120% 70% at 50% -10%,#3a2c1266 0,transparent 55%),
+    radial-gradient(ellipse 80% 60% at 110% 60%,#2a1f0d40 0,transparent 60%),
+    radial-gradient(ellipse 80% 60% at -10% 90%,#1f1a2a55 0,transparent 60%),
+    repeating-linear-gradient(135deg,#ffffff04 0 1px,transparent 1px 7px),
+    linear-gradient(180deg,#0e0c10 0%,#08070a 50%,#050506 100%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse at 50% 40%,transparent 55%,#000000b0 100%);
+}
+::selection{background:#d4a84966;color:#fff}
+
+/* ---------- header: framed artwork + engraved title plaque ---------- */
+header:before{
+  border:1px solid transparent!important;
+  box-shadow:0 0 0 1px #00000099,0 0 0 2px #d4a84988,0 0 0 4px #050506,0 0 0 5px #9c6f2266,0 18px 40px #000d!important;
+  filter:saturate(1.05) contrast(1.05);
+}
+header:after{
+  background:linear-gradient(180deg,#121014f2,#08070af7)!important;
+  border:1px solid transparent!important;
+  background-clip:padding-box!important;
+  box-shadow:0 0 0 1px #d4a849aa,0 0 0 3px #050506,0 0 0 4px #9c6f2255,0 14px 30px #000c,inset 0 1px 0 #fff2!important;
+}
+header .kick{
+  letter-spacing:.5em;color:var(--au2);font-size:10px;padding-left:.5em;
+  text-shadow:0 0 12px #d4a84966,0 2px 3px #000;
+}
+header .kick:before,header .kick:after{content:"";display:inline-block;width:26px;height:1px;vertical-align:middle;margin:0 10px;background:linear-gradient(90deg,transparent,#d4a849)}
+header .kick:after{background:linear-gradient(90deg,#d4a849,transparent)}
+header h1{
+  background:var(--foil);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:.09em;
+  filter:drop-shadow(0 1px 0 #2a1a05) drop-shadow(0 4px 10px #000);
+  animation:lxFoil 7s ease-in-out infinite;
+}
+@keyframes lxFoil{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
+header p{color:#c9bfa6}
+.lang{
+  border:1px solid transparent!important;
+  background:linear-gradient(180deg,#1a171d,#0b0a0d) padding-box,var(--foil) border-box!important;
+  color:var(--au2)!important;letter-spacing:.06em;
+  box-shadow:0 4px 12px #000b,inset 0 1px 0 #fff2!important;
+}
+
+/* ---------- panels: black lacquer with gold-foil frame ---------- */
+.glass{
+  border:1px solid transparent;border-radius:18px;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -20%,#d4a8491a,transparent 60%) padding-box,
+    linear-gradient(170deg,#1a171e 0%,#100e13 45%,#09080b 100%) padding-box,
+    var(--foil) border-box;
+  box-shadow:0 0 0 1px #00000080,inset 0 1px 0 #ffffff14,inset 0 -24px 40px #0000008c,0 18px 40px #000c;
+}
+.glass:before{border:1px solid #d4a84926;border-radius:13px;inset:6px}
+.glass:after{
+  content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:44px;height:3px;border-radius:0 0 3px 3px;
+  background:var(--foil);box-shadow:0 0 10px #f4d58a88;
+}
+h2{color:var(--au2);letter-spacing:.18em;text-transform:uppercase;font-size:14px}
+h2:before{content:"◆";font-size:9px;color:var(--au3);text-shadow:0 0 8px #d4a849}
+h2:after{background:linear-gradient(90deg,#d4a849aa,#d4a84922 60%,transparent)}
+.grp>b{color:var(--au3);letter-spacing:.24em;text-transform:uppercase;font-size:10.5px}
+
+/* ---------- effect cards: obsidian tiles, gold-leaf when chosen ---------- */
+.opt{
+  border:1px solid #3a3326;
+  background:linear-gradient(180deg,#1f1c24 0%,#151319 55%,#0e0d11 100%);
+  color:var(--champ);
+  box-shadow:inset 0 1px 0 #ffffff12,inset 0 -6px 12px #00000080,0 2px 0 #000,0 6px 14px #0008;
+}
+.opt:hover{border-color:#b98a33;filter:none;background:linear-gradient(180deg,#26222b 0%,#18161c 55%,#100f13 100%)}
+.opt .ic{
+  background:radial-gradient(circle at 35% 25%,#3d3628,#17140f 62%,#0b0a08);
+  border:1px solid transparent;
+  background-clip:padding-box;
+  box-shadow:0 0 0 1px #d4a849aa,inset 0 1px 3px #fff3,0 3px 6px #000c;
+}
+.opt .tag{background:linear-gradient(180deg,#d9f3ec,#7fc7b6);color:#08241d}
+.opt .tag.big{background:var(--foil);background-size:200% 100%;color:#2a1a05}
+.opt[aria-checked="true"]{
+  border-color:transparent;
+  background:
+    linear-gradient(180deg,#3a2c12 0%,#241b0b 50%,#140f06 100%) padding-box,
+    var(--foil) border-box;
+  border:1px solid transparent;
+  box-shadow:0 0 0 1px #00000080,0 0 22px #d4a84966,inset 0 1px 0 #fff5,inset 0 0 18px #d4a84933,0 3px 0 #000;
+}
+.opt[aria-checked="true"] .ic{box-shadow:0 0 0 1px #fff0b0,0 0 12px #f4d58a99,inset 0 1px 3px #fff5}
+.opt[aria-checked="true"]:after{color:var(--au1);text-shadow:0 0 8px #f4d58a}
+
+/* ---------- inputs ---------- */
+.pn{
+  border:1px solid #4a4030;background:linear-gradient(180deg,#07070a,#121016);
+  color:#fff7e0;letter-spacing:.03em;
+  box-shadow:inset 0 3px 10px #000c,0 1px 0 #ffffff10;
+}
+.pn::placeholder{color:#7d7563}
+.pn:focus{border-color:var(--au3);box-shadow:0 0 0 3px #d4a8492e,inset 0 3px 10px #000c}
+.pn[disabled]{color:var(--au2);border-color:#9c6f22;background:linear-gradient(180deg,#17130a,#0d0b07)}
+.qty{border:1px solid #4a4030;background:linear-gradient(180deg,#141217,#0a090c)}
+.qty button{
+  border:1px solid transparent;
+  background:linear-gradient(180deg,#2a2530,#141217) padding-box,var(--foil) border-box;
+  color:var(--au2);
+}
+.sel b{color:var(--au2)}
+
+/* ---------- buttons: polished gold bar with a passing sheen ---------- */
+.bt{
+  position:relative;overflow:hidden;isolation:isolate;
+  border:1px solid #fff2c4;color:#2a1a05;letter-spacing:.14em;text-transform:uppercase;
+  background:linear-gradient(180deg,#fff6d2 0%,#f4d58a 30%,#d4a849 62%,#9c6f22 100%);
+  box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 #7a541888,0 3px 0 #4a3010,0 10px 22px #000c,0 0 18px #d4a84933;
+  text-shadow:0 1px 0 #fff6;
+}
+.bt:not([disabled]):after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(110deg,transparent 35%,#ffffffaa 50%,transparent 65%);background-size:250% 100%;background-position:150% 0;
+  animation:lxSheen 4.2s ease-in-out infinite;
+}
+@keyframes lxSheen{0%,62%{background-position:150% 0}100%{background-position:-60% 0}}
+.bt.g{
+  text-transform:none;letter-spacing:.05em;color:var(--au2);text-shadow:none;
+  border:1px solid transparent;
+  background:linear-gradient(180deg,#25212a,#131116 60%,#0b0a0d) padding-box,linear-gradient(140deg,#9c6f22,#f4d58a 50%,#9c6f22) border-box;
+  box-shadow:inset 0 1px 0 #ffffff1a,0 2px 0 #000,0 6px 12px #0008;
+}
+.bt.g:after{display:none}
+
+/* ---------- generated codes: engraved gold plaques ---------- */
+.code{
+  border:1px solid transparent;border-radius:12px;
+  background:linear-gradient(145deg,#1c1810,#110e09 55%,#0a0806) padding-box,var(--foil) border-box;
+  box-shadow:inset 0 1px 0 #fff2,inset 0 0 22px #d4a8491a,0 6px 16px #000b;
+}
+.code .v{
+  background:linear-gradient(180deg,#fff6d6,#f4d58a 45%,#c4943c);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;filter:drop-shadow(0 0 8px #d4a84955) drop-shadow(0 1px 0 #2a1a05);letter-spacing:.12em;
+}
+.code .n{color:#bfb59c}
+.empty{border:1px dashed #6a5a3a;background:#0b0a0d99;color:#9a937f}
+.hrow{background:linear-gradient(145deg,#16141a,#0c0b0e);border:1px solid #3a3326}
+.hrow .v{color:var(--au2)}
+.hrow .m{color:#a39b86}
+.hist::-webkit-scrollbar{width:6px}.hist::-webkit-scrollbar-thumb{background:linear-gradient(#f4d58a,#9c6f22);border-radius:9px}
+.foot{color:#a39b86}.foot b{color:var(--au2)}
+.toast{
+  border:1px solid transparent;
+  background:linear-gradient(180deg,#1d1a20,#0c0b0e) padding-box,var(--foil) border-box;
+  color:var(--au1);letter-spacing:.06em;box-shadow:0 10px 30px #000d,0 0 18px #d4a84933;
+}
+.locked-off{opacity:.38;filter:grayscale(.7) brightness(.85)}
+
+/* ---------- entrance ---------- */
+.glass{animation:lxRise .6s cubic-bezier(.2,.85,.25,1) both}
+.glass:nth-of-type(2){animation-delay:.06s}.glass:nth-of-type(3){animation-delay:.12s}.glass:nth-of-type(4){animation-delay:.18s}.glass:nth-of-type(5){animation-delay:.24s}
+@keyframes lxRise{from{opacity:0;transform:translateY(14px)}}
+@media(prefers-reduced-motion:reduce){header h1,.bt:after,.glass{animation:none!important}}
