@@ -7,7 +7,17 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.5.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.5.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v2.6.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.6.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v2.6
+
+**Each base has its own lives.** On maps with two bases, the level's lives are split between them (10 + 10), so total lives and star ratings stay the same.
+- A monster that gets through damages only the base it reached.
+- Each base shows its own life bar and count.
+- When a base falls, it collapses into smoking rubble with a "HOLD THE LINE" banner, and monsters re-route to the base still standing.
+- You lose only when every base is destroyed.
+- Healing (potion, bought hearts, rewards) goes to the weakest surviving base.
+- Single-base maps play exactly as before.
 
 ## What changed in v2.5
 
@@ -110,7 +120,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.5.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.6.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

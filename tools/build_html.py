@@ -222,6 +222,33 @@ rep("function ckSummonTick(dt){",
     "c.restore()}c.globalAlpha=pa}\n"
     "function ckSummonTick(dt){")
 
+# ---------------------------------------------------------------- v2.6 separate bases
+# 19. Each base has its own life pool (the level's lives are split between the bases, so
+#     total lives and star ratings are unchanged). A leak damages the base it reached.
+#     A destroyed base becomes smoking rubble and monsters re-route to the bases still
+#     standing; the level is lost only when every base is destroyed. Heals (potion,
+#     hearts, rewards) go to the weakest surviving base; L.lives stays the total.
+rep("function leak(e){let d=e.d;e.hp=-1;if(!L.demo){if(!(L.bf.shield>0))L.lives=Math.max(0,L.lives-d.l);",
+    "function leak(e){let d=e.d;e.hp=-1;if(!L.demo){ckBaseSync();if(!(L.bf.shield>0))ckBaseHit(e,d.l);")
+rep("L.ct-=dt;updAir(dt);", "if(!L.demo)ckBaseSync();L.ct-=dt;updAir(dt);")
+rep("drawRiver();dPortal();dBase();", "drawRiver();dPortal();dBase();ckBaseDraw();")
+rep("function ckSummonTick(dt){",
+    "function ckBaseSync(){if(!L.base||L.base.L!==L){const gs=L.goals.slice(),n=gs.length,per=Math.floor(L.lives/n);L.base=gs.map((g,i)=>({x:g[0],y:g[1],hp:per+(i<L.lives-per*n?1:0),dead:0,hit:-9}));L.base.L=L}"
+    "const al=L.base.filter(b=>!b.dead);if(!al.length)return;let tot=0;for(const b of al)tot+=b.hp;"
+    "while(L.lives>tot){let m=al[0];for(const b of al)if(b.hp<m.hp)m=b;m.hp++;tot++}while(L.lives<tot){let m=al[0];for(const b of al)if(b.hp>m.hp)m=b;if(m.hp<=0)break;m.hp--;tot--}}\n"
+    "function ckBaseHit(e,n){const al=L.base.filter(b=>!b.dead);if(!al.length)return;let b=al[0],bd=1e9;for(const q of al){const dd=Math.hypot(q.x-e.x,q.y-e.y);if(dd<bd){bd=dd;b=q}}"
+    "b.hp=Math.max(0,b.hp-n);b.hit=TM;if(b.hp<=0){b.dead=1;b.deadT=TM;const rest=L.base.filter(q=>!q.dead);const sp=pp(b.x,b.y);vBoom(sp.x,sp.y,1.6);vFlash('#ff6a3a',.35);L.shake=Math.max(L.shake||0,1);"
+    "if(rest.length){const gi=L.goals.findIndex(g=>g[0]===b.x&&g[1]===b.y);if(gi>=0&&L.goals.length>1){L.goals.splice(gi,1);replan()}"
+    "toast(lvZ('⚠ 一座基地已被摧毁！守住最后的基地！','⚠ A base has fallen! Defend the remaining base!'));window.ckBanner&&ckBanner(lvZ('基地沦陷','Base destroyed'),lvZ('死守到底','HOLD THE LINE'),1)}}"
+    "let t=0;for(const q of L.base)if(!q.dead)t+=q.hp;L.lives=t}\n"
+    "function ckBaseDraw(){if(L.demo||!L.base||L.base.L!==L||L.base.length<2)return;for(const b of L.base){const p=pp(b.x,b.y),u=tw/100;"
+    "if(b.dead){ell(p.x,p.y+tw*.3,tw*.6,tw*.22,'#120a08cc');ell(p.x,p.y+tw*.25,tw*.42,tw*.15,'#2a1a14');ell(p.x-tw*.2,p.y+tw*.18,tw*.13,tw*.08,'#5a5068');ell(p.x+tw*.18,p.y+tw*.22,tw*.11,tw*.07,'#4a4258');ell(p.x+tw*.02,p.y+tw*.08,tw*.15,tw*.09,'#6a6078');ell(p.x-tw*.05,p.y+tw*.02,tw*.07,tw*.05,'#3fbfb0');for(let i=0;i<3;i++){const ph=(TM*.5+i/3)%1;c.globalAlpha=(1-ph)*.5;circ(p.x+Math.sin(i*2.1+TM)*tw*.15,p.y+tw*.1-ph*tw*.9,tw*(.08+.12*ph),'#3a3440')}"
+    "c.globalAlpha=.6+.4*Math.sin(TM*9+b.x);circ(p.x-tw*.1,p.y+tw*.22,tw*.05,'#ff7a2a');circ(p.x+tw*.12,p.y+tw*.26,tw*.04,'#ffb04a');c.globalAlpha=1;continue}"
+    "const mx=Math.max(1,b.hp,b.mx||0);b.mx=mx;const w=tw*.82,h=Math.max(5,tw*.11),x=p.x-w/2,up=p.y>H*.5,y=up?p.y-tw*1.05:p.y+tw*.62,f=b.hp/mx,hf=TM-b.hit<.4;"
+    "c.fillStyle='#07101dd9';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle=hf?'#ffffff':f>.5?'#5eead4':f>.25?'#ffbd3f':'#ff4e58';c.fillRect(x,y,w*f,h);"
+    "c.font=`900 ${Math.max(10,tw*.2)}px Nunito`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#07101d';const s='♥ '+b.hp;const ty=up?y-tw*.06:y+h+tw*.2;c.strokeText(s,p.x,ty);c.fillStyle=hf?'#ff8a8a':'#e8fffb';c.fillText(s,p.x,ty)}}\n"
+    "function ckSummonTick(dt){")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
