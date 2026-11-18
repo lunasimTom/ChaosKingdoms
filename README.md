@@ -7,7 +7,15 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.7.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.7.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v2.7.1.apk` | Android app (package `com.chaoskingdoms.game`, version 2.7.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v2.7.1
+
+- **Top bar always fits the screen.** Longer level labels (for example "Lv 80 · Boss", 3-digit levels and Chinese text) and big coin totals used to push the speed, pause and rotate buttons off the right edge. Now:
+  - The label reads "Lv 80 👑", with "Boss · realm name" on the second line.
+  - The realm name truncates instead of pushing buttons.
+  - Coin totals of 100,000 or more show as 992K or 1.2M.
+  - If the bar would still overflow, it tightens its spacing automatically.
 
 ## What changed in v2.7
 
@@ -162,7 +170,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.7.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.7.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

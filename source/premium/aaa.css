@@ -163,3 +163,15 @@ body.ck-boss:not(.pt) #toast{top:72px!important}
 #tp .ck-row em{font-style:normal;color:#c9d3ee;text-align:right;font-size:10px}
 #tp .ck-bpa{display:grid!important;grid-template-columns:repeat(3,1fr);gap:4px;width:232px;max-width:100%}
 #tp .ck-bpa .bt{min-width:0!important;padding:5px 2px!important;font-size:11px!important;line-height:1.2}
+
+/* v2.7.1: top bar always fits; the level label absorbs the slack */
+#hud .top{overflow:hidden}
+html body #app #hud .top>.lv{flex:1 1 0!important;min-width:min-content!important;overflow:hidden!important}
+html body #app #hud .top>.lv>#lr{width:0;min-width:100%}
+html body #app #hud .top>.lv>#ln{overflow:visible!important;text-overflow:clip!important}
+html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hud .top>#cnw,#hud .top>#lvw,#hud .top>#wvs{flex-shrink:0}
+#hud .top.ck-t1{gap:1px!important;padding-left:3px!important;padding-right:3px!important}
+#hud .top.ck-t1>.bt{padding-left:5px!important;padding-right:5px!important}
+#hud .top.ck-t2>*:not(.lv):not(#wbar){zoom:.9}
+#hud .top.ck-t3>*:not(.lv):not(#wbar){zoom:.8}

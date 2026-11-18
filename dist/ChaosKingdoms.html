@@ -1519,6 +1519,7 @@ function ckBasePanel(b){selT=null;const p=$('tp');p._base=b;const z=LANG==='zh'?
 $('tp').addEventListener('click',e=>{const x=e.target.closest('[data-ba]');if(!x)return;const b=$('tp')._base;if(!b||b.dead||!L.base||L.base.L!==L)return;const k=x.dataset.ba;if(k==='x'){$('tp').hidden=true;return}const u=CK_UP[k];if(!u||b[k]>=2)return;const cost=u.c(b);if(!charge(cost))return toast(TL('Not enough coins'));b[k]++;if(k==='fort'){const add=Math.max(1,Math.round(b.max0*.2));b.max+=add;b.hp+=add;ckBaseTotal()}const sp=pp(b.x,b.y);vPillar(sp.x,sp.y,k==='bar'?'#8fe8ff':k==='rep'?'#7dffa0':'#ffd34a',.8);vRing(sp.x,sp.y,tw*.9,'#ffe9a0',.5,4);sfx('upgrade')||beep(700,.15,'triangle',.07);ckBasePanel(b)});
 function ckTips(i){if(L.demo)return;if(ckBases(i)>1&&!S.tip2b){S.tip2b=1;save();setTimeout(()=>{if(S.mode==='play'&&!L.over)modal(`<h3>🏰 ${lvZ('多座基地','Multiple bases')}</h3><p>${lvZ('这一关有'+ckBases(i)+'座基地，每座都有独立的生命值。只有当所有基地都被摧毁时才会失败——失去一座还能坚持，但剩下的怪物会全部涌向其余基地！','This level has '+ckBases(i)+' bases, each with its own health. You only lose when every base is destroyed. Losing one is survivable, but every remaining monster will then march on the bases left!')}</p><p>${lvZ('点击基地可以加固、修复或架设屏障。','Tap a base to Fortify, Repair or raise a Barrier.')}</p><button class="bt" id="m1">${lvZ('明白','Got it')}</button>`)},500)}else if(i>=2&&!S.tipbu){S.tipbu=1;save();setTimeout(()=>{if(S.mode==='play'&&!L.over)modal(`<h3>🛡 ${lvZ('基地升级','Base upgrades')}</h3><p>${lvZ('点击你的基地：加固（最大生命 +20%）、修复（场上无敌人时回血）、屏障（每波抵挡漏怪）。金币有限，好好权衡！','Tap your base: Fortify (+20% max health), Repair (heals while the field is clear), Barrier (blocks leaks each wave). Coins are tight, so choose wisely!')}</p><button class="bt" id="m1">${lvZ('明白','Got it')}</button>`)},500)}}
 function ckBaseDraw(){if(L.demo||!L.base||L.base.L!==L)return;const multi=L.base.length>1;for(const b of L.base){const p=pp(b.x,b.y),u=tw/100;if(b.dead){ell(p.x,p.y+tw*.3,tw*.6,tw*.22,'#120a08cc');ell(p.x,p.y+tw*.25,tw*.42,tw*.15,'#2a1a14');ell(p.x-tw*.2,p.y+tw*.18,tw*.13,tw*.08,'#5a5068');ell(p.x+tw*.18,p.y+tw*.22,tw*.11,tw*.07,'#4a4258');ell(p.x+tw*.02,p.y+tw*.08,tw*.15,tw*.09,'#6a6078');ell(p.x-tw*.05,p.y+tw*.02,tw*.07,tw*.05,'#3fbfb0');for(let i=0;i<3;i++){const ph=(TM*.5+i/3)%1;c.globalAlpha=(1-ph)*.5;circ(p.x+Math.sin(i*2.1+TM)*tw*.15,p.y+tw*.1-ph*tw*.9,tw*(.08+.12*ph),'#3a3440')}c.globalAlpha=.6+.4*Math.sin(TM*9+b.x);circ(p.x-tw*.1,p.y+tw*.22,tw*.05,'#ff7a2a');circ(p.x+tw*.12,p.y+tw*.26,tw*.04,'#ffb04a');c.globalAlpha=1;continue}if(b.bar>b.barUsed){c.globalAlpha=.35+.15*Math.sin(TM*3+b.y);c.strokeStyle='#8fe8ff';c.lineWidth=2.2*u+.6;c.beginPath();c.ellipse(p.x,p.y+tw*.1,tw*.72,tw*.62,0,Math.PI*1.05,Math.PI*1.95);c.stroke();c.globalAlpha=1}for(let i=0;i<b.fort;i++)circ(p.x-tw*.12+i*tw*.24,p.y+tw*.5,tw*.05,'#ffd34a');if(!multi)continue;const mx=Math.max(1,b.max);const w=tw*.82,h=Math.max(5,tw*.11),x=p.x-w/2,up=p.y>H*.5,y=up?p.y-tw*1.05:p.y+tw*.62,f=Math.min(1,b.hp/mx),hf=TM-b.hit<.4;c.fillStyle='#07101dd9';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle=hf?'#ffffff':f>.5?'#5eead4':f>.25?'#ffbd3f':'#ff4e58';c.fillRect(x,y,w*f,h);c.font=`900 ${Math.max(10,tw*.2)}px Nunito`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#07101d';const s='♥ '+b.hp;const ty=up?y-tw*.06:y+h+tw*.2;c.strokeText(s,p.x,ty);c.fillStyle=hf?'#ff8a8a':'#e8fffb';c.fillText(s,p.x,ty)}}
+function ckCoinFmt(n){const d=Economy.display(n);if(typeof n!=='number'||!isFinite(n)||/[^0-9,.\s]/.test(String(d)))return d;return n>=1e7?Math.floor(n/1e6)+'M':n>=1e6?(Math.floor(n/1e5)/10)+'M':n>=1e5?Math.floor(n/1e3)+'K':d}
 function ckSummonTick(dt){if(!L.sq||!L.sq.length||L.over){L.sc=null;return}const b=L.en.find(x=>x.t==='boss'&&x.hp>0);if(!b){L.sq=[];L.sc=null;return}if(!L.sc){L.sc={ph:L.sq[0],t:5,last:6};toast(L.sc.ph===2?lvZ('⚠ 首领将召唤最后的援军！5 秒后降临','⚠ The boss will call its last reinforcements in 5 s!'):lvZ('⚠ 首领将召唤援军！5 秒后降临','⚠ The boss will call reinforcements in 5 s!'))}L.sc.t-=dt;const n=Math.ceil(L.sc.t);if(n<L.sc.last&&n>0){L.sc.last=n;beep(n<=2?880:620,.12,'square',.06)}if(L.sc.t<=0){const ph=L.sc.ph;L.sq.shift();L.sc=null;bossSummon(b,ph)}}
 function bossSummon(boss,ph){
  if(L.demo||L.over)return;
@@ -2849,7 +2850,7 @@ addEventListener('keydown',e=>{if(S.mode!=='play'||e.target.tagName==='INPUT')re
  else if(k==='escape'){if(mOpen)closeM();else showSel(null)}});
 function setCd(n,txt){let e=$('cd'),h;if(n===null)h=txt;else{let parts=TL('in {0}s','\u0001').split('\u0001');h='<i class="cdp">'+(parts[0]||'')+'</i><i class="cdn">'+n+'</i><i class="cdp">'+(parts[1]||'')+'</i>'}if(e.dataset.h!==h){e.dataset.h=h;e.innerHTML=h}}
 function setT(id,v){let e=$(id);v=''+v;if(e.textContent!==v)e.textContent=v}
-function hud(){if(S.mode!=='play')return;if(typeof updWl==='function')updWl();{let j=JSON.stringify(S.inv||{});if(j!==window.__ij){window.__ij=j;save()}}posTP();{let pl=L.placing;document.querySelectorAll('#inv .iv').forEach(b=>b.classList.toggle('act',b.dataset.use===pl));document.querySelectorAll('[data-cdid]').forEach(e=>{let id=e.dataset.cdid,r=L.cdn[id]||0;e.style.setProperty('--p',r>0?r/CDT[id]:0);let t=e.querySelector('.cdt'),v=r>0?Math.ceil(r):'';if(t&&t.textContent!=v)t.textContent=v})}setT('coin',Economy.display(Economy.battleBalance()));setT('dia',(S.diamonds||0).toLocaleString());setT('lives',L.lives);$('lvw').classList.toggle('low',L.lives<=Math.max(3,L.mxl*.25));{let wb=$('wbar');if(wb)wb.style.width=(L.waves?Math.min(100,L.wave/L.waves*100):0)+'%'}setT('wv',L.wave+'/'+L.waves);{let q=L.nq?L.nq.q.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{}):null;L.nt=q?TL('Next: ')+Object.entries(q).map(([k,v])=>v+' '+TL(k)).join(', '):''}let f=L.wave>=L.waves;setCd(f?null:Math.ceil(L.cd),f?TL('Final'):'');$('skip').style.visibility=f?'hidden':'visible';
+function hud(){if(S.mode!=='play')return;if(typeof updWl==='function')updWl();{let j=JSON.stringify(S.inv||{});if(j!==window.__ij){window.__ij=j;save()}}posTP();{let pl=L.placing;document.querySelectorAll('#inv .iv').forEach(b=>b.classList.toggle('act',b.dataset.use===pl));document.querySelectorAll('[data-cdid]').forEach(e=>{let id=e.dataset.cdid,r=L.cdn[id]||0;e.style.setProperty('--p',r>0?r/CDT[id]:0);let t=e.querySelector('.cdt'),v=r>0?Math.ceil(r):'';if(t&&t.textContent!=v)t.textContent=v})}setT('coin',ckCoinFmt(Economy.battleBalance()));setT('dia',(S.diamonds||0).toLocaleString());setT('lives',L.lives);$('lvw').classList.toggle('low',L.lives<=Math.max(3,L.mxl*.25));{let wb=$('wbar');if(wb)wb.style.width=(L.waves?Math.min(100,L.wave/L.waves*100):0)+'%'}setT('wv',L.wave+'/'+L.waves);{let q=L.nq?L.nq.q.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{}):null;L.nt=q?TL('Next: ')+Object.entries(q).map(([k,v])=>v+' '+TL(k)).join(', '):''}let f=L.wave>=L.waves;setCd(f?null:Math.ceil(L.cd),f?TL('Final'):'');$('skip').style.visibility=f?'hidden':'visible';
  let b=[];if(L.bf.ovc>0)b.push(TL('Speed {0}s',Math.ceil(L.bf.ovc)));if(L.bf.idol>0)b.push(TL('Gold ×2 {0}s',Math.ceil(L.bf.idol)));if(L.bf.horn>0)b.push(TL('Horn {0}s',Math.ceil(L.bf.horn)));if(L.bf.shield>0)b.push(TL('Shield {0}s',Math.ceil(L.bf.shield)));if(L.bf.aid>0)b.push(TL('Aid {0}s',Math.ceil(L.bf.aid)));setT('nxt',b.length?b.join(' · '):'');$('nxt').style.color=b.length?'var(--mint)':'';
  document.querySelectorAll('[data-cost]').forEach(x=>x.classList.toggle('no',!afford(+x.dataset.cost)))}
 function refreshProfileTeaser(){progressStats();let ri=rankAt(S.xp),next=RANKS[ri+1];$('ptitle').textContent=rankTitle(ri)+' · Lv.'+(ri+1);$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'))}
@@ -2941,7 +2942,7 @@ function toMap(){recordSession('quit');show('map');load(8*(Math.random()*8|0)+2,
 function start(i){closeM();recordSession('quit');load(i);L.t0=Date.now();S.name=$('nm').value;show('hud');tab='t';render();showSel(null);setLn();$('spd').textContent='1×';$('pz').classList.remove('paused');bm=true;toast('Wave 1 arrives in 14s. Build now!');ckTips(i)}
 const mapT=()=>S.name?TL('{0}’s kingdom',(LANG==='zh'&&S.name==='Commander')?'指挥官':S.name):TL('World map');
 const updWl=()=>{let e=$('wl');if(e)e.textContent=Economy.display(Economy.walletBalance())};
-function setLn(){if(!L)return;$('ln').textContent=TL('Lv {0}',L.i+1)+(L.boss?' · '+TL('Boss'):'');$('lr').textContent=R[L.i/8|0].n}
+function setLn(){if(!L)return;$('ln').textContent=TL('Lv {0}',L.i+1)+(L.boss?' 👑':'');$('lr').textContent=(L.boss?TL('Boss')+' · ':'')+R[L.i/8|0].n;window.ckFitTop&&ckFitTop()}
 let selectedRealm=0;
 const MAP_BONUS=0;
 function checkMapBonus(){S.mb=(S.mb&&typeof S.mb==='object')?S.mb:{};let n=0;for(let ri=1;ri<R.length;ri++)if(mapUnlockedBase(ri)&&!S.mb[ri]){S.mb[ri]=1;n++}
@@ -4492,6 +4493,18 @@ body.ck-boss:not(.pt) #toast{top:72px!important}
 #tp .ck-row em{font-style:normal;color:#c9d3ee;text-align:right;font-size:10px}
 #tp .ck-bpa{display:grid!important;grid-template-columns:repeat(3,1fr);gap:4px;width:232px;max-width:100%}
 #tp .ck-bpa .bt{min-width:0!important;padding:5px 2px!important;font-size:11px!important;line-height:1.2}
+
+/* v2.7.1: top bar always fits; the level label absorbs the slack */
+#hud .top{overflow:hidden}
+html body #app #hud .top>.lv{flex:1 1 0!important;min-width:min-content!important;overflow:hidden!important}
+html body #app #hud .top>.lv>#lr{width:0;min-width:100%}
+html body #app #hud .top>.lv>#ln{overflow:visible!important;text-overflow:clip!important}
+html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hud .top>#cnw,#hud .top>#lvw,#hud .top>#wvs{flex-shrink:0}
+#hud .top.ck-t1{gap:1px!important;padding-left:3px!important;padding-right:3px!important}
+#hud .top.ck-t1>.bt{padding-left:5px!important;padding-right:5px!important}
+#hud .top.ck-t2>*:not(.lv):not(#wbar){zoom:.9}
+#hud .top.ck-t3>*:not(.lv):not(#wbar){zoom:.8}
 </style>
 <script id="ck-fixes">
 /* runtime fixes (source-level fixes live in build.py) */
@@ -4540,7 +4553,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.7 · Premium Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.7.1 · Premium Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}
@@ -4630,6 +4643,17 @@ const zh=()=>G('LANG')==='zh';
  const set=m=>{const a=SP['m_'+m]||SP.m_forest;if(a&&a!==cur){cur=a;document.body.style.setProperty('--ck-art',`url("${a}")`)}};
  set('forest');
  setInterval(()=>{const S=G('S'),L=G('L');if(S&&S.mode==='play'&&L&&!L.demo&&L.reg)set(L.reg.m);else if(S&&S.mode==='map'){const R=G('R'),ri=G('selectedRealm');set(R&&R[ri]&&R[ri].m||'forest')}else set('forest')},700);
+})();
+
+/* ---------------- top bar fit: never let buttons fall off screen ---------------- */
+(function fitTop(){
+ const top=document.querySelector('#hud .top');if(!top)return;
+ let busy=false;
+ const fit=()=>{if(busy||!top.offsetParent)return;busy=true;top.classList.remove('ck-t1','ck-t2','ck-t3');
+  for(const c of ['ck-t1','ck-t2','ck-t3']){if(top.scrollWidth<=top.clientWidth+1)break;top.classList.add(c)}busy=false};
+ window.ckFitTop=()=>requestAnimationFrame(fit);
+ new MutationObserver(()=>window.ckFitTop()).observe(top,{childList:true,characterData:true,subtree:true});
+ addEventListener('resize',()=>window.ckFitTop());
 })();
 
 /* ---------------- HUD feedback ---------------- */

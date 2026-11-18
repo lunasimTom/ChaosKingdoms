@@ -313,6 +313,20 @@ rep("function ckSummonTick(dt){", (
  "c.font=`900 ${Math.max(10,tw*.2)}px Nunito`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#07101d';const s='♥ '+b.hp;const ty=up?y-tw*.06:y+h+tw*.2;c.strokeText(s,p.x,ty);c.fillStyle=hf?'#ff8a8a':'#e8fffb';c.fillText(s,p.x,ty)}}\n"
  "function ckSummonTick(dt){"))
 
+# ---------------------------------------------------------------- v2.7.1 HUD fit
+# 29. Top bar overflow: every item had a fixed width, so a longer level label
+#     ("Lv 96 · Boss", Chinese text) or a big coin total pushed the last buttons off
+#     screen. The label is now short ("Lv 96 👑", boss + realm on the second line), the
+#     label block shrinks with an ellipsis, large coin totals are compact (123K / 1.2M),
+#     and a fit step tightens the bar if it would still overflow.
+rep("function setLn(){if(!L)return;$('ln').textContent=TL('Lv {0}',L.i+1)+(L.boss?' · '+TL('Boss'):'');$('lr').textContent=R[L.i/8|0].n}",
+    "function setLn(){if(!L)return;$('ln').textContent=TL('Lv {0}',L.i+1)+(L.boss?' 👑':'');$('lr').textContent=(L.boss?TL('Boss')+' · ':'')+R[L.i/8|0].n;window.ckFitTop&&ckFitTop()}")
+rep("setT('coin',Economy.display(Economy.battleBalance()));",
+    "setT('coin',ckCoinFmt(Economy.battleBalance()));")
+rep("function ckSummonTick(dt){",
+    "function ckCoinFmt(n){const d=Economy.display(n);if(typeof n!=='number'||!isFinite(n)||/[^0-9,.\\s]/.test(String(d)))return d;return n>=1e7?Math.floor(n/1e6)+'M':n>=1e6?(Math.floor(n/1e5)/10)+'M':n>=1e5?Math.floor(n/1e3)+'K':d}\n"
+    "function ckSummonTick(dt){")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()

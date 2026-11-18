@@ -28,7 +28,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.7 · Premium Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v2.7.1 · Premium Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}
@@ -118,6 +118,17 @@ const zh=()=>G('LANG')==='zh';
  const set=m=>{const a=SP['m_'+m]||SP.m_forest;if(a&&a!==cur){cur=a;document.body.style.setProperty('--ck-art',`url("${a}")`)}};
  set('forest');
  setInterval(()=>{const S=G('S'),L=G('L');if(S&&S.mode==='play'&&L&&!L.demo&&L.reg)set(L.reg.m);else if(S&&S.mode==='map'){const R=G('R'),ri=G('selectedRealm');set(R&&R[ri]&&R[ri].m||'forest')}else set('forest')},700);
+})();
+
+/* ---------------- top bar fit: never let buttons fall off screen ---------------- */
+(function fitTop(){
+ const top=document.querySelector('#hud .top');if(!top)return;
+ let busy=false;
+ const fit=()=>{if(busy||!top.offsetParent)return;busy=true;top.classList.remove('ck-t1','ck-t2','ck-t3');
+  for(const c of ['ck-t1','ck-t2','ck-t3']){if(top.scrollWidth<=top.clientWidth+1)break;top.classList.add(c)}busy=false};
+ window.ckFitTop=()=>requestAnimationFrame(fit);
+ new MutationObserver(()=>window.ckFitTop()).observe(top,{childList:true,characterData:true,subtree:true});
+ addEventListener('resize',()=>window.ckFitTop());
 })();
 
 /* ---------------- HUD feedback ---------------- */
