@@ -327,6 +327,31 @@ rep("function ckSummonTick(dt){",
     "function ckCoinFmt(n){const d=Economy.display(n);if(typeof n!=='number'||!isFinite(n)||/[^0-9,.\\s]/.test(String(d)))return d;return n>=1e7?Math.floor(n/1e6)+'M':n>=1e6?(Math.floor(n/1e5)/10)+'M':n>=1e5?Math.floor(n/1e3)+'K':d}\n"
     "function ckSummonTick(dt){")
 
+# ---------------------------------------------------------------- v2.8 (pilot) towers
+# 30. Heavy / Rapid branches removed: level 4 is one "Master" tier for every tower
+#     (damage x1.15, reload x0.9, range x1.08: about the average power of the old picks).
+rep("let d=TW[t.k],m=br===1?[1.5,1.25,1.15]:br===2?[.8,.6,1]:[1,1,1]", "let d=TW[t.k],m=lv>=4?[1.15,.9,1.08]:[1,1,1]")
+rep("(t.lv<3?`<button class=\"bt pay\" data-a=\"u\" data-b=\"0\">${TL('Upgrade')}<br>${cs}</button>`:t.lv===3?",
+    "(t.lv<4?`<button class=\"bt pay\" data-a=\"u\" data-b=\"0\">${TL('Upgrade')}<br>${cs}</button>`:false?")
+rep("(t.lv===3&&!w?`<button class=\"bt pay sup\" data-a=\"ua\" data-b=\"1\">", "(false?`<button class=\"bt pay sup\" data-a=\"ua\" data-b=\"1\">")
+rep("${t.lv===3&&!w?'<small class=\"tpn\">'+TL('Level 4: choose a branch')+'</small>':''}", "${t.lv===3&&!w?'<small class=\"tpn\">'+lvZ('下一级：4级大师','Next: Level 4 Master')+'</small>':''}")
+rep("${t.br?' · '+TL(t.br===1?'Heavy':'Rapid'):''}", "${t.lv>=4&&!w?' · '+lvZ('大师','Master'):''}")
+rep("selT.lv<(w?6:3)?upg(selT):toast(selT.lv===3&&!w?'Pick Heavy or Rapid in the panel':'Max level')", "selT.lv<(w?6:4)?upg(selT):toast('Max level')")
+#     Towers without a new model keep their old level-4 look.
+rep("const spr=towerSpr(k,lv,br,a);", "const spr=towerSpr(k,lv,lv>3?(br||1):br,a);")
+#     The tower panel stays up 3 s instead of 1.5 s.
+rep("},1500)}", "},3000)}")
+# 31. CK3D tower renderer (pilot: Cannon and Holy). Real 3D meshes with a static base and
+#     an independently rotating turret (64 facings, cached), recoil, and a true muzzle
+#     point used by projectiles and muzzle flashes. Build-menu paintings are unchanged.
+rep("function tower(k,lv,p,u,a,rc,stun,br){\n if(k==='wall'){dWallT(lv,p,u,rc);return}",
+    "function tower(k,lv,p,u,a,rc,stun,br){\n if(k==='wall'){dWallT(lv,p,u,rc);return}\n if(window.CK3D&&CK3D.has(k)){CK3D.draw(c,k,lv,p,u,a,rc,stun,TM);return}")
+rep("let d=TW[t.k],u=tw/100,p=pp(t.x,t.y),fx=p.x+Math.cos(t.a)*24*u,fy=p.y-20*u+Math.sin(t.a)*12*u,dm=",
+    "let d=TW[t.k],u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],dm=")
+rep("function vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),fx=p.x+Math.cos(t.a)*24*u,fy=p.y-20*u+Math.sin(t.a)*12*u,",
+    "function ckMuzzle(t,p,u){return window.CK3D&&CK3D.has(t.k)?CK3D.muzzle(t,p,u):[p.x+Math.cos(t.a)*24*u,p.y-20*u+Math.sin(t.a)*12*u]}\nfunction vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],")
+rep("<script>const SFXD=", "<script id=\"ck-3d\">\n"+open(os.path.join(SRC,'ck3d.js'),encoding='utf8').read()+"</script>\n<script>const SFXD=")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
