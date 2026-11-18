@@ -113,7 +113,12 @@ function ckV3Tick(dt){
 function ckV3Ui(){
  if(!ckChip){const bb=document.getElementById('ck-bossbar');if(!bb)return;ckChip=document.createElement('div');ckChip.id='ck-v3';bb.parentNode.appendChild(ckChip)}
  const rail=document.getElementById('rail'),host=ckChip.parentNode;if(!rail||!host)return;
- const hr=host.getBoundingClientRect(),rr=rail.getBoundingClientRect();ckChip.style.top=Math.max(60,rr.top-hr.top-30)+'px';
+ const hr=host.getBoundingClientRect(),rr=rail.getBoundingClientRect(),cvE=document.getElementById('cv');
+ // sit in the free strip between the bottom of the battlefield and the build bar; if that strip is too thin, float just above the bar
+ let top=rr.top-hr.top-30;
+ if(cvE&&W){const cr=cvE.getBoundingClientRect(),k=cr.height/H,bb=cr.top+(oy+(port?L.cols:L.rows)*tw)*k,gap=rr.top-bb,ch=(ckChip.offsetHeight||24)*(hr.height/(host.offsetHeight||hr.height)||1);top=gap>=ch+4?bb-hr.top+(gap-ch)/2:bb-hr.top-ch-6}
+ const sc=hr.height/(host.offsetHeight||hr.height)||1; // host may be CSS-scaled on small screens
+ ckChip.style.top=Math.max(60,top/sc)+'px';
  let h='';
  const nq=L.wave<L.waves?L.nq:null;
  if(nq&&nq.q){const o=ckWaveSum(nq.q);h+=`<span class="nw"><i>${lvZ('下一波','Next')}</i> ${o.b?'👑 '+lvZ('首领','Boss'):o.n}${Object.keys(o.r).map(k=>` <em style="color:${CKR[k].c}">${CKR[k].g}${o.r[k]}</em>`).join('')}</span>`}
