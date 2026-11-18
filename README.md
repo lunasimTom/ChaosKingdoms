@@ -7,7 +7,20 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.1.apk` | Android app (package `com.chaoskingdoms.game`, version 3.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.2.apk` | Android app (package `com.chaoskingdoms.game`, version 3.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.2
+
+**Fix: the Level 80 boss (Ancient Treant) was invisible.** Only its shadow and health bar were drawn. The original game file names a sprite for it, `e_treant`, that was never included, so there was no image to draw. The Ancient Treant now has its own art, built from the Stone Golem sprite and recoloured in moss and bark with a crown of branches and leaves, in the same style as the other monsters. As a safety net, any boss whose sprite is missing now falls back to an existing boss sprite, so a boss can no longer be invisible.
+
+**Fix: corrupted pixels in two enemy sprites.** The Stone Golem and the Giant Spider each had a block of random-coloured pixels in the lower-right corner, which came from damaged image data in the original file. The Golem is repaired by mirroring its intact left side. On the Spider, only the corrupted pixels are removed.
+
+**Known limitation.** The Ice Dragon's image is also damaged in the original file: only the head and neck survived. That boss (Levels 24, 56, 72 and 97) is fully visible, but appears as a head and neck.
+
+**Tested**
+- All 16 boss encounters (Levels 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 97, 98, 99, 100), played through to the end. Each was checked every frame for a drawable sprite, across spawn, the summon shield, enrage and growth, and with both bosses on levels 40 and up. There are no missing sprites now; on v3.1 the same test flags Level 80.
+- A screenshot of every boss in its own level.
+- Every interface (42 states), gameplay across levels 1–100, boss summons at 50% and 25%, the v3 mechanics test and the 40-tower benchmark: all unchanged.
 
 ## What changed in v3.1
 
@@ -255,7 +268,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.2.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

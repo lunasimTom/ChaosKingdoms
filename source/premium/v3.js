@@ -159,3 +159,32 @@ function ckChipCovered(){
  return false}
 function ckChipVis(){if(!ckChip)return;const show=!!ckChip._has&&ckInBattle();ckChip.hidden=!show;if(show)ckChip.style.visibility=ckChipCovered()?'hidden':''}
 setInterval(ckChipVis,120);
+
+// ---- sprite repairs (v3.2) ----
+// The original file's Level 80 boss (Ancient Treant) points at a sprite, e_treant, that was never
+// included, so that boss drew only its shadow and health bar. The Stone Golem and Giant Spider
+// sprites also carry a block of corrupted pixels. Repair them once the images have loaded, and
+// build the Treant from the repaired Golem art.
+function ckMirrorFix(im,x0,y0){const w=im.width,h=im.height,c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(im,0,0);
+ // replace the corrupted lower-right block with the mirror image of the clean left side
+ g.clearRect(x0,y0,w-x0,h-y0);g.save();g.beginPath();g.rect(x0,y0,w-x0,h-y0);g.clip();g.translate(w,0);g.scale(-1,1);g.drawImage(im,0,0);g.restore();return c}
+function ckDeglitch(im,x0,y0,x1,y1){const w=im.width,h=im.height,c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(im,0,0);const id=g.getImageData(0,0,w,h),d=id.data;
+ // inside the damaged block keep only the creature's own palette (purples, violets, near-greys); clear the rest
+ for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*w+x)*4,r=d[i],gg=d[i+1],b=d[i+2],mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),sat=mx?(mx-mn)/mx:0;let hue=0;if(mx>mn){hue=mx===r?((gg-b)/(mx-mn))%6:mx===gg?(b-r)/(mx-mn)+2:(r-gg)/(mx-mn)+4;hue=(hue*60+360)%360}
+  const own=(hue>=255&&hue<=335&&sat>.25)||(sat<.18&&mx>140);if(!own)d[i+3]=0}
+ g.putImageData(id,0,0);return c}
+function ckTreantArt(golem){const w=golem.width,h=golem.height,pad=Math.round(h*.22),c=document.createElement('canvas');c.width=w;c.height=h+pad;const g=c.getContext('2d');
+ if('filter' in g){g.filter='hue-rotate(62deg) saturate(1.25) brightness(.88)'}g.drawImage(golem,0,pad);g.filter='none';
+ // a moss sheen over the bark, kept inside the body
+ g.globalCompositeOperation='source-atop';g.fillStyle='rgba(70,140,40,.18)';g.fillRect(0,0,w,h+pad);g.globalCompositeOperation='source-over';
+ // leafy canopy on the head and shoulders
+ g.strokeStyle='#5a3a1c';g.lineCap='round';g.lineWidth=Math.max(2,w*.04);for(const[a,b2,cx2,cy2] of [[.36,.36,.18,.12],[.64,.36,.82,.1],[.45,.33,.36,.02],[.56,.33,.66,.03]]){g.beginPath();g.moveTo(a*w,b2*(h+pad));g.quadraticCurveTo((a+cx2)/2*w,(b2*(h+pad)+cy2*(h+pad))/2-pad*.2,cx2*w,cy2*(h+pad)+pad*.3);g.stroke()}
+ const L=[[.18,.12,.11],[.82,.1,.11],[.36,.02,.1],[.66,.03,.1],[.26,.07,.08],[.74,.06,.08],[.5,0,.08],[.14,.3,.08],[.86,.3,.08]];
+ for(const[x,y,r] of L){const cx=x*w,cy=y*(h+pad)+pad*.35,R=r*w;const gr=g.createRadialGradient(cx-R*.3,cy-R*.35,R*.1,cx,cy,R);gr.addColorStop(0,'#b5f06a');gr.addColorStop(.55,'#4fa83a');gr.addColorStop(1,'#1f5a22');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,R,0,7);g.fill();g.strokeStyle='rgba(10,40,12,.6)';g.lineWidth=1;g.stroke()}
+ return c}
+function ckFixSprites(){const g=SP.e_golem,sp=SP.e_spider;if(!g||!sp||!g.complete||!sp.complete||!g.width||!sp.width)return false;
+ try{let gf=g;if(g.width===71&&g.height===66)gf=SP.e_golem=ckMirrorFix(g,37,43);if(sp.width===89&&sp.height===66)SP.e_spider=ckDeglitch(sp,40,30,89,66);SP.e_treant=ckTreantArt(gf)}catch(e){SP.e_treant=SP.e_treant||g}
+ return true}
+// a boss whose sprite is missing falls back to a real one instead of drawing nothing
+function ckBossKey(k){return SP[k]?k:(SP.e_golem&&k==='e_treant'?'e_golem':'b_necromancer')}
+setTimeout(function ckFS(){if(!ckFixSprites())setTimeout(ckFS,150)},0);

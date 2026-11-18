@@ -1284,7 +1284,7 @@ let reM=null;
 
 const R=[{n:'Forest Kingdom',m:'forest',h:100,s:38,l:32,ph:34,sky:['#1b3a2a','#7fb26a'],wx:'spore',bh:105},{n:'Desert Wasteland',m:'desert',h:38,s:42,l:40,ph:28,sky:['#3a2410','#e0a050'],wx:'spark',bh:40},{n:'Ice Realm',m:'ice',h:200,s:26,l:52,ph:215,sky:['#1c3358','#a9d3ea'],wx:'snow',bh:195},{n:'Lava Fortress',m:'lava',h:12,s:30,l:22,ph:20,sky:['#240b18','#e0532b'],wx:'ember',bh:20},{n:'Sky Castle',m:'sky',h:210,s:30,l:50,ph:40,sky:['#2a4a8a','#bcd8f5'],wx:'rain',bh:210},{n:'Underground Dungeon',m:'dungeon',h:268,s:22,l:22,ph:260,sky:['#0f0a2a','#4a2f8f'],wx:'spark',bh:270},{n:'Celestial Rift',m:'sky2',h:282,s:35,l:35,ph:290,sky:['#17113d','#bd8cff'],wx:'spark',bh:285},{n:'Abyssal Crown',m:'abyss',h:325,s:30,l:24,ph:330,sky:['#260b30','#e66ab5'],wx:'ember',bh:320},
 {n:'Stormfront Expanse',m:'sky',h:205,s:42,l:48,ph:215,sky:['#18334f','#8dd9f2'],wx:'rain',bh:205},{n:'Emerald Wilds',m:'forest',h:118,s:44,l:31,ph:40,sky:['#123b2b','#83c76a'],wx:'spore',bh:115},{n:'Obsidian Depths',m:'dungeon',h:278,s:26,l:18,ph:270,sky:['#171323','#9874a8'],wx:'spark',bh:275},{n:'Crimson Caldera',m:'lava',h:8,s:38,l:20,ph:16,sky:['#2b101b','#f0783b'],wx:'ember',bh:18},{n:'The Fourfold Throne',m:'abyss',h:330,s:42,l:18,ph:340,sky:['#180820','#f28ccf'],wx:'ember',bh:330,count:4,special:1}];
-const BOSS=['Skeleton King','Demon Lord','Ice Dragon','Fire Giant','Dragon','Necromancer','Astral Sovereign','Abyssal Empress','Storm Tyrant','Ancient Treant','Obsidian Colossus','Crimson Behemoth','The Fourfold Throne','Void Seraph','Eternal Wyrm','Chaos Sovereign','Abyssal Titan'],BOSSK=['b_skeleton_king','b_demon_lord','b_ice_dragon','b_fire_giant','e_dragon','b_necromancer','b_ice_dragon','b_necromancer','b_ice_dragon','e_treant','b_necromancer','b_fire_giant','b_necromancer','b_ice_dragon','e_dragon','b_demon_lord','b_skeleton_king'],POOL=[{grunt:['e_goblin','e_skeleton'],runner:['e_wolf'],brute:['e_orc','e_ogre']},{grunt:['e_zombie','e_goblin'],runner:['e_spider','e_assassin'],brute:['e_ogre','e_vampire']},{grunt:['e_mystic','e_skeleton'],runner:['e_wolf','e_ghost'],brute:['e_troll','e_golem']},{grunt:['e_shaman','e_skeleton'],runner:['e_assassin','e_spider'],brute:['e_demon','e_ogre']},{grunt:['e_mystic','e_shaman'],runner:['e_ghost','e_wolf'],brute:['e_golem','e_dknight']},{grunt:['e_zombie','e_skeleton','e_shaman'],runner:['e_spider','e_ghost','e_assassin'],brute:['e_dknight','e_vampire','e_troll','e_demon']},{grunt:['e_mystic','e_ghost'],runner:['e_ghost','e_assassin'],brute:['e_golem','e_dknight']},{grunt:['e_zombie','e_shaman'],runner:['e_assassin','e_ghost'],brute:['e_demon','e_vampire','e_dknight']}],spk=t=>{let ri=L.i/8|0;if(t==='boss')return BOSSK[L.i>=96?13+(L.i-96):ri]||'b_necromancer';let a=(POOL[ri]||POOL[5])[t];if(!L.demo&&L.i>=4&&Math.random()<Math.min(.35,.08+(L.i-4)*.004))return t==='brute'?'e_dragon':'e_ghost';return a[Math.random()*a.length|0]};
+const BOSS=['Skeleton King','Demon Lord','Ice Dragon','Fire Giant','Dragon','Necromancer','Astral Sovereign','Abyssal Empress','Storm Tyrant','Ancient Treant','Obsidian Colossus','Crimson Behemoth','The Fourfold Throne','Void Seraph','Eternal Wyrm','Chaos Sovereign','Abyssal Titan'],BOSSK=['b_skeleton_king','b_demon_lord','b_ice_dragon','b_fire_giant','e_dragon','b_necromancer','b_ice_dragon','b_necromancer','b_ice_dragon','e_treant','b_necromancer','b_fire_giant','b_necromancer','b_ice_dragon','e_dragon','b_demon_lord','b_skeleton_king'],POOL=[{grunt:['e_goblin','e_skeleton'],runner:['e_wolf'],brute:['e_orc','e_ogre']},{grunt:['e_zombie','e_goblin'],runner:['e_spider','e_assassin'],brute:['e_ogre','e_vampire']},{grunt:['e_mystic','e_skeleton'],runner:['e_wolf','e_ghost'],brute:['e_troll','e_golem']},{grunt:['e_shaman','e_skeleton'],runner:['e_assassin','e_spider'],brute:['e_demon','e_ogre']},{grunt:['e_mystic','e_shaman'],runner:['e_ghost','e_wolf'],brute:['e_golem','e_dknight']},{grunt:['e_zombie','e_skeleton','e_shaman'],runner:['e_spider','e_ghost','e_assassin'],brute:['e_dknight','e_vampire','e_troll','e_demon']},{grunt:['e_mystic','e_ghost'],runner:['e_ghost','e_assassin'],brute:['e_golem','e_dknight']},{grunt:['e_zombie','e_shaman'],runner:['e_assassin','e_ghost'],brute:['e_demon','e_vampire','e_dknight']}],spk=t=>{let ri=L.i/8|0;if(t==='boss')return ckBossKey(BOSSK[L.i>=96?13+(L.i-96):ri]||'b_necromancer');let a=(POOL[ri]||POOL[5])[t];if(!L.demo&&L.i>=4&&Math.random()<Math.min(.35,.08+(L.i-4)*.004))return t==='brute'?'e_dragon':'e_ghost';return a[Math.random()*a.length|0]};
 const TW={arrow:{n:'Archer Tower',cost:60,dmg:16,rg:3.4,rt:.6,h:35,d:'Fast bolts, long reach.'},cannon:{n:'Cannon Tower',cost:90,dmg:34,rg:3,rt:1.5,h:215,d:'Area blast. +30% vs slowed foes.'},ice:{n:'Frost Tower',cost:75,dmg:8,rg:2.9,rt:1,h:190,d:'Slows enemies by half.'},zap:{n:'Lightning Tower',cost:110,dmg:22,rg:3.1,rt:1.1,h:275,d:'Chains to 3. +30% vs poisoned foes.'},toxin:{n:'Poison Tower',cost:85,dmg:7,rg:3,rt:.9,h:100,d:'Stacking poison. Pairs with Lightning.'},mage:{n:'Mage Tower',cost:100,dmg:15,rg:3.2,rt:.8,h:270,d:'Twin orbs hit two targets.'},holy:{n:'Holy Tower',cost:120,dmg:24,rg:3.2,rt:1.1,h:50,d:'Smite. +60% vs brutes and bosses.'},wall:{n:'Barricade',cost:25,dmg:0,rg:0,rt:9,h:30,d:'Obstacle: no damage, blocks enemies. 6 tiers up to the SUPER OBSTACLE.'}};
 const WN=['Wooden Barricade','Reinforced Barricade','Stone Wall','Iron Bastion','Steel Fortress','SUPER OBSTACLE'],WHP=[200,320,480,700,1000,1800],WARM=[0,.05,.1,.15,.2,.3],WREG=[0,0,0,0,.005,.01],WUPC=[30,60,110,190,420,0];
 /* Enemy aggro radius (tiles) for attacking towers that are NOT blocking the road; helpers for clear line-of-walk */
@@ -1682,6 +1682,35 @@ function ckChipCovered(){
  return false}
 function ckChipVis(){if(!ckChip)return;const show=!!ckChip._has&&ckInBattle();ckChip.hidden=!show;if(show)ckChip.style.visibility=ckChipCovered()?'hidden':''}
 setInterval(ckChipVis,120);
+
+// ---- sprite repairs (v3.2) ----
+// The original file's Level 80 boss (Ancient Treant) points at a sprite, e_treant, that was never
+// included, so that boss drew only its shadow and health bar. The Stone Golem and Giant Spider
+// sprites also carry a block of corrupted pixels. Repair them once the images have loaded, and
+// build the Treant from the repaired Golem art.
+function ckMirrorFix(im,x0,y0){const w=im.width,h=im.height,c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(im,0,0);
+ // replace the corrupted lower-right block with the mirror image of the clean left side
+ g.clearRect(x0,y0,w-x0,h-y0);g.save();g.beginPath();g.rect(x0,y0,w-x0,h-y0);g.clip();g.translate(w,0);g.scale(-1,1);g.drawImage(im,0,0);g.restore();return c}
+function ckDeglitch(im,x0,y0,x1,y1){const w=im.width,h=im.height,c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(im,0,0);const id=g.getImageData(0,0,w,h),d=id.data;
+ // inside the damaged block keep only the creature's own palette (purples, violets, near-greys); clear the rest
+ for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*w+x)*4,r=d[i],gg=d[i+1],b=d[i+2],mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),sat=mx?(mx-mn)/mx:0;let hue=0;if(mx>mn){hue=mx===r?((gg-b)/(mx-mn))%6:mx===gg?(b-r)/(mx-mn)+2:(r-gg)/(mx-mn)+4;hue=(hue*60+360)%360}
+  const own=(hue>=255&&hue<=335&&sat>.25)||(sat<.18&&mx>140);if(!own)d[i+3]=0}
+ g.putImageData(id,0,0);return c}
+function ckTreantArt(golem){const w=golem.width,h=golem.height,pad=Math.round(h*.22),c=document.createElement('canvas');c.width=w;c.height=h+pad;const g=c.getContext('2d');
+ if('filter' in g){g.filter='hue-rotate(62deg) saturate(1.25) brightness(.88)'}g.drawImage(golem,0,pad);g.filter='none';
+ // a moss sheen over the bark, kept inside the body
+ g.globalCompositeOperation='source-atop';g.fillStyle='rgba(70,140,40,.18)';g.fillRect(0,0,w,h+pad);g.globalCompositeOperation='source-over';
+ // leafy canopy on the head and shoulders
+ g.strokeStyle='#5a3a1c';g.lineCap='round';g.lineWidth=Math.max(2,w*.04);for(const[a,b2,cx2,cy2] of [[.36,.36,.18,.12],[.64,.36,.82,.1],[.45,.33,.36,.02],[.56,.33,.66,.03]]){g.beginPath();g.moveTo(a*w,b2*(h+pad));g.quadraticCurveTo((a+cx2)/2*w,(b2*(h+pad)+cy2*(h+pad))/2-pad*.2,cx2*w,cy2*(h+pad)+pad*.3);g.stroke()}
+ const L=[[.18,.12,.11],[.82,.1,.11],[.36,.02,.1],[.66,.03,.1],[.26,.07,.08],[.74,.06,.08],[.5,0,.08],[.14,.3,.08],[.86,.3,.08]];
+ for(const[x,y,r] of L){const cx=x*w,cy=y*(h+pad)+pad*.35,R=r*w;const gr=g.createRadialGradient(cx-R*.3,cy-R*.35,R*.1,cx,cy,R);gr.addColorStop(0,'#b5f06a');gr.addColorStop(.55,'#4fa83a');gr.addColorStop(1,'#1f5a22');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,R,0,7);g.fill();g.strokeStyle='rgba(10,40,12,.6)';g.lineWidth=1;g.stroke()}
+ return c}
+function ckFixSprites(){const g=SP.e_golem,sp=SP.e_spider;if(!g||!sp||!g.complete||!sp.complete||!g.width||!sp.width)return false;
+ try{let gf=g;if(g.width===71&&g.height===66)gf=SP.e_golem=ckMirrorFix(g,37,43);if(sp.width===89&&sp.height===66)SP.e_spider=ckDeglitch(sp,40,30,89,66);SP.e_treant=ckTreantArt(gf)}catch(e){SP.e_treant=SP.e_treant||g}
+ return true}
+// a boss whose sprite is missing falls back to a real one instead of drawing nothing
+function ckBossKey(k){return SP[k]?k:(SP.e_golem&&k==='e_treant'?'e_golem':'b_necromancer')}
+setTimeout(function ckFS(){if(!ckFixSprites())setTimeout(ckFS,150)},0);
 
 function ckSummonTick(dt){const a=L.scs;if(!a||!a.length){L.sc=null;return}if(L.over){L.scs=[];L.sc=null;return}for(const sc of a.slice()){sc.t-=dt;const n=Math.ceil(sc.t);if(sc===a[0]&&n<sc.last&&n>0){sc.last=n;beep(n<=2?880:620,.12,'square',.06)}if(sc.t<=0){a.splice(a.indexOf(sc),1);if(sc.b){sc.b.chan=0;sc.b.pro=0}bossSummon(sc.b,sc.ph)}}L.sc=a[0]||null}
 function bossSummon(boss,ph){
@@ -4728,7 +4757,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.1 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.2 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

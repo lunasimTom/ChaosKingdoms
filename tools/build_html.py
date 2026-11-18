@@ -367,6 +367,9 @@ for _k in ('river','air','bomb'):
     rep(f"L.inv.{_k}--;", f"L.inv.{_k}--;ckIU('{_k}');")
 rep("if(win){S.prog[L.i]=", "if(win){ckCrownEval();S.prog[L.i]=")
 rep("${rewardPanel(st,pg)}", "${rewardPanel(st,pg)}${ckCrownHtml()}")
+# 33. Bosses always have a sprite: spk() resolves the boss key through ckBossKey (fixes the
+#     invisible Level 80 boss; see the sprite repairs at the end of v3.js).
+rep("if(t==='boss')return BOSSK[L.i>=96?13+(L.i-96):ri]||'b_necromancer';", "if(t==='boss')return ckBossKey(BOSSK[L.i>=96?13+(L.i-96):ri]||'b_necromancer');")
 
 # ---------------------------------------------------------------- v2.8 (pilot) towers
 # Disabled until the tower pilot / Master tier is approved for release.
