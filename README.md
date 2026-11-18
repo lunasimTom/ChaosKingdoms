@@ -7,7 +7,19 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.0.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.0.0, Android 7.0 or newer). Signed with APK Signature Scheme v2. |
+| `dist/ChaosKingdoms-v2.1.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.1.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as 2.0.0, so it installs as an update. |
+
+## What changed in v2.1
+
+- **Freeze lasts 10 seconds** (was 4). The shop text in English and Chinese is updated to match.
+- **Smaller no-build zone around monster portals.** It was a 5×5 block per portal from level 33 onward, which covered up to half the board on 4-portal maps. It is now the portal tile plus its four direct neighbours. Late levels go from about 45–60 buildable tiles to about 88–100.
+- **Late-game slowdown fixed.** The game loop credited at most 50 ms of game time per frame, so whenever the frame rate dropped below 20 fps, everything (energy-core build timers, waves, cooldowns) quietly ran in slow motion. Frames were slow for these reasons:
+  - each portal drew about 30 glowing strokes with canvas blur every frame;
+  - tower sprites were cached at full size (380×428, up to 180 of them) and shrunk on every draw;
+  - turning towers kept missing the sprite cache;
+  - each level gem used a clip and a blend pass.
+
+  All four are fixed, and the loop now catches up to 150 ms per frame. On a 4-portal map with 40 towers, a frame takes about 22 ms instead of 139 ms.
 
 ## What changed in v2.0
 
@@ -54,7 +66,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.0.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.1.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

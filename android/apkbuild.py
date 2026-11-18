@@ -4,8 +4,8 @@ aligned (zipalign-equivalent) unsigned APK writer. No Android SDK required."""
 import struct, sys, zipfile, zlib
 
 PKG = 'com.chaoskingdoms.game'
-VERSION_CODE = 20
-VERSION_NAME = '2.0.0'
+VERSION_CODE = 21
+VERSION_NAME = '2.1.0'
 MIN_SDK, TARGET_SDK = 24, 34
 APP_LABEL = 'Chaos Kingdoms'
 ICON_PATH = 'res/drawable-xxxhdpi-v4/ic_launcher.png'
