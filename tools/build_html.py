@@ -177,7 +177,7 @@ rep("let d=Math.min(1.5,(devicePixelRatio||1)*FS)",
 rep("if(id==='rep')L.price.rep+=150", "if(id==='rep')L.price.rep=Math.min(700,L.price.rep+100)")
 rep("st:'Instant · price rises 150 after each purchase'", "st:'Instant · +100 per purchase this level (max 700)'")
 rep("st:'瞬发 · 每次购买涨价150'", "st:'瞬发 · 本关每次购买+100（最高700）'")
-rep("L.inv[id]--;L.cdn[id]=CDT[id];", "if(id==='rep'&&L.lives>=30)return toast(lvZ('生命值已满','Lives are already full'));L.inv[id]--;L.cdn[id]=CDT[id];")
+rep("L.inv[id]--;L.cdn[id]=CDT[id];", "if(id==='rep'&&L.lives>=ckCap())return toast(lvZ('生命值已满','Lives are already full'));L.inv[id]--;L.cdn[id]=CDT[id];")
 # 14. Monster motion: elastic pop-in on spawn, squash on hit, heavier footfalls for brutes
 #     and bosses, softer shadows under flyers. Pure transform math: no extra draws.
 rep("function eUp(e,dt){let d=e.d;e.fl-=dt;", "function eUp(e,dt){let d=e.d;e.fl-=dt;e.age=(e.age||0)+dt;")
@@ -222,32 +222,96 @@ rep("function ckSummonTick(dt){",
     "c.restore()}c.globalAlpha=pa}\n"
     "function ckSummonTick(dt){")
 
-# ---------------------------------------------------------------- v2.6 separate bases
-# 19. Each base has its own life pool (the level's lives are split between the bases, so
-#     total lives and star ratings are unchanged). A leak damages the base it reached.
-#     A destroyed base becomes smoking rubble and monsters re-route to the bases still
-#     standing; the level is lost only when every base is destroyed. Heals (potion,
-#     hearts, rewards) go to the weakest surviving base; L.lives stays the total.
+# ---------------------------------------------------------------- v2.6/2.7 base health system
+# 19. Separate bases: each base has its own health; a leak damages the base it reached;
+#     a destroyed base turns to rubble, leaves the pathing and monsters re-route; the level
+#     is lost only when every base is destroyed. L.lives stays the total of all bases.
+# 20. Scaled health (v2.7): 20 + 2 per realm, x difficulty (+25%, +10%, x1, -15%, -25%),
+#     x1.36 split over two bases / x1.5 over three, +1 per commander rank 3/5/7/9.
+#     Health stays far below the incoming threat (e.g. Normal Lv96: 57 vs 814).
+# 21. Stars use the share of starting health kept (90% / 50%), so they stay meaningful.
+# 22. A boss leak costs 38% of the base it reaches instead of a flat 10.
+# 23. Base upgrades (tap a base): Fortify (+20% max health), Repair (heals only while the
+#     field is clear), Barrier (blocks 1-2 non-boss leaks per wave). They cost battle
+#     coins that would otherwise buy towers.
+# 24. A perfect wave heals each surviving base by 1, never above its maximum (replaces the
+#     old +1 heart every 3 perfect waves).
+# 25. Healing scales: potion +25% of starting health, bought heart +5%, Last Stand +10%;
+#     the overall cap is 150% of starting health instead of a flat 30.
 rep("function leak(e){let d=e.d;e.hp=-1;if(!L.demo){if(!(L.bf.shield>0))L.lives=Math.max(0,L.lives-d.l);",
     "function leak(e){let d=e.d;e.hp=-1;if(!L.demo){ckBaseSync();if(!(L.bf.shield>0))ckBaseHit(e,d.l);")
-rep("L.ct-=dt;updAir(dt);", "if(!L.demo)ckBaseSync();L.ct-=dt;updAir(dt);")
+rep("L.ct-=dt;updAir(dt);", "if(!L.demo){ckBaseSync();ckBaseTick(dt)}L.ct-=dt;updAir(dt);")
 rep("drawRiver();dPortal();dBase();", "drawRiver();dPortal();dBase();ckBaseDraw();")
-rep("function ckSummonTick(dt){",
-    "function ckBaseSync(){if(!L.base||L.base.L!==L){const gs=L.goals.slice(),n=gs.length,per=Math.floor(L.lives/n);L.base=gs.map((g,i)=>({x:g[0],y:g[1],hp:per+(i<L.lives-per*n?1:0),dead:0,hit:-9}));L.base.L=L}"
-    "const al=L.base.filter(b=>!b.dead);if(!al.length)return;let tot=0;for(const b of al)tot+=b.hp;"
-    "while(L.lives>tot){let m=al[0];for(const b of al)if(b.hp<m.hp)m=b;m.hp++;tot++}while(L.lives<tot){let m=al[0];for(const b of al)if(b.hp>m.hp)m=b;if(m.hp<=0)break;m.hp--;tot--}}\n"
-    "function ckBaseHit(e,n){const al=L.base.filter(b=>!b.dead);if(!al.length)return;let b=al[0],bd=1e9;for(const q of al){const dd=Math.hypot(q.x-e.x,q.y-e.y);if(dd<bd){bd=dd;b=q}}"
-    "b.hp=Math.max(0,b.hp-n);b.hit=TM;if(b.hp<=0){b.dead=1;b.deadT=TM;const rest=L.base.filter(q=>!q.dead);const sp=pp(b.x,b.y);vBoom(sp.x,sp.y,1.6);vFlash('#ff6a3a',.35);L.shake=Math.max(L.shake||0,1);"
-    "if(rest.length){const gi=L.goals.findIndex(g=>g[0]===b.x&&g[1]===b.y);if(gi>=0&&L.goals.length>1){L.goals.splice(gi,1);replan()}"
-    "toast(lvZ('⚠ 一座基地已被摧毁！守住最后的基地！','⚠ A base has fallen! Defend the remaining base!'));window.ckBanner&&ckBanner(lvZ('基地沦陷','Base destroyed'),lvZ('死守到底','HOLD THE LINE'),1)}}"
-    "let t=0;for(const q of L.base)if(!q.dead)t+=q.hp;L.lives=t}\n"
-    "function ckBaseDraw(){if(L.demo||!L.base||L.base.L!==L||L.base.length<2)return;for(const b of L.base){const p=pp(b.x,b.y),u=tw/100;"
-    "if(b.dead){ell(p.x,p.y+tw*.3,tw*.6,tw*.22,'#120a08cc');ell(p.x,p.y+tw*.25,tw*.42,tw*.15,'#2a1a14');ell(p.x-tw*.2,p.y+tw*.18,tw*.13,tw*.08,'#5a5068');ell(p.x+tw*.18,p.y+tw*.22,tw*.11,tw*.07,'#4a4258');ell(p.x+tw*.02,p.y+tw*.08,tw*.15,tw*.09,'#6a6078');ell(p.x-tw*.05,p.y+tw*.02,tw*.07,tw*.05,'#3fbfb0');for(let i=0;i<3;i++){const ph=(TM*.5+i/3)%1;c.globalAlpha=(1-ph)*.5;circ(p.x+Math.sin(i*2.1+TM)*tw*.15,p.y+tw*.1-ph*tw*.9,tw*(.08+.12*ph),'#3a3440')}"
-    "c.globalAlpha=.6+.4*Math.sin(TM*9+b.x);circ(p.x-tw*.1,p.y+tw*.22,tw*.05,'#ff7a2a');circ(p.x+tw*.12,p.y+tw*.26,tw*.04,'#ffb04a');c.globalAlpha=1;continue}"
-    "const mx=Math.max(1,b.hp,b.mx||0);b.mx=mx;const w=tw*.82,h=Math.max(5,tw*.11),x=p.x-w/2,up=p.y>H*.5,y=up?p.y-tw*1.05:p.y+tw*.62,f=b.hp/mx,hf=TM-b.hit<.4;"
-    "c.fillStyle='#07101dd9';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle=hf?'#ffffff':f>.5?'#5eead4':f>.25?'#ffbd3f':'#ff4e58';c.fillRect(x,y,w*f,h);"
-    "c.font=`900 ${Math.max(10,tw*.2)}px Nunito`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#07101d';const s='♥ '+b.hp;const ty=up?y-tw*.06:y+h+tw*.2;c.strokeText(s,p.x,ty);c.fillStyle=hf?'#ff8a8a':'#e8fffb';c.fillText(s,p.x,ty)}}\n"
-    "function ckSummonTick(dt){")
+rep("lives:20,", "lives:ckMaxLives(i),mxl:ckMaxLives(i),")
+rep("let st=L.lives>=18?3:L.lives>=10?2:1;", "let st=L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1;")
+rep("(L.lives>=18?3:L.lives>=10?2:1)", "(L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1)")
+rep("if(L.lives>=20)S.stats.perfect++", "if(L.lives>=L.mxl)S.stats.perfect++")
+rep("$('lvw').classList.toggle('low',L.lives<=5)", "$('lvw').classList.toggle('low',L.lives<=Math.max(3,L.mxl*.25))")
+rep("L.lives=Math.min(30,L.lives+5)", "L.lives=Math.min(ckCap(),L.lives+ckHeal())")
+rep("toast('+5 lives')", "toast('+'+ckHeal()+' ♥')")
+rep("Instantly restores 5 lives (up to a maximum of 30).", "Restores 25% of your starting base health (up to 150% of it).")
+rep("立即恢复5点生命（上限30）。", "立即恢复初始基地生命的25%（上限为初始的150%）。")
+rep("d:'+5 lives. Price rises each buy.'", "d:'+25% base health. Price rises each buy.'")
+rep("d:'+5生命，每次购买涨价。'", "d:'+25%基地生命，每次购买涨价。'")
+rep("L.lives=Math.min(HMAX,L.lives+n)", "L.lives=Math.min(ckCap(),L.lives+n)")
+rep("TL('Hearts ♥ {0}/{1}',L.lives,HMAX)", "TL('Hearts ♥ {0}/{1}',L.lives,ckCap())")
+rep("if(L.lives>=HMAX)return toast('Hearts are full');let pr=hPrice();if(!charge(pr))return toast('Not enough coins');L.hb=(L.hb||0)+1;heart(1,'bought')",
+    "if(L.lives>=ckCap())return toast('Hearts are full');let pr=hPrice();if(!charge(pr))return toast('Not enough coins');L.hb=(L.hb||0)+1;heart(Math.max(1,Math.round(L.mxl*.05)),'bought')")
+rep("L.lives=Math.min(20,L.lives+2)", "L.lives=Math.min(ckCap(),L.lives+Math.max(2,Math.round(L.mxl*.1)))")
+rep("if(L.pstreak%3===0)heart(1,'3 perfect waves')", "ckPerfectRepair()")
+rep("L.lk=0;if(pf)sfx('perfect',.6);", "L.lk=0;ckBarrierReset();if(pf)sfx('perfect',.6);")
+rep("let t=L.tr.find(t=>t.x===q.x&&t.y===q.y);if(t){if(t.building)",
+    "{const bb=L.base&&L.base.L===L&&L.base.find(b=>!b.dead&&b.x===q.x&&b.y===q.y);if(bb){ckBasePanel(bb);return}}let t=L.tr.find(t=>t.x===q.x&&t.y===q.y);if(t){if(t.building)")
+# ---------------------------------------------------------------- two-base system (v2.7)
+# 26. ~30 two-base levels: level 5 (with a one-time explanation), the 3rd and 6th level of
+#     realms 2-6, the 3rd, 5th and 7th of realms 7-12, plus the realm-11 and realm-12 boss
+#     finales. Other boss levels stay single-base.
+# 27. Bases are placed far apart (opposite corners of the defence edge, >= 6 tiles), so the
+#     monster routes really split. Levels 98 and 100 (final realm) have three bases.
+# 28. Level select marks multi-base levels; a one-time tip explains base upgrades.
+rep("M=(m=>(m.open=true,m.routes=[],extraPortals(m,i,r,cols,rows),m))(genMap(i,r,cols,rows))",
+    "M=(m=>(m.open=true,m.routes=[],ckGoals(m,i,cols,rows),extraPortals(m,i,r,cols,rows),m))(genMap(i,r,cols,rows))")
+rep("style=\"--level-art:url('${levelArt}')\" data-i=\"${i}\" aria-label=\"${TL('Level {0}',i+1)}\">", "style=\"--level-art:url('${levelArt}')\" data-i=\"${i}\" aria-label=\"${TL('Level {0}',i+1)}\">${ckBases(i)>1?`<span class=\"ck-nb\" title=\"${lvZ(ckBases(i)+'座基地',ckBases(i)+' bases')}\">🏰${ckBases(i)}</span>`:''}")
+rep("bm=true;toast('Wave 1 arrives in 14s. Build now!')}", "bm=true;toast('Wave 1 arrives in 14s. Build now!');ckTips(i)}")
+rep("function ckSummonTick(dt){", (
+ "function ckBases(i){if(i>=96)return(i===97||i===99)?3:1;const ri=i/8|0,k=i%8;if(k===7)return(i===87||i===95)?2:1;if(ri===0)return k===4?2:1;return(ri<=5?[2,5]:[2,4,6]).includes(k)?2:1}\n"
+ "function ckGoals(m,i,C,Rw){const n=ckBases(i),g=rng(i*104729+71);if(n===1){if(m.goals.length!==1)m.goals=[[C-1,2+(g()*5|0)]]}else if(n===2){m.goals=[[C-1,g()*2|0],[C-1,Rw-1-(g()*2|0)]]}else m.goals=[[C-1,1],[C-1,Rw>>1],[C-1,Rw-2]]}\n"
+ "function ckCmdHP(){let lv=1;try{lv=plLevel()}catch(_){}return[3,5,7,9].filter(x=>lv>=x).length}\n"
+ "function ckMaxLives(i){const n=ckBases(i),base=20+2*Math.min(12,i/8|0),dm=[1.25,1.1,1,.85,.75][S.dif]??1;return Math.round(base*dm*(n===1?1:n===2?1.36:1.5))+ckCmdHP()}\n"
+ "function ckCap(){if(L.base&&L.base.L===L){let t=0;for(const b of L.base)if(!b.dead)t+=Math.round(b.max*1.5);return t}return Math.round((L.mxl||20)*1.5)}\n"
+ "function ckHeal(){return Math.max(3,Math.round((L.mxl||20)*.25))}\n"
+ "function ckBaseTotal(){let t=0;for(const q of L.base)if(!q.dead)t+=q.hp;L.lives=t}\n"
+ "function ckBaseSync(){if(!L.base||L.base.L!==L){const gs=L.goals.slice(),n=gs.length,per=Math.floor(L.lives/n);L.base=gs.map((g,i)=>{const hp=per+(i<L.lives-per*n?1:0);return{x:g[0],y:g[1],hp,max:hp,max0:hp,dead:0,hit:-9,fort:0,rep:0,bar:0,barUsed:0,rt:0}});L.base.L=L}"
+ "const al=L.base.filter(b=>!b.dead);if(!al.length)return;let tot=0;for(const b of al)tot+=b.hp;"
+ "while(L.lives>tot){let m=null;for(const b of al)if(b.hp<Math.round(b.max*1.5)&&(!m||b.hp<m.hp))m=b;if(!m){L.lives=tot;break}m.hp++;tot++}"
+ "while(L.lives<tot){let m=al[0];for(const b of al)if(b.hp>m.hp)m=b;if(m.hp<=0)break;m.hp--;tot--}}\n"
+ "function ckBaseHit(e,n){const al=L.base.filter(b=>!b.dead);if(!al.length)return;let b=al[0],bd=1e9;for(const q of al){const dd=Math.hypot(q.x-e.x,q.y-e.y);if(dd<bd){bd=dd;b=q}}"
+ "const sp=pp(b.x,b.y);if(e.t!=='boss'&&b.barUsed<b.bar){b.barUsed++;vRing(sp.x,sp.y,tw*1.1,'#8fe8ff',.5,5);vGlow(sp.x,sp.y,tw*1.2,'#8fe8ff',.4);txt(sp.x,sp.y-tw*.6,lvZ('屏障','Barrier'),'#aef2ff');return}"
+ "if(e.t==='boss')n=Math.ceil(b.max*.38);b.hp=Math.max(0,b.hp-n);b.hit=TM;if(b.hp<=0){b.dead=1;b.deadT=TM;const rest=L.base.filter(q=>!q.dead);vBoom(sp.x,sp.y,1.6);vFlash('#ff6a3a',.35);L.shake=Math.max(L.shake||0,1);"
+ "if(rest.length){const gi=L.goals.findIndex(g=>g[0]===b.x&&g[1]===b.y);if(gi>=0&&L.goals.length>1){L.goals.splice(gi,1);replan()}"
+ "toast(lvZ('⚠ 一座基地已被摧毁！守住剩下的基地！','⚠ A base has fallen! Defend the remaining base!'));window.ckBanner&&ckBanner(lvZ('基地沦陷','Base destroyed'),lvZ('死守到底','HOLD THE LINE'),1)}}"
+ "ckBaseTotal()}\n"
+ "function ckBaseTick(dt){if(!L.base||L.base.L!==L)return;const clear=!L.en.some(e=>e.hp>0);let ch=0;for(const b of L.base){if(b.dead||!b.rep||b.hp>=b.max||!clear){b.rt=0;continue}b.rt+=dt;if(b.rt>=(b.rep>1?2.5:4)){b.rt=0;b.hp++;ch=1;const sp=pp(b.x,b.y);txt(sp.x,sp.y-tw*.5,'+1','#7dffa0')}}if(ch)ckBaseTotal()}\n"
+ "function ckPerfectRepair(){if(!L.base||L.base.L!==L)return;let ch=0;for(const b of L.base)if(!b.dead&&b.hp<b.max){b.hp++;ch=1;const sp=pp(b.x,b.y);txt(sp.x,sp.y-tw*.5,'+1 ♥','#7dffa0')}if(ch){ckBaseTotal();toast(lvZ('完美防守：基地 +1 生命','Perfect wave: bases +1 health'))}}\n"
+ "function ckBarrierReset(){if(L.base&&L.base.L===L)for(const b of L.base)b.barUsed=0}\n"
+ "const CK_UP={fort:{n:['加固','Fortify'],d:['最大生命 +20%','+20% max health'],c:b=>Math.round((240+L.i*9)*(1+b.fort*.65))},rep:{n:['修复','Repair'],d:['场上无敌人时缓慢回复','Heals while the field is clear'],c:b=>Math.round((300+L.i*9)*(1+b.rep*.7))},bar:{n:['屏障','Barrier'],d:['每波抵挡漏怪（首领除外）','Blocks leaks each wave (not bosses)'],c:b=>Math.round((220+L.i*8)*(1+b.bar*.7))}};\n"
+ "function ckBasePanel(b){selT=null;const p=$('tp');p._base=b;const z=LANG==='zh'?0:1,row=k=>{const u=CK_UP[k],lv=b[k];return`<div class=\"ck-row\"><span>${u.n[z]} <small>${'◆'.repeat(lv)}${'◇'.repeat(2-lv)}</small></span><em>${u.d[z]}</em></div>`},btn=k=>{const u=CK_UP[k],lv=b[k];return lv>=2?`<button class=\"bt\" disabled>${CK_UP[k].n[z]}<br>MAX</button>`:`<button class=\"bt pay\" data-ba=\"${k}\">${u.n[z]}<br>${COIN}${u.c(b)}</button>`},cmd=ckCmdHP();"
+ "p.innerHTML=`<div class=\"tph\"><b class=\"f\">${lvZ('基地','Base')}</b><span>♥ ${b.hp}/${b.max}</span><button class=\"bt g\" data-ba=\"x\" aria-label=\"${TL('Close')}\">✕</button></div><div class=\"ck-bps\">${row('fort')}${row('rep')}${row('bar')}${cmd?`<div class=\"ck-row\"><span>${lvZ('统帅加成','Commander bonus')}</span><em>+${cmd} ♥</em></div>`:''}</div><div class=\"tpa ck-bpa\">${btn('fort')}${btn('rep')}${btn('bar')}</div>`;"
+ "p.hidden=false;const q=pp(b.x,b.y),pw=p.offsetWidth||170,ph=p.offsetHeight||140;let l=q.x-tw*.62-pw;if(l<4)l=Math.min(W-pw-4,q.x+tw*.62);const rt=$('rail').offsetHeight;p.style.left=Math.max(4,l)+'px';p.style.top=Math.max(port?48:34,Math.min(H-rt-ph-4,q.y-ph/2))+'px';resetTPIdle()}\n"
+ "$('tp').addEventListener('click',e=>{const x=e.target.closest('[data-ba]');if(!x)return;const b=$('tp')._base;if(!b||b.dead||!L.base||L.base.L!==L)return;const k=x.dataset.ba;if(k==='x'){$('tp').hidden=true;return}const u=CK_UP[k];if(!u||b[k]>=2)return;const cost=u.c(b);if(!charge(cost))return toast(TL('Not enough coins'));b[k]++;"
+ "if(k==='fort'){const add=Math.max(1,Math.round(b.max0*.2));b.max+=add;b.hp+=add;ckBaseTotal()}const sp=pp(b.x,b.y);vPillar(sp.x,sp.y,k==='bar'?'#8fe8ff':k==='rep'?'#7dffa0':'#ffd34a',.8);vRing(sp.x,sp.y,tw*.9,'#ffe9a0',.5,4);sfx('upgrade')||beep(700,.15,'triangle',.07);ckBasePanel(b)});\n"
+ "function ckTips(i){if(L.demo)return;if(ckBases(i)>1&&!S.tip2b){S.tip2b=1;save();setTimeout(()=>{if(S.mode==='play'&&!L.over)modal(`<h3>🏰 ${lvZ('多座基地','Multiple bases')}</h3><p>${lvZ('这一关有'+ckBases(i)+'座基地，每座都有独立的生命值。只有当所有基地都被摧毁时才会失败——失去一座还能坚持，但剩下的怪物会全部涌向其余基地！','This level has '+ckBases(i)+' bases, each with its own health. You only lose when every base is destroyed. Losing one is survivable, but every remaining monster will then march on the bases left!')}</p><p>${lvZ('点击基地可以加固、修复或架设屏障。','Tap a base to Fortify, Repair or raise a Barrier.')}</p><button class=\"bt\" id=\"m1\">${lvZ('明白','Got it')}</button>`)},500)}"
+ "else if(i>=2&&!S.tipbu){S.tipbu=1;save();setTimeout(()=>{if(S.mode==='play'&&!L.over)modal(`<h3>🛡 ${lvZ('基地升级','Base upgrades')}</h3><p>${lvZ('点击你的基地：加固（最大生命 +20%）、修复（场上无敌人时回血）、屏障（每波抵挡漏怪）。金币有限，好好权衡！','Tap your base: Fortify (+20% max health), Repair (heals while the field is clear), Barrier (blocks leaks each wave). Coins are tight, so choose wisely!')}</p><button class=\"bt\" id=\"m1\">${lvZ('明白','Got it')}</button>`)},500)}}\n"
+ "function ckBaseDraw(){if(L.demo||!L.base||L.base.L!==L)return;const multi=L.base.length>1;for(const b of L.base){const p=pp(b.x,b.y),u=tw/100;"
+ "if(b.dead){ell(p.x,p.y+tw*.3,tw*.6,tw*.22,'#120a08cc');ell(p.x,p.y+tw*.25,tw*.42,tw*.15,'#2a1a14');ell(p.x-tw*.2,p.y+tw*.18,tw*.13,tw*.08,'#5a5068');ell(p.x+tw*.18,p.y+tw*.22,tw*.11,tw*.07,'#4a4258');ell(p.x+tw*.02,p.y+tw*.08,tw*.15,tw*.09,'#6a6078');ell(p.x-tw*.05,p.y+tw*.02,tw*.07,tw*.05,'#3fbfb0');"
+ "for(let i=0;i<3;i++){const ph=(TM*.5+i/3)%1;c.globalAlpha=(1-ph)*.5;circ(p.x+Math.sin(i*2.1+TM)*tw*.15,p.y+tw*.1-ph*tw*.9,tw*(.08+.12*ph),'#3a3440')}"
+ "c.globalAlpha=.6+.4*Math.sin(TM*9+b.x);circ(p.x-tw*.1,p.y+tw*.22,tw*.05,'#ff7a2a');circ(p.x+tw*.12,p.y+tw*.26,tw*.04,'#ffb04a');c.globalAlpha=1;continue}"
+ "if(b.bar>b.barUsed){c.globalAlpha=.35+.15*Math.sin(TM*3+b.y);c.strokeStyle='#8fe8ff';c.lineWidth=2.2*u+.6;c.beginPath();c.ellipse(p.x,p.y+tw*.1,tw*.72,tw*.62,0,Math.PI*1.05,Math.PI*1.95);c.stroke();c.globalAlpha=1}"
+ "for(let i=0;i<b.fort;i++)circ(p.x-tw*.12+i*tw*.24,p.y+tw*.5,tw*.05,'#ffd34a');"
+ "if(!multi)continue;const mx=Math.max(1,b.max);const w=tw*.82,h=Math.max(5,tw*.11),x=p.x-w/2,up=p.y>H*.5,y=up?p.y-tw*1.05:p.y+tw*.62,f=Math.min(1,b.hp/mx),hf=TM-b.hit<.4;"
+ "c.fillStyle='#07101dd9';c.fillRect(x-2,y-2,w+4,h+4);c.fillStyle=hf?'#ffffff':f>.5?'#5eead4':f>.25?'#ffbd3f':'#ff4e58';c.fillRect(x,y,w*f,h);"
+ "c.font=`900 ${Math.max(10,tw*.2)}px Nunito`;c.textAlign='center';c.lineWidth=3;c.strokeStyle='#07101d';const s='♥ '+b.hp;const ty=up?y-tw*.06:y+h+tw*.2;c.strokeText(s,p.x,ty);c.fillStyle=hf?'#ff8a8a':'#e8fffb';c.fillText(s,p.x,ty)}}\n"
+ "function ckSummonTick(dt){"))
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

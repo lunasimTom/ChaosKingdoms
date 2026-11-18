@@ -152,3 +152,14 @@ body.zh #ck-bossbar .ckb-n{font-family:var(--btn-font);letter-spacing:.16em}
 @keyframes ckRageBar{to{filter:brightness(1.5)}}
 body.ck-boss.pt #toast{top:96px!important}
 body.ck-boss:not(.pt) #toast{top:72px!important}
+
+/* v2.7: multi-base marker on level nodes; base panel rows */
+.realm-levels .nd{position:relative}
+.realm-levels .nd{overflow:visible!important}.realm-levels .nd .ck-nb{position:absolute;top:-6px;right:-5px;z-index:2;font:900 9px/1 'Nunito',system-ui,sans-serif;padding:1px 3px;border-radius:6px;background:#0a1020cc;color:#ffe6a6;box-shadow:0 0 0 1px #f3c04d66;pointer-events:none}
+#tp .ck-bps{display:flex;flex-direction:column;gap:4px;width:232px;max-width:100%;margin:6px 0 2px}
+#tp .ck-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 6px;border-radius:8px;background:#ffffff0d;font-size:11px;line-height:1.25}
+#tp .ck-row span{font-weight:900;color:#ffe6a6;white-space:nowrap}
+#tp .ck-row small{color:#ffd34a;letter-spacing:1px;margin-left:3px}
+#tp .ck-row em{font-style:normal;color:#c9d3ee;text-align:right;font-size:10px}
+#tp .ck-bpa{display:grid!important;grid-template-columns:repeat(3,1fr);gap:4px;width:232px;max-width:100%}
+#tp .ck-bpa .bt{min-width:0!important;padding:5px 2px!important;font-size:11px!important;line-height:1.2}

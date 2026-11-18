@@ -7,7 +7,49 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.6.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.6.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v2.7.0.apk` | Android app (package `com.chaoskingdoms.game`, version 2.7.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v2.7
+
+Design rule for this release: base health stays well below the threat of the level, so every leak still hurts. On Normal, level 96 starts with 57 health against monsters that could cost 814 if they all got through.
+
+**Base health**
+1. **Starting health scales:** 20 + 2 per realm (20 at level 1, up to 44 in the last realm). Difficulty adjusts it:
+
+   | Difficulty | Novice | Easy | Normal | Hard | Chaos |
+   |---|---|---|---|---|---|
+   | Health | +25% | +10% | ×1 | −15% | −25% |
+
+2. **Stars** use the share of starting health kept: 90% or more for 3 stars, 50% or more for 2. Losing a base therefore caps you at 2 stars.
+3. **A boss leak** costs 38% of the base it reaches instead of a flat 10, so it can no longer wipe out a base on its own.
+4. **Two-base maps** start with 136% of the single-base health, split between the bases. Three-base maps start with 150%.
+5. **Base upgrades:** tap a base to buy them. They cost battle coins, the same coins you spend on towers.
+   - *Fortify:* +20% max health, 2 levels.
+   - *Repair:* heals 1 every 4 s (2.5 s at level 2), only while no monsters are on the field.
+   - *Barrier:* blocks 1 or 2 non-boss leaks each wave.
+6. **Perfect waves** heal each surviving base by 1, never above its maximum. This replaces the old +1 heart every 3 perfect waves.
+7. **Commander ranks** 3, 5, 7 and 9 each give +1 starting health.
+8. **Healing scales with the level:**
+   - Healing Potion: +25% of starting health.
+   - Bought heart: +5%.
+   - Last Stand: +10%.
+   - The overall cap is 150% of starting health (previously a flat 30).
+
+**Two-base system**
+
+| Levels | Bases | Count |
+|---|---|---|
+| Level 5 (the first, with a one-time explanation) | 2 | 1 |
+| 3rd and 6th level of realms 2–6 | 2 | 10 |
+| 3rd, 5th and 7th level of realms 7–12 | 2 | 18 |
+| Realm 11 and 12 boss finales (levels 88 and 96) | 2 | 2 |
+| Levels 98 and 100 (final realm) | 3 | 2 |
+
+- That's 31 two-base and 2 three-base levels in total.
+- Other boss levels stay single-base.
+- Bases sit at opposite corners of the defence edge, at least 6 tiles apart, so the monster routes really split.
+- Level select marks multi-base levels with 🏰2 or 🏰3.
+- A one-time tip explains base upgrades the first time you reach level 3.
 
 ## What changed in v2.6
 
@@ -120,7 +162,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.6.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.7.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
