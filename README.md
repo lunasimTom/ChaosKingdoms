@@ -7,7 +7,66 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v2.7.2.apk` | Android app (package `com.chaoskingdoms.game`, version 2.7.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.0.apk` | Android app (package `com.chaoskingdoms.game`, version 3.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.0 · Strategy Edition
+
+v3.0 adds strategic depth without stat inflation. The original tower art, campaign, bosses, two-base levels, upgrades and saves are unchanged.
+
+**Enemy roles and damage types.** Towers now deal one of three damage types:
+- Physical: Archer, Cannon.
+- Magic: Mage, Holy, Lightning.
+- Elemental: Frost, Poison.
+
+Monsters can carry a role, shown as a badge next to their health bar. Each role unlocks at a set level, and a short tip appears the first time you meet it.
+
+| Role | From level | Effect | Counter |
+| --- | --- | --- | --- |
+| ⛨ Armoured | 4 | Physical damage halved | Magic towers, Arcane Break |
+| ✦ Warded | 7 | Magic damage halved | Physical or elemental towers |
+| ✚ Healer | 10 | Heals nearby monsters | Kill it first (Hunter's Mark) |
+| ◈ Shield-bearer | 14 | A shield (45% of HP) soaks damage first | Cannons deal double damage to shields |
+| ✷ Splitter | 18 | Splits into two fast runners on death | Area damage |
+| ϟ Disruptor | 24 | Jams the nearest tower for 1.6 s every 7 s | Long-range towers |
+
+Resistances never exceed 50%, so every tower still contributes.
+
+**Designed waves.** Waves are fixed for each level, so replays are fair and can be planned. Each wave follows a pattern (mixed, swarm, armoured column or healer escort), and each realm favours one role. Wave sizes are unchanged. A chip above the build bar previews the next wave, with its size and role counts.
+
+**Visible combos.**
+- *Shatter*: Archer or Cannon hits on frozen monsters deal +40%.
+- *Marked*: Holy hits mark a monster for 3 s, and every tower deals +20% to it.
+- *Arcane Break*: Mage hits weaken armour, wards and shields for 3 s.
+
+The original combos still apply: Cannon +30% vs slowed, Lightning +30% vs poisoned.
+
+**Aimed powers** sit in the new POWERS row. Tap one, then tap the battlefield to aim it.
+
+| Power | From level | Effect | Cooldown |
+| --- | --- | --- | --- |
+| ☄ Meteor | 1 | Heavy area blast (half damage to bosses) | 40 s |
+| ❄ Frost Nova | 3 | Freezes an area (slows bosses) | 45 s |
+| ◎ Hunter's Mark | 6 | Towers focus marked monsters first, and deal +20% to them | 30 s |
+| ⚑ Rally | 10 | All towers fire faster for 6 s (no aiming) | 60 s |
+
+**Terrain.**
+- From level 5, two golden shrines appear on each map. A tower built on a shrine gets +20% damage and +10% range.
+- Portals now corrupt the area around them (dashed purple ring). Towers within it deal 15% less damage, so camping next to a portal is no longer the best plan.
+
+**Bosses.**
+- Every boss has a weakness: one damage type deals +30%, announced when the boss arrives and shown on its badge.
+- From level 40, a boss adapts every 10 s, taking 35% less damage from whichever type hurt it most. Mixed defences pay off.
+
+**Crowns.** Each level has one optional challenge, shown in the chip and announced at the start. The challenges are Flawless, Lean army, Self-reliant, Restriction (one tower type banned) and Towers only. Winning while it still holds earns a crown, plus a one-time gold reward, and the result appears on the Victory panel.
+
+**Item stock.** Each item can be used at most 3 times per level, so powers and towers carry each fight, not bulk item purchases.
+
+Tested with headless runs:
+- Every new mechanic exercised in isolation.
+- Full-level simulations at levels 1–100 (difficulty is comparable to v2.7.2 in the same simulation).
+- Boss summons at 50% and 25% for every boss level.
+- Two-base levels, the UI sweep in portrait and landscape, and English and Chinese text.
+- A 40-tower frame-time benchmark (same as v2.7.2).
 
 ## What changed in v2.7.2
 
@@ -186,7 +245,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v2.7.2.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
