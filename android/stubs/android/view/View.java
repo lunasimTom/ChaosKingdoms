@@ -1,0 +1,2 @@
+package android.view; public class View { public static final int SYSTEM_UI_FLAG_LAYOUT_STABLE=0x100, SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION=0x200, SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN=0x400, SYSTEM_UI_FLAG_HIDE_NAVIGATION=0x2, SYSTEM_UI_FLAG_FULLSCREEN=0x4, SYSTEM_UI_FLAG_IMMERSIVE_STICKY=0x1000, OVER_SCROLL_NEVER=2;
+ public void setSystemUiVisibility(int v){} public void setOverScrollMode(int m){} public void setVerticalScrollBarEnabled(boolean b){} public void setHorizontalScrollBarEnabled(boolean b){} public void setBackgroundColor(int c){} }

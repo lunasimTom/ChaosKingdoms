@@ -1,0 +1,1 @@
+package android.view; public abstract class Window { public void addFlags(int f){} public final WindowManager.LayoutParams getAttributes(){return null;} public void setAttributes(WindowManager.LayoutParams a){} public abstract void setStatusBarColor(int c); public abstract void setNavigationBarColor(int c); public abstract View getDecorView(); }

@@ -1,0 +1,18 @@
+html,body{background:#050912!important;color:#fff3d6}
+#ck-splash{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 50% 42%,#1d2a55 0%,#0b1128 48%,#03050c 100%);transition:opacity .7s ease,visibility .7s;font-family:'Cinzel',Georgia,serif;animation:cksFailsafe .6s ease 7s forwards}
+#ck-splash.out{opacity:0;visibility:hidden;pointer-events:none}
+#ck-splash .cks-glow{position:absolute;width:140vmax;height:140vmax;left:50%;top:42%;transform:translate(-50%,-50%);background:radial-gradient(circle,#f3c04d22 0,#f3c04d0a 18%,transparent 42%);animation:cksBreath 3.2s ease-in-out infinite}
+#ck-splash .cks-rays{position:absolute;width:160vmax;height:160vmax;left:50%;top:42%;margin:-80vmax 0 0 -80vmax;background:repeating-conic-gradient(from 0deg,#ffd77a0b 0deg 4deg,transparent 4deg 18deg);-webkit-mask-image:radial-gradient(circle,#000 0,transparent 55%);mask-image:radial-gradient(circle,#000 0,transparent 55%);animation:cksSpin 40s linear infinite}
+#ck-splash .cks-core{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;animation:cksRise 1s cubic-bezier(.2,.9,.25,1) both}
+#ck-splash .cks-crest{width:112px;height:112px;filter:drop-shadow(0 0 22px #f3c04d55) drop-shadow(0 12px 18px #000c);animation:cksFloat 3.6s ease-in-out infinite}
+#ck-splash .cks-title{margin-top:10px;font-weight:900;font-size:34px;letter-spacing:.14em;line-height:1;text-align:center;color:#ffd977;background:linear-gradient(180deg,#fff8d8 0%,#ffd468 45%,#c7801f 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 0 #3a1f05) drop-shadow(0 8px 16px #000)}
+#ck-splash .cks-title span{display:block;font-size:26px;letter-spacing:.2em;margin-top:4px}
+#ck-splash .cks-sub{font:800 11px/1 'Nunito',system-ui,sans-serif;letter-spacing:.55em;color:#b9c5ea;margin:6px 0 22px;padding-left:.55em}
+#ck-splash .cks-bar{width:220px;height:8px;border-radius:99px;background:#0b1024;border:1px solid #f3c04d66;box-shadow:inset 0 2px 4px #000,0 0 18px #f3c04d22;overflow:hidden}
+#ck-splash .cks-bar i{display:block;height:100%;width:8%;border-radius:inherit;background:linear-gradient(90deg,#9a5a12,#ffd468 70%,#fff6cf);box-shadow:0 0 12px #ffd468;transition:width .35s ease}
+#ck-splash .cks-tip{margin-top:12px;font:700 11px/1.2 'Nunito',system-ui,sans-serif;letter-spacing:.12em;color:#8f9cc8;text-transform:uppercase}
+@keyframes cksSpin{to{transform:rotate(360deg)}}
+@keyframes cksBreath{50%{opacity:.6;transform:translate(-50%,-50%) scale(1.06)}}
+@keyframes cksFloat{50%{transform:translateY(-6px)}}
+@keyframes cksRise{from{opacity:0;transform:translateY(18px) scale(.96)}}
+@keyframes cksFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}
