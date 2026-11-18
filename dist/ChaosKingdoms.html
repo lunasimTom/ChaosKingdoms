@@ -3011,17 +3011,24 @@ function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over
    Android content:// WebViews can occasionally omit the synthesized click after a
    touch. Handle the real pointerdown directly, and keep this as the sole inventory
    activation path. The rail's delegated click handler intentionally ignores items. */
-$('inv').addEventListener('pointerdown',ev=>{
- const b=ev.target&&ev.target.closest?ev.target.closest('button[data-use]'):null;
- if(!b)return;
- ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();
- useItem(b.dataset.use);
-},{passive:false});
-$('inv').addEventListener('click',ev=>{
- const b=ev.target&&ev.target.closest?ev.target.closest('button[data-use]'):null;
- if(!b)return;
- ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();
-});
+/* Item bar input (v3.3): an item is used on a TAP, not on touch-down, so the bar can be swiped.
+   A tap = finger lifts on the same item, moved under 10 px, and the bar did not scroll. If the
+   browser takes the touch over as a swipe it sends pointercancel, which also cancels the tap.
+   Activation still runs from pointer events (not click), because some Android WebViews can
+   drop the synthesized click; a keyboard click (detail 0) also works. */
+(()=>{const inv=$('inv'),TAP=10,itemAt=ev=>ev.target&&ev.target.closest?ev.target.closest('button[data-use]'):null;let tp=null,lastUse=0;
+ const use=id=>{lastUse=performance.now();useItem(id)};
+ inv.addEventListener('pointerdown',ev=>{const b=itemAt(ev);tp=(!b||(ev.pointerType==='mouse'&&ev.button!==0))?null:{id:ev.pointerId,use:b.dataset.use,x:ev.clientX,y:ev.clientY,sl:inv.scrollLeft}},{passive:true});
+ inv.addEventListener('pointermove',ev=>{if(tp&&ev.pointerId===tp.id&&Math.hypot(ev.clientX-tp.x,ev.clientY-tp.y)>TAP)tp=null},{passive:true});
+ inv.addEventListener('scroll',()=>{if(tp&&Math.abs(inv.scrollLeft-tp.sl)>2)tp=null},{passive:true});
+ inv.addEventListener('pointercancel',()=>{tp=null});
+ inv.addEventListener('pointerup',ev=>{const t=tp;tp=null;if(!t||ev.pointerId!==t.id)return;if(Math.hypot(ev.clientX-t.x,ev.clientY-t.y)>TAP||Math.abs(inv.scrollLeft-t.sl)>2)return;
+  // the bar may have re-rendered during the press; match the item by id, and only if the finger is still on it
+  const r=document.elementFromPoint(ev.clientX,ev.clientY),b=r&&r.closest?r.closest('button[data-use]'):null;if(!b||b.dataset.use!==t.use)return;
+  ev.preventDefault();use(t.use)});
+ inv.addEventListener('click',ev=>{const b=itemAt(ev);if(!b)return;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();
+  if(ev.detail===0&&performance.now()-lastUse>600)use(b.dataset.use)});
+})();
 function render(){let h='';if(tab==='t')h=Object.entries(TW).map(([k,d],ix)=>`<button class="tw${k===selK?' sel':''}" data-k="${k}" data-cost="${d.cost}" data-i="${d.n} · ${d.cost} — ${d.d}"><img src="${icon(k)}" alt=""><em>${d.cost}</em><u>${ix+1}</u></button>`).join('');
  else h='';
  $('cards').innerHTML=h;{let n=Object.values(L.inv).reduce((a,b)=>a+b,0),bt=document.querySelector('.tab[data-t="i"]');if(bt)bt.textContent=n?'Bag '+n:'Bag'}document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));info();renderShop();invR()}
@@ -4709,6 +4716,9 @@ html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;
 #ck-v3 .cr.got{border-color:#ffd36a}
 .ck-crown{margin:.4em auto;padding:6px 12px;border-radius:10px;max-width:30em;font-weight:800;background:#ffffff0d;border:1px solid #ffffff22}
 .ck-crown.ok{color:#ffd36a;border-color:#ffd36a88}.ck-crown.no{color:#a9b3d4}
+/* v3.3: the item bar scrolls sideways with a swipe; taps still reach the buttons */
+#inv{touch-action:pan-x;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+#inv .iv{touch-action:pan-x}
 </style>
 <script id="ck-fixes">
 /* runtime fixes (source-level fixes live in build.py) */
@@ -4757,7 +4767,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.2 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.3 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

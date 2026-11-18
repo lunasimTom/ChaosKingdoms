@@ -187,3 +187,6 @@ html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;
 #ck-v3 .cr.got{border-color:#ffd36a}
 .ck-crown{margin:.4em auto;padding:6px 12px;border-radius:10px;max-width:30em;font-weight:800;background:#ffffff0d;border:1px solid #ffffff22}
 .ck-crown.ok{color:#ffd36a;border-color:#ffd36a88}.ck-crown.no{color:#a9b3d4}
+/* v3.3: the item bar scrolls sideways with a swipe; taps still reach the buttons */
+#inv{touch-action:pan-x;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+#inv .iv{touch-action:pan-x}

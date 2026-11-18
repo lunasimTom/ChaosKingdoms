@@ -7,7 +7,22 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.2.apk` | Android app (package `com.chaoskingdoms.game`, version 3.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.3.apk` | Android app (package `com.chaoskingdoms.game`, version 3.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.3
+
+**Fix: swiping the item bar used items by accident.** Items fired the moment a finger touched them, so swiping the bar to reach items further along used whatever item the swipe started on. Now an item is used only on a tap: the finger lifts on the same item, has moved less than 10 px, and the bar did not scroll. Swipes, drags and presses that slide off an item scroll the bar or do nothing. Tapping still works as before, including small finger jitter. Mouse clicks still work, and keyboard Enter on an item now works too (it did nothing before). Activation still uses pointer events rather than click events, so it keeps working on Android WebViews that sometimes drop clicks.
+
+**Tested** on an emulated Pixel 7 touchscreen, in portrait and landscape, with all 17 item types in the bar. The tests used real browser touch input, so native scrolling ran exactly as on a phone, and the old v3.2 ran alongside for comparison.
+- A tap uses the item.
+- A swipe starting on an item scrolls the bar and uses nothing (v3.2 used the item).
+- A short 25 px drag uses nothing (v3.2 used the item).
+- A tap with 4 px of finger jitter still uses the item.
+- A press that slides off vertically uses nothing (v3.2 used the item).
+- After swiping, tapping a newly revealed item uses that item.
+- Mouse click and keyboard Enter both work.
+
+The 42-state interface walkthrough, the UI sweep and the gameplay tests all still pass.
 
 ## What changed in v3.2
 
@@ -268,7 +283,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.2.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.3.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
