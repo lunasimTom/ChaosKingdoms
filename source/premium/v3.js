@@ -114,11 +114,13 @@ function ckV3Ui(){
  if(!ckChip){const bb=document.getElementById('ck-bossbar');if(!bb)return;ckChip=document.createElement('div');ckChip.id='ck-v3';bb.parentNode.appendChild(ckChip)}
  const rail=document.getElementById('rail'),host=ckChip.parentNode;if(!rail||!host)return;
  const hr=host.getBoundingClientRect(),rr=rail.getBoundingClientRect(),cvE=document.getElementById('cv');
- // sit in the free strip between the bottom of the battlefield and the build bar; if that strip is too thin, float just above the bar
- let top=rr.top-hr.top-30;
- if(cvE&&W){const cr=cvE.getBoundingClientRect(),k=cr.height/H,bb=cr.top+(oy+(port?L.cols:L.rows)*tw)*k,gap=rr.top-bb,ch=(ckChip.offsetHeight||24)*(hr.height/(host.offsetHeight||hr.height)||1);top=gap>=ch+4?bb-hr.top+(gap-ch)/2:bb-hr.top-ch-6}
+ // sit in the empty strip between the battlefield frame and the build bar (outside the map);
+ // on screens where that strip is thinner than the chip, the chip is scaled down to fit it.
  const sc=hr.height/(host.offsetHeight||hr.height)||1; // host may be CSS-scaled on small screens
- ckChip.style.top=Math.max(60,top/sc)+'px';
+ let top=(rr.top-hr.top)/sc-30,zs=1;
+ if(cvE&&W){const cr=cvE.getBoundingClientRect(),k=cr.height/H,bb=(cr.top-hr.top)/sc+(oy+(port?L.cols:L.rows)*tw+9)*k/sc,rt=(rr.top-hr.top)/sc,gap=rt-bb,ch=ckChip.offsetHeight||24;
+  if(gap>=10){zs=Math.min(1,(gap-2)/ch);top=bb+(gap-ch*zs)/2}else top=bb-9-ch-6}
+ ckChip.style.transform=zs<1?'scale('+zs.toFixed(3)+')':'';ckChip.style.top=Math.max(40,top)+'px';
  let h='';
  const nq=L.wave<L.waves?L.nq:null;
  if(nq&&nq.q){const o=ckWaveSum(nq.q);h+=`<span class="nw"><i>${lvZ('下一波','Next')}</i> ${o.b?'👑 '+lvZ('首领','Boss'):o.n}${Object.keys(o.r).map(k=>` <em style="color:${CKR[k].c}">${CKR[k].g}${o.r[k]}</em>`).join('')}</span>`}

@@ -177,7 +177,7 @@ html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;
 #hud .top.ck-t3>*:not(.lv):not(#wbar){zoom:.8}
 
 /* ===== v3.0: next-wave + crown chip, crown result ===== */
-#ck-v3{position:absolute;left:8px;z-index:43;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 16px);pointer-events:none;font:800 11px/1.2 'Nunito',system-ui,sans-serif}
+#ck-v3{position:absolute;left:8px;transform-origin:0 0;z-index:43;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 16px);pointer-events:none;font:800 11px/1.2 'Nunito',system-ui,sans-serif}
 #ck-v3[hidden]{display:none}
 #ck-v3>span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:#0b1024d9;border:1px solid #f3c04d66;color:#f4ead2;box-shadow:0 4px 10px #0008;white-space:nowrap}
 #ck-v3 i{font-style:normal;color:#f3c04d;letter-spacing:.06em;text-transform:uppercase;font-size:10px}

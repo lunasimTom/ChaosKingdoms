@@ -48,7 +48,7 @@ The original combos still apply: Cannon +30% vs slowed, Lightning +30% vs poison
 - Every boss has a weakness: one damage type deals +30%, announced when the boss arrives and shown on its badge.
 - From level 40, a boss adapts every 10 s, taking 35% less damage from whichever type hurt it most. Mixed defences pay off.
 
-**Crowns.** Each level has one optional challenge, shown below the battlefield during battle (hidden on the map and menus). The battlefield is drawn slightly smaller so there is a free strip above it for notices and below it for these panels and announced at the start. The challenges are Flawless, Lean army, Self-reliant and Restriction (one tower type banned). Winning while it still holds earns a crown, plus a one-time gold reward, and the result appears on the Victory panel.
+**Crowns.** Each level has one optional challenge, shown below the battlefield during battle (hidden on the map and menus) and announced at the start. The challenges are Flawless, Lean army, Self-reliant and Restriction (one tower type banned). Winning while it still holds earns a crown, plus a one-time gold reward, and the result appears on the Victory panel.
 
 Tested with headless runs:
 - Every new mechanic exercised in isolation.
