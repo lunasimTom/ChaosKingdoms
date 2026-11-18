@@ -396,6 +396,11 @@ if INCLUDE_TOWER_PILOT:
      "function ckMuzzle(t,p,u){return window.CK3D&&CK3D.has(t.k)?CK3D.muzzle(t,p,u):[p.x+Math.cos(t.a)*24*u,p.y-20*u+Math.sin(t.a)*12*u]}\nfunction vMuzzle(t,e){let u=tw/100,p=pp(t.x,t.y),mz=ckMuzzle(t,p,u),fx=mz[0],fy=mz[1],")
  rep("<script>const SFXD=", "<script id=\"ck-3d\">\n"+open(os.path.join(SRC,'ck3d.js'),encoding='utf8').read()+"</script>\n<script>const SFXD=")
 
+# 33. Battlefield margins: the board is drawn slightly smaller so a strip stays free above it
+#     (wave notices, boss bar) and below it (next-wave preview, crown challenge).
+rep("function lay(){if(port){tw=Math.min(48,Math.floor((W-16)/9),Math.floor((H-48-156)/14));ox=Math.round((W-9*tw)/2);oy=48+Math.max(0,Math.round((H-48-156-14*tw)/2))}else{tw=50;ox=12;oy=35}}",
+    "function lay(){const CKM=36;if(port){tw=Math.min(46,Math.floor((W-16)/9),Math.floor((H-48-156-2*CKM)/14));ox=Math.round((W-9*tw)/2);oy=48+Math.max(0,Math.round((H-48-156-14*tw)/2))}else{tw=46;ox=Math.round((W-14*tw)/2);oy=40}}")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
