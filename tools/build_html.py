@@ -403,6 +403,21 @@ if INCLUDE_TOWER_PILOT:
 rep("$('inv').addEventListener('pointerdown',ev=>{\n const b=ev.target&&ev.target.closest?ev.target.closest('button[data-use]'):null;\n if(!b)return;\n ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();\n useItem(b.dataset.use);\n},{passive:false});\n$('inv').addEventListener('click',ev=>{\n const b=ev.target&&ev.target.closest?ev.target.closest('button[data-use]'):null;\n if(!b)return;\n ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();\n});\n",
     "/* Item bar input (v3.3): an item is used on a TAP, not on touch-down, so the bar can be swiped.\n   A tap = finger lifts on the same item, moved under 10 px, and the bar did not scroll. If the\n   browser takes the touch over as a swipe it sends pointercancel, which also cancels the tap.\n   Activation still runs from pointer events (not click), because some Android WebViews can\n   drop the synthesized click; a keyboard click (detail 0) also works. */\n(()=>{const inv=$('inv'),TAP=10,itemAt=ev=>ev.target&&ev.target.closest?ev.target.closest('button[data-use]'):null;let tp=null,lastUse=0;\n const use=id=>{lastUse=performance.now();useItem(id)};\n inv.addEventListener('pointerdown',ev=>{const b=itemAt(ev);tp=(!b||(ev.pointerType==='mouse'&&ev.button!==0))?null:{id:ev.pointerId,use:b.dataset.use,x:ev.clientX,y:ev.clientY,sl:inv.scrollLeft}},{passive:true});\n inv.addEventListener('pointermove',ev=>{if(tp&&ev.pointerId===tp.id&&Math.hypot(ev.clientX-tp.x,ev.clientY-tp.y)>TAP)tp=null},{passive:true});\n inv.addEventListener('scroll',()=>{if(tp&&Math.abs(inv.scrollLeft-tp.sl)>2)tp=null},{passive:true});\n inv.addEventListener('pointercancel',()=>{tp=null});\n inv.addEventListener('pointerup',ev=>{const t=tp;tp=null;if(!t||ev.pointerId!==t.id)return;if(Math.hypot(ev.clientX-t.x,ev.clientY-t.y)>TAP||Math.abs(inv.scrollLeft-t.sl)>2)return;\n  // the bar may have re-rendered during the press; match the item by id, and only if the finger is still on it\n  const r=document.elementFromPoint(ev.clientX,ev.clientY),b=r&&r.closest?r.closest('button[data-use]'):null;if(!b||b.dataset.use!==t.use)return;\n  ev.preventDefault();use(t.use)});\n inv.addEventListener('click',ev=>{const b=itemAt(ev);if(!b)return;ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();\n  if(ev.detail===0&&performance.now()-lastUse>600)use(b.dataset.use)});\n})();\n")
 
+# 35. New boss art (v3.4): 19 illustrated bosses supplied by the owner (source-sheet-transparent.png,
+#     plus the Lich King from source-sheet.png), embedded as WebP. Each boss level gets the
+#     best-matching portrait; on two-boss levels the second boss is a random different portrait.
+_bd = os.path.join(SRC, 'bosses')
+_b2 = {f[:-5]: base64.b64encode(open(os.path.join(_bd, f), 'rb').read()).decode()
+       for f in sorted(os.listdir(_bd)) if f.startswith('b2_') and f.endswith('.webp')}
+assert len(_b2) == 19, sorted(_b2)
+rep("const SP={};for(const k in SPRD){",
+    "Object.assign(SPRD,{" + ",".join(f"{k}:'data:image/webp;base64,{v}'" for k, v in _b2.items()) + "});const SP={};for(const k in SPRD){")
+rep("BOSSK=['b_skeleton_king','b_demon_lord','b_ice_dragon','b_fire_giant','e_dragon','b_necromancer','b_ice_dragon','b_necromancer','b_ice_dragon','e_treant','b_necromancer','b_fire_giant','b_necromancer','b_ice_dragon','e_dragon','b_demon_lord','b_skeleton_king']",
+    "BOSSK=['b2_skeleton_king','b2_demon_lord','b2_ice_dragon','b2_fire_giant','b2_dragon_king','b2_necromancer','b2_lich_king','b2_spider_queen','b2_storm_titan','b2_forest_ent','b2_stone_golem','b2_demon_beast','b2_death_knight','b2_void_lord','b2_giant_worm','b2_death_knight','b2_sea_monster']")
+# the new portraits are landscape-shaped; scale them so they keep a boss-sized presence
+rep("s=sz/Math.max(iw,ih)*(e.wd>0?1.1:1)",
+    "s=(e.sp.startsWith('b2_')?Math.min(sz*1.3/Math.max(iw,ih),sz*1.05/ih):sz/Math.max(iw,ih))*(e.wd>0?1.1:1)")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()

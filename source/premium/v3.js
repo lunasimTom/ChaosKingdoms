@@ -19,6 +19,8 @@ const CKCH=[
  {id:'ban',n:['禁用','Restriction'],d:['不建造{0}','Build no {0}']}
 ];
 let CK_NR=null;
+// v3.4 boss art: on two-boss levels the second boss is a random portrait, different from the first
+const CK_BOSS_ART=['b2_skeleton_king','b2_demon_lord','b2_ice_dragon','b2_fire_giant','b2_necromancer','b2_death_knight','b2_dread_knight','b2_lich_king','b2_stone_golem','b2_sea_monster','b2_dragon_king','b2_vampire_lord','b2_ogre_king','b2_spider_queen','b2_giant_worm','b2_demon_beast','b2_forest_ent','b2_void_lord','b2_storm_titan'];
 function ckIU(id){if(L&&L.iu)L.iu[id]=(L.iu[id]||0)+1}
 const ckZ=a=>lvZ(a[0],a[1]);
 function ckCell(x,y){return L.g[y*L.cols+x]}
@@ -42,7 +44,7 @@ function ckLbl(e,s,col){if(e.lbt>TM)return;e.lbt=TM+.9;const p=eS(e);txt(p.x,p.y
 function ckRole(e){
  if(L.demo)return;
  if(L.ckv!==L)ckV3Init();
- if(e.t==='boss'){const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
+ if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsp1=e.sp;else if(L.bsc===2){const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,pool=CK_BOSS_ART.filter(k=>kn(k)!==kn(L.bsp1)&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0]}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
  const r=CK_NR;if(!r||!CKR[r])return;e.rl=r;
  if(r==='shield')e.sh=e.msh=e.mx*.45;
  if(r==='heal')e.hc=1.2;

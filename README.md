@@ -7,7 +7,41 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.3.apk` | Android app (package `com.chaoskingdoms.game`, version 3.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.4.apk` | Android app (package `com.chaoskingdoms.game`, version 3.4, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.4
+
+**New boss art.** Every boss now uses the illustrated portraits from the owner's boss sheet: 19 bosses in total (18 from `source/premium/bosses/source-sheet-transparent.png`, plus the Lich King from the first sheet). They are stored as WebP files in `source/premium/bosses/` and embedded in the game (about 0.7 MB).
+
+| Level | Boss | Portrait |
+| --- | --- | --- |
+| 8 | Skeleton King | Skeleton King |
+| 16 | Demon Lord | Demon Lord |
+| 24 | Ice Dragon | Ice Dragon (now with a full body) |
+| 32 | Fire Giant | Fire Giant |
+| 40 | Dragon | Dragon King |
+| 48 | Necromancer | Necromancer |
+| 56 | Astral Sovereign | Lich King |
+| 64 | Abyssal Empress | Spider Queen |
+| 72 | Storm Tyrant | Storm Titan |
+| 80 | Ancient Treant | Forest Ent |
+| 88 | Obsidian Colossus | Stone Golem |
+| 96 | Crimson Behemoth | Demon Beast |
+| 97 | Void Seraph | Void Lord |
+| 98 | Eternal Wyrm | Giant Worm |
+| 99 | Chaos Sovereign | Death Knight |
+| 100 | Abyssal Titan | Sea Monster |
+
+**Random second boss.** On every two-boss level (Level 40 and up), the second boss is a random portrait that differs from the first, so each attempt can bring a new pairing. The two armoured knights look alike, so they never appear together.
+
+The new portraits are drawn about 2 tiles tall, a similar presence to the old boss sprites. Enrage, the summon shield, the hit flash and the weakness badge all work with them.
+
+**Tested**
+- Each of the 16 boss levels rendered with both of its bosses.
+- Every boss fight played to the end with a sprite check on every frame: no missing sprites.
+- 300 random draws on Level 56: the second boss never matches the first, and 18 different second bosses appeared.
+- 400 draws on Level 99: the two knights never appear together.
+- Boss summons, the 42-state interface walkthrough, the item-bar touch test, gameplay and the 40-tower benchmark all pass, with no slowdown.
 
 ## What changed in v3.3
 
@@ -283,7 +317,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.3.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.4.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
