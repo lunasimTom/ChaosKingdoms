@@ -7,7 +7,43 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.9.apk` | Android app (package `com.chaoskingdoms.game`, version 3.9, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v4.0.apk` | Android app (package `com.chaoskingdoms.game`, version 4.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v4.0
+
+**Fix: a 2-3 second freeze when entering any level.** Each level's soundtrack is composed when the level starts. Since v3.7 the composer ran on the game's main thread, so the game stopped for 2.5-2.9 s on a desktop and longer on phones. Level loading itself takes about 10 ms.
+
+The composer (`source/premium/music_core.js`) now runs in a background Web Worker:
+- The level starts instantly; in tests the worst frame gap at level start was 25-64 ms, down from 2,500-2,900 ms.
+- The music fades in about 3 seconds later. Replaying a recent level reuses the cached track at once.
+- Starting a new level cancels a track that is still being composed for a level you have left, so hopping between levels never queues up work.
+- If a device cannot run workers, the game falls back to its original composer.
+
+**Rebalanced late-game bosses: one smooth curve.** The old curve was flat until Level 64, jumped x1.75 to Level 72, then made a x3 leap from Level 96 to Level 97. Now:
+- From Level 56, every boss level is an even x1.47 step tougher than the one before, up to Level 96.
+- The final four are a separate finale tier: about twice Level 96 at Level 97, then about a third harder each level.
+- Defense and attack grow along the same curve.
+
+Effective HP per boss on Normal (health x defense):
+
+| Level | Bosses | v3.9 -> v4.0 | Step | Attack |
+| --- | --- | --- | --- | --- |
+| 64 | 3 | 48,143 -> 62,740 | x1.47 | x1.16 |
+| 72 | 3 | 95,593 -> 92,927 | x1.48 | x1.32 |
+| 80 | 3 | 159,721 -> 137,190 | x1.48 | x1.48 |
+| 88 | 4 | 242,779 -> 201,756 | x1.47 | x1.64 |
+| 96 | 4 | 347,018 -> 295,634 | x1.47 | x1.80 |
+| 97 | 4 | 1,087,588 -> 639,758 | x2.16 | x2.20 |
+| 98 | 4 | 1,421,232 -> 861,353 | x1.35 | x2.45 |
+| 99 | 4 | 1,790,123 -> 1,123,356 | x1.30 | x2.70 |
+| 100 | 4 | 2,458,505 -> 1,536,566 | x1.37 | x3.00 |
+
+Against a maxed 40-tower defense, one boss now lasts 23 / 25 / 28 / 39 / 54 / 62 / 80 seconds on Levels 80 / 88 / 96 / 97 / 98 / 99 / 100. The v3.9 figures were 24 / 27 / 30 / 57 / 87 / 91 / 117. Every boss still enters Rage Mode for the full 8 seconds. Level 96 is harder than Level 88, and every boss level is harder than the one before.
+
+**Tested**
+- Level-start frame timing with music on, on five levels and while hopping between levels.
+- Boss strength on every boss level, plus real fights against a maxed defense (rage on every level).
+- All 16 boss fights (sprite check every frame), boss summons, the base siege, no start-of-level pop-ups, the 42-state interface walkthrough, the item-bar touch test, gameplay and the benchmark all pass.
 
 ## What changed in v3.9
 
@@ -479,7 +515,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.9.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

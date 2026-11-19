@@ -496,7 +496,8 @@ rep("NAT={e_wolf:-1,e_dragon:-1,b_ice_dragon:-1,e_goblin:-1,e_skeleton:-1,e_zomb
 rep("if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25}",
     "if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25;else if(L.i>=39&&!e.s2&&e.hp<e.mx*.19)e.hp=e.mx*.19;else if(e.rage&&(e.rgT||0)<CK_RAGE_T&&e.hp<e.mx*.03)e.hp=e.mx*.03}")
 # soundtrack: the new composer, with the original one kept as a fallback
-rep("async function song(key){", open(os.path.join(SRC,'music.js'),encoding='utf8').read()+"\nfunction song(key){return ckSong(key).catch(e=>{console.warn('ckSong',e);return songV2(key)})}\nasync function songV2(key){")
+_mcore = open(os.path.join(SRC,'music_core.js'),encoding='utf8').read()
+rep("async function song(key){", "const CK_MUSIC_SRC=" + __import__('json').dumps(_mcore) + ";\n" + _mcore + "\n" + open(os.path.join(SRC,'music.js'),encoding='utf8').read()+"\nfunction song(key){return ckSong(key).catch(e=>{if(e==='superseded')throw e;console.warn('ckSong',e);return songV2(key)})}\nasync function songV2(key){")
 
 # 39. v3.8: bosses besiege a base instead of vanishing on contact (that skipped Rage Mode too);
 #     quieter UI/gameplay effects so the music leads.

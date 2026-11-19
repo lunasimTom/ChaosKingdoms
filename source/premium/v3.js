@@ -228,9 +228,13 @@ function ckRage(e,dt){
 // Bosses from Level 64 grow steadily stronger; the final four (Levels 97-100) are true titans.
 // hp: health multiplier; def: extra damage reduction; atk: stomp reach and stun, rampage trample
 // damage, and lives taken if the boss reaches a base.
-// v3.7: the final four are brutal (about 3-4x tougher than v3.6), Levels 64-95 ramp up towards them
-function ckBossPow(i){if(i>=96)return[[9,1.7,2.6],[11,1.8,2.9],[13,1.9,3.2],[16,2.1,3.6]][i-96].reduce((o,v,k)=>(o[['hp','def','atk'][k]]=v,o),{});
- if(i>=63){const k=(i-63)/32;return{hp:1+2.4*k,def:1+.45*k,atk:1+.9*k}}return{hp:1,def:1,atk:1}}
+// v4.0: one smooth difficulty curve. From Level 56 a boss's toughness T (health x defense) rises
+// geometrically to 4.2x at Level 96, so every boss level is a similar step harder than the one before; the final four are a distinct finale tier (9x -> 21x), each step about
+// a third harder than the last. Defense and attack grow with T; health makes up the rest.
+function ckBossPow(i){
+ if(i>=96){const T=[9,12,15.5,21][i-96],def=[1.55,1.65,1.75,1.9][i-96];return{hp:T/def,def,atk:[2.2,2.45,2.7,3.0][i-96]}}
+ if(i>=56){const k=(i-55)/40,T=Math.pow(4.2,Math.pow(k,1.05)),def=1+.4*k;return{hp:T/def,def,atk:1+.8*k}}
+ return{hp:1,def:1,atk:1}}
 function ckBossPower(e){if(L.demo||e.bpw)return;const p=ckBossPow(L.i);e.bpw=1;e.hp*=p.hp;e.mx=e.hp;e.bdef=p.def;e.batk=p.atk}
 
 // ---- boss siege (v3.8) ----
