@@ -1324,7 +1324,7 @@ function renderTreasure(){return `<div class="treasure-scroll">${window.CKTopup&
 function renderShop(){const sh=$('shop');if(!sh)return;if(tab!=='s'||S.mode!=='play'||!L){sh.hidden=true;return}
  let old=sh.querySelector('.shl'),st=old?old.scrollTop:0;const zh=LANG==='zh';
  const tabs=`<div class="shop-tabs"><button class="shop-tab ${shopPage==='items'?'on':''}" data-shop-page="items">${zh?'道具':'Items'}</button><button class="shop-tab ${shopPage==='treasure'?'on':''}" data-shop-page="treasure">✧ ${zh?'宝藏':'Treasures'}</button></div>`;
- const body=shopPage==='treasure'?renderTreasure():`<div class="shl">${IT.map(it=>{let lim=it.stock!=null,s=lim?L.stock[it.id]:null,pr=lim?it.cost:L.price[it.id],out=lim&&!s,lk=!itemOpen(it.id),D=DET[it.id];return`<div class="si${['legion','air','bomb','heli'].includes(it.id)?' new':''}" style="${lk?'opacity:.5;filter:grayscale(.7)':''}"><div class="sw" data-cdid="${it.id}"><img src="${SPRD[it.sp]}" alt=""><span class="cdo"></span><span class="cdt"></span></div><div class="sd"><b class="f">${it.n}</b><p>${D.fx}</p><small><b>${TL('Stats:')}</b> ${D.st}${TL(' · Cooldown {0}s',CDT[it.id])}</small><small><b>${TL('Use:')}</b> ${D.use}</small></div><div class="sb"><button class="bt pay" data-id="${it.id}" data-cost="${pr}" ${out||lk?'disabled':''}>${lk?'🔒 Lv.'+LV_ITEM[it.id]:out?TL('Sold<br>out').replace('<br>',' '):`<span class="buytxt">${TL('Buy<br>').replace('<br>','')}</span>${COIN}<span class="price">${pr}</span>`}</button><small>${lk?'<a class="vlink" data-prof="shop" style="color:#ffd37a">'+(LANG==='zh'?'统帅档案 ›':'Rank ›')+'</a><br>':''}${TL('Owned {0}',L.inv[it.id]||0)}${lim?'<br>'+TL('Left {0}',s):''}</small></div></div>`}).join('')}</div>`;
+ const body=shopPage==='treasure'?renderTreasure():`<div class="shl">${IT.map(it=>{let lim=it.stock!=null,s=lim?L.stock[it.id]:null,pr=lim?it.cost:L.price[it.id],out=lim&&!s,lk=!itemOpen(it.id),D=DET[it.id];return`<div class="si${['legion','air','bomb','heli'].includes(it.id)?' new':''}" style="${lk?'opacity:.5;filter:grayscale(.7)':''}"><div class="sw" data-cdid="${it.id}"><img src="${SPRD[it.sp]}" alt=""><span class="cdo"></span><span class="cdt"></span></div><div class="sd"><b class="f">${it.n}</b><p>${D.fx}</p><small><b>${TL('Stats:')}</b> ${D.st}${FXon('nocd')?lvZ(' · 无冷却',' · No cooldown'):TL(' · Cooldown {0}s',CDT[it.id])}</small><small><b>${TL('Use:')}</b> ${D.use}</small></div><div class="sb"><button class="bt pay" data-id="${it.id}" data-cost="${pr}" ${out||lk?'disabled':''}>${lk?'🔒 Lv.'+LV_ITEM[it.id]:out?TL('Sold<br>out').replace('<br>',' '):`<span class="buytxt">${TL('Buy<br>').replace('<br>','')}</span>${COIN}<span class="price">${pr}</span>`}</button><small>${lk?'<a class="vlink" data-prof="shop" style="color:#ffd37a">'+(LANG==='zh'?'统帅档案 ›':'Rank ›')+'</a><br>':''}${TL('Owned {0}',L.inv[it.id]||0)}${lim?'<br>'+TL('Left {0}',s):''}</small></div></div>`}).join('')}</div>`;
  sh.innerHTML=`<div class="shh"><b class="f">${TL('Shop')}</b><small>${shopPage==='items'?TL('Read what each item does, then press Buy. Bought items wait in the inventory bar at the bottom.'):(zh?'资源宝藏 · 兑换码获取':'Resource treasury · redeem codes')}<br><b class="vlink" data-prof="shop" style="color:#ffd37a">Lv.${plLevel()} · ${lvInfo()} ›</b></small><button class="bt g" data-x="1">${TL('Close ✕')}</button></div>${tabs}${body}`;
  sh.hidden=false;let sc=sh.querySelector('.shl');if(sc)sc.scrollTop=st}
 $('shop').onclick=e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.x){tab='t';render()}else if(b.dataset.shopPage){shopPage=b.dataset.shopPage;renderShop()}else if(b.dataset.ck){if(window.CKTopup&&CKTopup.pick)CKTopup.pick(+b.dataset.ck)}else if(b.dataset.id)buy(b.dataset.id)};
@@ -1459,7 +1459,7 @@ function load(i,demo){
  if(!demo&&FXon('clear'))fxClearObs(false);
  if(demo){let rt=M.open?L.orts[0]:M.routes[0];for(let k=0;k<4;k++){let q=rt[Math.min(rt.length-2,5+k*4)];if(!q)continue;let z=g.find(z=>!z.p&&!z.sp&&!z.ob&&!z.tw&&Math.abs(z.x-q[0])+Math.abs(z.y-q[1])===1);if(z){let tt={k:Object.keys(TW)[k],x:z.x,y:z.y,lv:2+k%3,a:0,rc:0,st:0,cd:0,inv:0};z.tw=tt;faceP(tt);L.tr.push(tt)}}if(M.open)openRoutes()}
 }
-function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}let n=5+w*2+(L.i/3|0),q=[];if(L.boss&&w===L.waves){q.push('boss');if(L.portals&&L.portals.length>=2)q.push('boss');q.push('grunt','grunt','grunt','grunt');return q}for(let k=0;k<n;k++){let r=Math.random();q.push(r<.2+L.i*.004?'runner':r>.85-w*.03-L.i*.004?'brute':'grunt')}return q}
+function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}let n=5+w*2+(L.i/3|0),q=[];if(L.boss&&w===L.waves){L.nBoss=Math.max(1,(L.portals&&L.portals.length)||1);for(let k=0;k<L.nBoss;k++)q.push('boss');q.push('grunt','grunt','grunt','grunt');return q}for(let k=0;k<n;k++){let r=Math.random();q.push(r<.2+L.i*.004?'runner':r>.85-w*.03-L.i*.004?'brute':'grunt')}return q}
 function pickRt(sp){if(L.open){let pi=L.rr++%L.portals.length,fl=FLY.has(sp);return fl?[L.portals[pi].slice(),L.goals[0].slice()]:L.orts[pi]}return L.routes[L.rr++%L.routes.length]}
 function spawn(t,at=null){let d=EN[t],hp=[.68,.82,1,1.28,1.62][S.dif]*(t==='boss'?1100*(1+L.i*.16):45*d.hp*(1+L.i*.15)*(1+L.wave*.15)),rb=L.reg.bh,sp=spk(t),pi=(t==='boss'&&!at)?((L.bpi=(L.bpi||0)+1)-1)%L.portals.length:L.rr++%L.portals.length,P0=L.portals[pi],x0=at?at.x:P0[0],y0=at?at.y:P0[1];if(!L.demo&&!(at&&at.sky)){let SP0=pp(x0,y0);vGlow(SP0.x,SP0.y,tw*.6,'#b36bff',.3);vRing(SP0.x,SP0.y,tw*.6,'#d9a0ff',.4,3);vSparks(SP0.x,SP0.y,8,'#d9a0ff',120,.4)}L.en.push({sp,t,d,hp,mx:hp,x:x0,y:y0,tc:null,atk:null,at:0,_nav:null,vv:[0,0],ax:1,ay:0,pr:-999,ph:Math.random()*6,fly:FLY.has(sp),vx:1,vy:0,fd:1,sl:0,fz:0,fl:0,pro:L.demo?0:1.5,o:Math.random()*6,bt:5,ha:0,hue:t==='boss'?(rb+20)%360:t==='runner'?(rb+50)%360:t==='brute'?215:rb});ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}
 const epos=e=>[e.x,e.y];
@@ -1491,8 +1491,8 @@ function stomp(e){let q=epos(e),p=pp(q[0],q[1]);L.shake=.7;L.rg.push({x:p.x,y:p.
 function eUp(e,dt){let d=e.d;e.fl-=dt;e.age=(e.age||0)+dt;if(e.chan>0){e.chan-=dt;e.pro=Math.max(e.pro||0,e.chan);e.vv[0]*=.8;e.vv[1]*=.8;return}if(e.pro>0)e.pro-=dt;e.vocalCd=Math.max(0,(e.vocalCd||0)-dt);e.kb=Math.max(0,(e.kb||0)-dt*7);e.sl-=dt;if(e.fz>0){e.fz-=dt;return}
  if(e.ps>0){e.ps-=dt;e.pa=(e.pa||0)+dt;if(e.pa>=.5){e.pa-=.5;hurt(e,e.pd*e.pk*.35,'#9fe05a','toxin')}if(e.ps<=0)e.pk=0}
  if(e.t==='boss'&&!L.demo){let r=e.hp/e.mx;if(!e.s1&&r<.66){e.s1=1;for(let k=0;k<4;k++)spawn('grunt',{x:e.x+(Math.random()-.5)*.9,y:e.y+(Math.random()-.5)*.9});L.shake=.5;toast('The boss calls its guards')}
-  if(!e.s2&&r<(L.i>=39?.2:.33)){e.s2=1;e.en=1;if(L.i>=39){e.rage=1;e.chg=0;e.smash=[];L.shake=Math.max(L.shake||0,.9);sfx('bossalert',.6)||beep(90,.45,'sawtooth',.08);toast(lvZ('⚠ 首领狂暴！体型变大、高速冲撞、攻击力 +15%','⚠ The boss is ENRAGED! Bigger, charging, +15% attack'));if(window.ckBanner)ckBanner(lvZ('首领狂暴','Boss enraged'),lvZ('狂暴模式','ENRAGED'),1)}else toast('The boss is enraged')}
-  if(!e.atk&&!(e.fz>0)&&window.CK_Q!==0&&!L.demo){e.stp=(e.stp||0)-dt;if(e.stp<=0){e.stp=e.rage?.3:.6;const sp1=eS(e),rr=tw*(.3+.45*(e.rg||0));vDecal(sp1.x,sp1.y+tw*.32,rr,'rgba(24,14,8,.32)');burst(sp1.x,sp1.y+tw*.32,'#b9a58a',e.rg?6:3,e.rg?90:50)}}e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}if(e.rage){e.rgT=(e.rgT||0)+dt;{const rt=e.rgT,ss=x=>x*x*(3-2*x);e.rg=rt<.35?ss(rt/.35):rt<2.65?1:rt<3?ss((3-rt)/.35):0;if(rt>=.35&&rt-dt<.35){const sp2=eS(e);vRing(sp2.x,sp2.y,tw*3.2,'#ff4a3a',.6,8);vGlow(sp2.x,sp2.y,tw*2.4,'#ff3a2a',.5);L.shake=Math.max(L.shake||0,1)}}const c0=e.chg%2.2<1.3;e.chg=(e.chg||0)+dt;const c1=e.chg%2.2<1.3;if(c1&&!c0)e.smash=[];if(c1){e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const sp0=eS(e);burst(sp0.x,sp0.y+tw*.3,'#ff6a3a',3,70)}for(const t of L.tr){if(t.building||t.hp<=0||e.smash.includes(t))continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.8){e.smash.push(t);dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}}}}
+  if(!e.s2&&r<(L.i>=39?.2:.33)){e.s2=1;e.en=1;if(L.i>=39){e.rage=1;e.chg=0;e.smash=[];L.shake=Math.max(L.shake||0,.9);sfx('bossalert',.6)||beep(90,.45,'sawtooth',.08);toast(lvZ('⚠ 首领狂暴 8 秒！体型暴涨，满地图横冲直撞','⚠ The boss is ENRAGED for 8 s! It swells and stampedes across the map'));if(window.ckBanner)ckBanner(lvZ('首领狂暴','Boss enraged'),lvZ('狂暴模式','ENRAGED'),1)}else toast('The boss is enraged')}
+  if(!e.atk&&!(e.fz>0)&&window.CK_Q!==0&&!L.demo){e.stp=(e.stp||0)-dt;if(e.stp<=0){e.stp=e.rage?.3:.6;const sp1=eS(e),rr=tw*(.3+.45*(e.rg||0));vDecal(sp1.x,sp1.y+tw*.32,rr,'rgba(24,14,8,.32)');burst(sp1.x,sp1.y+tw*.32,'#b9a58a',e.rg?6:3,e.rg?90:50)}}e.bt-=dt;if(e.bt<=0&&!(e.wd>0)){e.wd=1;e.bt=e.en?4:6.5}if(e.rage){if(ckRage(e,dt))return}}
  if(e.wd>0){e.wd-=dt;if(e.wd<=0)stomp(e);return}
  eMove(e,dt,d.sp*(e.sl>0?(e.t==='boss'?.75:.5):1)*(e.rage?(e.chg%2.2<1.3?2.7:1.3):e.en?1.7:1)*(cell(Math.max(0,Math.min(L.cols-1,Math.round(e.x))),Math.max(0,Math.min(L.rows-1,Math.round(e.y)))).sw&&!e.fly?.62:1))}
 
@@ -1542,7 +1542,8 @@ const CKCH=[
  {id:'ban',n:['禁用','Restriction'],d:['不建造{0}','Build no {0}']}
 ];
 let CK_NR=null;
-// v3.4 boss art: on two-boss levels the second boss is a random portrait, different from the first
+// v3.4 boss art: on levels with several bosses (one per enemy base), every extra boss is a random
+// portrait, different from all the others on that level
 const CK_BOSS_ART=['b2_skeleton_king','b2_demon_lord','b2_ice_dragon','b2_fire_giant','b2_necromancer','b2_death_knight','b2_dread_knight','b2_lich_king','b2_stone_golem','b2_sea_monster','b2_dragon_king','b2_vampire_lord','b2_ogre_king','b2_spider_queen','b2_giant_worm','b2_demon_beast','b2_forest_ent','b2_void_lord','b2_storm_titan'];
 function ckIU(id){if(L&&L.iu)L.iu[id]=(L.iu[id]||0)+1}
 const ckZ=a=>lvZ(a[0],a[1]);
@@ -1567,7 +1568,7 @@ function ckLbl(e,s,col){if(e.lbt>TM)return;e.lbt=TM+.9;const p=eS(e);txt(p.x,p.y
 function ckRole(e){
  if(L.demo)return;
  if(L.ckv!==L)ckV3Init();
- if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsp1=e.sp;else if(L.bsc===2){const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,pool=CK_BOSS_ART.filter(k=>kn(k)!==kn(L.bsp1)&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0]}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
+ if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
  const r=CK_NR;if(!r||!CKR[r])return;e.rl=r;
  if(r==='shield')e.sh=e.msh=e.mx*.45;
  if(r==='heal')e.hc=1.2;
@@ -1714,11 +1715,42 @@ function ckFixSprites(){const g=SP.e_golem,sp=SP.e_spider;if(!g||!sp||!g.complet
 function ckBossKey(k){return SP[k]?k:(SP.e_golem&&k==='e_treant'?'e_golem':'b_necromancer')}
 setTimeout(function ckFS(){if(!ckFixSprites())setTimeout(ckFS,150)},0);
 
+// ---- Rage Mode (v3.5) ----
+// From level 40 a boss at 20% HP enrages for 8 s: it swells to 3x size and stampedes freely across
+// the whole map (ignoring paths and buildings), charging tower clusters and far corners and
+// trampling every tower it runs over. Then it shrinks back and resumes its normal march.
+const CK_RAGE_T=8;
+function ckRage(e,dt){
+ e.rgT=(e.rgT||0)+dt;const rt=e.rgT,ss=x=>x*x*(3-2*x);
+ e.rg=rt<.35?ss(rt/.35):rt<CK_RAGE_T-.45?1:rt<CK_RAGE_T?ss((CK_RAGE_T-rt)/.45):0;
+ e.wd=0;e.bt=Math.max(e.bt||0,2.5);e.atk=null;e.chase=null;
+ if(rt>=.35&&rt-dt<.35){const p=eS(e);vRing(p.x,p.y,tw*3.2,'#ff4a3a',.6,8);vGlow(p.x,p.y,tw*2.4,'#ff3a2a',.5);L.shake=Math.max(L.shake||0,1)}
+ if(rt>=CK_RAGE_T){e.rage=0;e.rg=0;e.en=0;e.rw=null;e.vv[0]=e.vv[1]=0;toast(lvZ('首领的狂暴平息了','The boss calms down'));return false}
+ // choose a new stampede target: a random tower (to wreck it) or a random far spot anywhere on the map
+ // targets alternate between far corners/edges of the map and distant towers, so the stampede
+ // sweeps the whole battlefield instead of circling one spot
+ e.rwT=(e.rwT||0)-dt;
+ if(!e.rw||e.rwT<=0||Math.hypot(e.rw[0]-e.x,e.rw[1]-e.y)<1){
+  const C=L.cols-1,R=L.rows-1,far=(a,b)=>Math.hypot(a-e.x,b-e.y);let tx=0,ty=0;
+  const tws=L.tr.filter(t=>t&&!t.building&&t.hp>0&&far(t.x,t.y)>2.5);
+  e.rwN=(e.rwN||0)+1;
+  if(tws.length&&e.rwN%2===0){let bt=null,bd=-1;for(let k=0;k<4;k++){const t=tws[Math.random()*tws.length|0],d=far(t.x,t.y);if(d>bd){bd=d;bt=t}}tx=bt.x;ty=bt.y}
+  else{let bd=-1;const pts=[[0,0],[C,0],[0,R],[C,R],[C/2,0],[C/2,R],[0,R/2],[C,R/2]];for(let k=0;k<6;k++){const q=Math.random()<.6?pts[Math.random()*pts.length|0]:[Math.random()*C,Math.random()*R],x=Math.max(0,Math.min(C,q[0]+(Math.random()-.5)*1.5)),y=Math.max(0,Math.min(R,q[1]+(Math.random()-.5)*1.5)),d=far(x,y);if(d>bd){bd=d;tx=x;ty=y}}}
+  e.rw=[tx,ty];e.rwT=3;
+ }
+ const dx=e.rw[0]-e.x,dy=e.rw[1]-e.y,dl=Math.hypot(dx,dy)||1;
+ steer(e,dx/dl,dy/dl,e.d.sp*6.5*(e.sl>0?.8:1),dt);
+ e.x=Math.max(0,Math.min(L.cols-1,e.x));e.y=Math.max(0,Math.min(L.rows-1,e.y));
+ // trample: every tower (and barricade) it runs over takes a heavy hit, at most once per 1.2 s each
+ for(const t of L.tr){if(!t||t.building||t.hp<=0)continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.6+.7*(e.rg||0)&&!((t._rsm||0)>TM)){t._rsm=TM+1.2;dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}
+ e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const p=eS(e);burst(p.x,p.y+tw*.3,'#ff6a3a',3,70)}
+ return true}
+
 function ckSummonTick(dt){const a=L.scs;if(!a||!a.length){L.sc=null;return}if(L.over){L.scs=[];L.sc=null;return}for(const sc of a.slice()){sc.t-=dt;const n=Math.ceil(sc.t);if(sc===a[0]&&n<sc.last&&n>0){sc.last=n;beep(n<=2?880:620,.12,'square',.06)}if(sc.t<=0){a.splice(a.indexOf(sc),1);if(sc.b){sc.b.chan=0;sc.b.pro=0}bossSummon(sc.b,sc.ph)}}L.sc=a[0]||null}
 function bossSummon(boss,ph){
  if(L.demo||L.over)return;
  const lv=Math.max(0,L.i-32),dm=[.7,.85,1,1.15,1.3][S.dif]||1;
- let n=Math.round((8+Math.floor(lv/4))*(ph===2?1.5*4:2.5)*dm);n=Math.max(15,Math.min(ph===2?170:80,n));n=Math.max(8,Math.round(n/((L.boss&&L.i>=39)?2:1)));
+ let n=Math.round((8+Math.floor(lv/4))*(ph===2?1.5*4:2.5)*dm);n=Math.max(15,Math.min(ph===2?170:80,n));n=Math.max(8,Math.round(n/Math.max(1,L.nBoss||1)));
  /* alert first, so it always shows even if no landing tile is found */
  L.bAl={t:0,d:2.4};try{let o=document.getElementById('bossAlertOv');if(!o){o=document.createElement('div');o.id='bossAlertOv';o.style.cssText='position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,rgba(255,0,0,.28) 30%,rgba(255,0,0,.8) 100%)';document.body.appendChild(o)}o.getAnimations().forEach(a=>a.cancel());o.animate([{opacity:0},{opacity:1},{opacity:.1},{opacity:1},{opacity:.1},{opacity:1},{opacity:0}],{duration:2400,easing:'ease-in-out'})}catch(_){}
  L.shake=Math.max(L.shake||0,.6);
@@ -1754,7 +1786,7 @@ function bossSummon(boss,ph){
  L.rr=rr}
 function leak(e){let d=e.d;e.hp=-1;if(!L.demo){ckBaseSync();if(!(L.bf.shield>0))ckBaseHit(e,d.l);L.shake=.4;L.lk=1;(L.lkb=L.lkb||{})[e.t]=(L.lkb[e.t]||0)+d.l;sfx('leak')||beep(150,.3,'sawtooth',.08);if(L.lives<=0&&!L.over)end(false)}}
 function faceTo(e,dx,dy,dt){let l=Math.hypot(dx,dy)||1,sx=(port?dy:dx)/l,sy=(port?dx:dy)/l,k=Math.min(1,(dt||.016)*10);e.vx+=(sx-e.vx)*k;e.vy+=(sy-e.vy)*k;e.ax=sx;e.ay=sy}
-function steer(e,ux,uy,sp,dt){let k=Math.min(1,dt*8);e.vv[0]+=(ux*sp-e.vv[0])*k;e.vv[1]+=(uy*sp-e.vv[1])*k;let mx=e.vv[0]*dt,my=e.vv[1]*dt;if(!e.fly){const blocked=(x,y)=>waterBlocked(Math.round(x),Math.round(y));if(blocked(e.x+mx,e.y)){mx=0;e.vv[0]=0}if(blocked(e.x,e.y+my)){my=0;e.vv[1]=0}if(blocked(e.x+mx,e.y+my)){if(!blocked(e.x+mx,e.y))my=0;else if(!blocked(e.x,e.y+my))mx=0;else{mx=0;my=0}e.vv[0]*=.2;e.vv[1]*=.2}}e.x+=mx;e.y+=my;e.ph+=Math.hypot(mx,my)*6.2832/(.62*(e.t==='boss'?1.6:e.d.sz));if(Math.hypot(e.vv[0],e.vv[1])>.05)faceTo(e,e.vv[0],e.vv[1],dt)}
+function steer(e,ux,uy,sp,dt){let k=Math.min(1,dt*8);e.vv[0]+=(ux*sp-e.vv[0])*k;e.vv[1]+=(uy*sp-e.vv[1])*k;let mx=e.vv[0]*dt,my=e.vv[1]*dt;if(!e.fly&&e.t!=='boss'){const blocked=(x,y)=>waterBlocked(Math.round(x),Math.round(y));if(blocked(e.x+mx,e.y)){mx=0;e.vv[0]=0}if(blocked(e.x,e.y+my)){my=0;e.vv[1]=0}if(blocked(e.x+mx,e.y+my)){if(!blocked(e.x+mx,e.y))my=0;else if(!blocked(e.x,e.y+my))mx=0;else{mx=0;my=0}e.vv[0]*=.2;e.vv[1]*=.2}}e.x+=mx;e.y+=my;e.ph+=Math.hypot(mx,my)*6.2832/(.62*(e.t==='boss'?1.6:e.d.sz));if(Math.hypot(e.vv[0],e.vv[1])>.05)faceTo(e,e.vv[0],e.vv[1],dt)}
 
 /* ===== BOSS CRITICAL STRIKE =====
    Chance and multiplier scale with the boss level (L.i), enrage state and lost health.
@@ -1782,7 +1814,7 @@ function killTower(t){if(!L.tr.includes(t))return;L.tr=L.tr.filter(x=>x!==t);cel
 /* Open-field enemy navigation: continuous waypoint arrival, stuck recovery and destructible tower targeting. */
 function eMove(e,dt,sp){
  const C=L.cols,R=L.rows;
- if(e.fly){let g=L.goals.reduce((a,b)=>!a||Math.hypot(b[0]-e.x,b[1]-e.y)<Math.hypot(a[0]-e.x,a[1]-e.y)?b:a,null);if(!g)return;let dx=g[0]-e.x,dy=g[1]-e.y,dl=Math.hypot(dx,dy)||1;steer(e,dx/dl,dy/dl,sp,dt);e.pr=-dl;if(dl<.3)leak(e);return}
+ if(e.fly||(e.t==='boss'&&!L.demo)){let g=L.goals.reduce((a,b)=>!a||Math.hypot(b[0]-e.x,b[1]-e.y)<Math.hypot(a[0]-e.x,a[1]-e.y)?b:a,null);if(!g)return;let dx=g[0]-e.x,dy=g[1]-e.y,dl=Math.hypot(dx,dy)||1;steer(e,dx/dl,dy/dl,sp,dt);e.pr=-dl;if(dl<.3)leak(e);return}
  let cx=Math.max(0,Math.min(C-1,Math.round(e.x))),cy=Math.max(0,Math.min(R-1,Math.round(e.y))),nav=e._nav||(e._nav={prev:null,recent:[],px:e.x,py:e.y,stuck:0,repath:0,lastDist:1e9,vis:{},best:1e9,bt:0,sc:0});
  e.pr=-(L.df[cy*C+cx]+Math.hypot(e.x-cx,e.y-cy));
  // Progress watchdog: if an enemy barely moves for 0.9s, discard its stale waypoint and rebuild the flow field.
@@ -1896,13 +1928,13 @@ const cuLv=k=>Math.max(0,Math.min(CU_MAX,((S.cu&&S.cu[k])|0)));
 /* Build speed: base 12s, each upgrade level shortens it; level 10 = 1s. Crit rate: +2% per level, level 10 = 20%. */
 const BUILD_BASE=12,BUILD_MIN=1,CRIT_PCT=2,CRIT_MULT=2;
 /* ---- redeem-code effects (S.fx), see ck-topup ---- */
-const FXKEYS=['atk','atk5','crit','crit5','def','inv','build','unlock','clear','infight'];
+const FXKEYS=['atk','atk5','crit','crit5','def','inv','build','unlock','clear','infight','nocd'];
 function fxClean(o){const r={};if(o&&typeof o==='object')for(const k of FXKEYS){const cap=(k==='atk'||k==='crit'||k==='def')?400:1,v=Math.max(0,Math.min(cap,(+o[k])|0));if(v)r[k]=v}return r}
 function FXon(k){return !!(S&&S.fx&&S.fx[k])}
 function fxAtk(){const f=S.fx||{};return (f.atk|0)*.25+(f.atk5?5:0)}
 function fxCrit(){const f=S.fx||{};return (f.crit|0)*.25+(f.crit5?5:0)}
 function fxDef(){const f=S.fx||{};return (f.def|0)*.25}
-function fxClearObs(redraw){if(!L)return;L.g.forEach(q=>{q.ob=0;q.ot=null});try{openRoutes()}catch(e){}if(redraw){try{render()}catch(e){}}}
+function fxClearObs(redraw){if(!L)return;L.g.forEach(q=>{q.ob=0;q.ot=null;q.sw=0});L.gc=null;try{openRoutes()}catch(e){}if(redraw){try{render()}catch(e){}}}
 let _ifT=0;
 function fxInfight(dt){if(!FXon('infight')||!L||L.demo||L.over)return;_ifT-=dt;if(_ifT>0)return;_ifT=.5;
  const a=L.en.filter(e=>e.hp>0);if(a.length<2)return;
@@ -2984,7 +3016,7 @@ function updateDifficulty(){let r=$('difrange');if(r)r.value=S.dif;const db=$('d
 $('difrange').addEventListener('input',e=>{const _v=+e.target.value;if(_v!==S.dif){try{navigator.vibrate&&navigator.vibrate(12)}catch(_){}}S.dif=_v;updateDifficulty();save()});
 function buy(id){let it=IT.find(x=>x.id===id),lim=it.stock!=null,pr=lim?it.cost:L.price[id];if(!itemOpen(id))return toast(lvZ('指挥官 Lv.'+LV_ITEM[id]+' 解锁此道具','Unlocks at Commander Lv.'+LV_ITEM[id]));if(lim&&!L.stock[id])return;if(!charge(pr))return toast('Not enough coins');L.is=(L.is||0)+pr;if(lim)L.stock[id]--;L.inv[id]=(L.inv[id]||0)+1;if(id==='rep')L.price.rep=Math.min(700,L.price.rep+100);toast(TL('{0} added to the inventory',it.n));sfx('coin')||beep(800,.15,'square',.05);render()}
 const bagH=()=>{let a=IT.filter(it=>L.inv[it.id]>0);return a.length?a.map(it=>`<button class="tw" data-use="${it.id}" data-i="${it.n} — ${it.d} (tap to use)"><i><img src="${SPRD[it.sp]}" alt=""></i><em>Use</em><u>${L.inv[it.id]}</u></button>`).join(''):'<p style="margin:6px;font-size:12px;color:var(--mut)">Your Bag is empty. Buy items in the Shop, then use them here.</p>'};
-function placeRiver(index){if(!(L.inv.river>0)){L.placing=null;render();return}const axis='col',limit=axis==='col'?L.cols:L.rows;if(index<1||index>limit-2){toast('Pick a spot away from the gates');return}if(L.rv){toast('A river is already flowing');return}const saved=[],cells=[];if(axis==='col'){for(let y=0;y<L.rows;y++){const q=cell(index,y);saved.push([index,y,q.rv||0]);if(!q.br&&!q.sp)q.rv=1}}else{for(let x=0;x<L.cols;x++){const q=cell(x,index);saved.push([x,index,q.rv||0]);if(!q.br&&!q.sp)q.rv=1}}L.inv.river--;ckIU('river');L.cdn.river=CDT.river;L.placing=null;L.rv={axis,index,t:30,cells:saved};
+function placeRiver(index){if(!(L.inv.river>0)){L.placing=null;render();return}const axis='col',limit=axis==='col'?L.cols:L.rows;if(index<1||index>limit-2){toast('Pick a spot away from the gates');return}if(L.rv){toast('A river is already flowing');return}const saved=[],cells=[];if(axis==='col'){for(let y=0;y<L.rows;y++){const q=cell(index,y);saved.push([index,y,q.rv||0]);if(!q.br&&!q.sp)q.rv=1}}else{for(let x=0;x<L.cols;x++){const q=cell(x,index);saved.push([x,index,q.rv||0]);if(!q.br&&!q.sp)q.rv=1}}L.inv.river--;ckIU('river');L.cdn.river=FXon('nocd')?0:CDT.river;L.placing=null;L.rv={axis,index,t:30,cells:saved};
  /* Water barrier across the enemy path (logical column). Bridges stay passable; both screen-side ends remain open. */
  L.en.forEach(e=>{if(!e.fly){e.tc=null;e.vv=[0,0];e.atk=null;e._nav=e._nav||{};e._nav.wander=null;e._nav.wanderT=0;e._nav.wanderRecent=[];e._nav.stuck=0;e._nav.best=1e9;e._nav.bt=0}});replan();computeDF();vFlash('#5ab8ff',.25);L.shake=.3;
  toast('The river spans the whole map for 30s. Ground enemies can only cross at bridges.');render()}
@@ -2994,7 +3026,7 @@ function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over
  if(id==='air'||id==='bomb'){if(L.placing===id){L.placing=null;render();return toast('Cancelled')}L.placing=id;render();return toast(id==='air'?'Tap the map where enemies bunch up (Q cancels)':'Tap a lane: the jets fly along it (Q cancels)')}
  if(id==='heli'&&L.hel)return toast('A gunship is already on station');
  if(!en.length&&['met','fbomb','scroll','trap'].includes(id))return toast('No enemies on the field');
- if(id==='rep'&&L.lives>=ckCap())return toast(lvZ('生命值已满','Lives are already full'));L.inv[id]--;ckIU(id);L.cdn[id]=CDT[id];let mid=pp(L.cols/2-.5,L.rows/2-.5),G=L.goals.map(g=>pp(g[0],g[1])),big=Math.max(W,H),R=Math.random;
+ if(id==='rep'&&L.lives>=ckCap())return toast(lvZ('生命值已满','Lives are already full'));L.inv[id]--;ckIU(id);L.cdn[id]=FXon('nocd')?0:CDT[id];let mid=pp(L.cols/2-.5,L.rows/2-.5),G=L.goals.map(g=>pp(g[0],g[1])),big=Math.max(W,H),R=Math.random;
  if(id==='rep'){L.lives=Math.min(ckCap(),L.lives+ckHeal());G.forEach(p=>{vGlow(p.x,p.y,tw*1.8,'#7dffa0',.9);vRing(p.x,p.y,tw*1.6,'#7dffa0',.8,4);vPillar(p.x,p.y,'#7dffa0',.9);for(let i=0;i<26;i++)vp(p.x+(R()-.5)*tw*1.4,p.y+R()*tw*.5,(R()-.5)*20,-40-R()*70,.9+R()*.7,2+R()*2.5,'#b6ffc8','g',-10)});vFlash('#7dffa0',.28);toast('+'+ckHeal()+' ♥')}
  if(id==='frz'){vFlash('#bfeaff',.5);vRing(mid.x,mid.y,big,'#bfeaff',.9,10,1);L.shake=.3;en.forEach(e=>{e.fz=10;let p=eS(e);vShards(p.x,p.y);vSparks(p.x,p.y,14,'#e8fbff',120,.6)});toast('Everything is frozen for 10s')}
  if(id==='met'){vFlash('#ff9a55',.18);en.forEach((e,i)=>{let p=eS(e);vMeteor(p.x+tw*4,p.y-tw*10,p.x,p.y,.5+i*.05,'#ffb36b',()=>{vBoom(p.x,p.y,1.2);if(e.hp>0){hurt(e,140+L.i*10,'#ffb36b');vKnock(e,1,.3,1.3)}})});toast('Meteor strike!')}
@@ -3505,8 +3537,8 @@ function snd(k,v=1){if(!mon||!au)return;let t=au.currentTime,d=sg||mg||au.destin
 function callLegion(){let R=Math.random;for(let i=0;i<8;i++){let g=L.goals[i%L.goals.length];L.al.push({x:g[0]-.5-R()*.9,y:g[1]+(R()-.5)*2.4,t:16,cd:R()*.4,ph:R()*6,mv:0,fx:-1,sw:0,col:['#ff5b7f','#5eead4','#ffbe3d','#7aa2ff'][i%4]})}
  snd('horn');vFlash('#fff4c0',.25);L.shake=.25;L.al.forEach((a,i)=>{let p=pp(a.x,a.y);if(i<2)vPillar(p.x,p.y,'#fff4c0',.6);vRing(p.x,p.y,tw*.7,'#fff4c0',.4,2);vSparks(p.x,p.y,6,'#fff4c0',110,.35)});toast('Allied Legion deployed! Knights charge for 16s')}
 function callHeli(){L.hel={x:-2.5,y:L.rows/2-.5,t:14,ph:0,cd:0,rk:1,rs:0,gn:0,tr:[]};snd('rotor');vFlash('#cfe6ff',.15);toast('Gunship on station for 14s')}
-function placeAir(q){if(!(L.inv.air>0)){L.placing=null;return}L.inv.air--;ckIU('air');L.cdn.air=CDT.air;L.placing=null;L.tgt.push({x:q.x,y:q.y,t:1.2,a:0,n:0,m:0});snd('lock');vFlash('#ff5b7f',.15);toast('Airstrike inbound! Impact in 1 second');render()}
-function placeBomb(q){if(!(L.inv.bomb>0)){L.placing=null;return}L.inv.bomb--;ckIU('bomb');L.cdn.bomb=CDT.bomb;L.placing=null;
+function placeAir(q){if(!(L.inv.air>0)){L.placing=null;return}L.inv.air--;ckIU('air');L.cdn.air=FXon('nocd')?0:CDT.air;L.placing=null;L.tgt.push({x:q.x,y:q.y,t:1.2,a:0,n:0,m:0});snd('lock');vFlash('#ff5b7f',.15);toast('Airstrike inbound! Impact in 1 second');render()}
+function placeBomb(q){if(!(L.inv.bomb>0)){L.placing=null;return}L.inv.bomb--;ckIU('bomb');L.cdn.bomb=FXon('nocd')?0:CDT.bomb;L.placing=null;
  // Three compact allied strike craft converge on the selected enemy cluster from different bearings.
  const targets=L.en.filter(e=>e.hp>0).sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y)).slice(0,3);
  const aim=targets.length?{x:targets.reduce((v,e)=>v+e.x,0)/targets.length,y:targets.reduce((v,e)=>v+e.y,0)/targets.length}:{x:q.x,y:q.y};
@@ -4172,7 +4204,7 @@ const EFFECTS=[
  {id:16,g:'map',ic:'🗝️',zh:'解锁所有关卡',en:'Unlock All Levels'},
  {id:17,g:'map',ic:'🌲',zh:'消除地图上所有自然障碍物',en:'Clear All Natural Obstacles'},
  {id:18,g:'btl',ic:'😈',zh:'怪物互相攻击',en:'Monsters Fight Each Other'},
- {id:19,g:'btl',ic:'⏱️',zh:'所有道具冷却时间归0',en:'Reset All Item Cooldowns'}
+ {id:19,g:'btl',ic:'⏱️',zh:'所有道具永久无冷却',en:'No Item Cooldowns'}
 ];
 const GROUPS=[['res','资源','Resources'],['tow','防御塔','Towers'],['map','地图与关卡','Map & Levels'],['btl','战斗','Battle']];
 
@@ -4286,7 +4318,7 @@ function openTopup(fromPause){
 }
 let fails=0,lockUntil=0;
 /* ---- apply the effect of a verified code. Returns {ok,msg}; when ok:false the code is NOT consumed. ---- */
-const FXMAP={9:['build',0],10:['inv',0],11:['atk',1],12:['atk5',0],13:['crit',1],14:['crit5',0],15:['def',1],16:['unlock',0],17:['clear',0],18:['infight',0]};
+const FXMAP={9:['build',0],10:['inv',0],11:['atk',1],12:['atk5',0],13:['crit',1],14:['crit5',0],15:['def',1],16:['unlock',0],17:['clear',0],18:['infight',0],19:['nocd',0]};
 function applyEffect(id){
   const inBattle=S.mode==='play'&&!!L&&!L.demo,r=RES[id];
   const refresh=()=>{try{if(typeof updWl==='function')updWl()}catch(e){}try{if(S.mode==='play'&&typeof hud==='function')hud()}catch(e){}try{if(S.mode==='map'&&typeof buildMap==='function')buildMap()}catch(e){}};
@@ -4298,16 +4330,12 @@ function applyEffect(id){
     save();refresh();
     return {ok:true,msg:Z('兑换成功：+'+n.toLocaleString()+' '+unit(kind),'Redeemed: +'+n.toLocaleString()+' '+unit(kind))};
   }
-  if(id===19){
-    if(!inBattle)return {ok:false,msg:Z('请在战斗中（暂停菜单）使用此兑换码，当前兑换码未消耗','Use this code during a battle (pause menu). Your code was not used.')};
-    for(const k in L.cdn)L.cdn[k]=0;
-    refresh();return {ok:true,msg:Z('兑换成功：所有道具冷却已归零','Redeemed: all item cooldowns reset')};
-  }
   const m=FXMAP[id];if(!m)return {ok:false,msg:Z('兑换码无效','Invalid redeem code')};
   const f=S.fx=fxClean(S.fx),k=m[0];
   if(!m[1]&&f[k])return {ok:false,msg:Z('该效果已经生效，无需重复兑换（兑换码未消耗）','This effect is already active. Your code was not used.')};
   f[k]=m[1]?Math.min(400,(f[k]|0)+1):1;
   if(id===17&&inBattle)fxClearObs(true);
+  if(id===19&&inBattle)for(const k in L.cdn)L.cdn[k]=0;
   save();refresh();
   let extra='';
   if(id===11)extra=Z('（累计 +'+f.atk*25+'%）',' (total +'+f.atk*25+'%)');
@@ -4769,7 +4797,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.4 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.5 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

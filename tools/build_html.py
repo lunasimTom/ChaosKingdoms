@@ -418,6 +418,44 @@ rep("BOSSK=['b_skeleton_king','b_demon_lord','b_ice_dragon','b_fire_giant','e_dr
 rep("s=sz/Math.max(iw,ih)*(e.wd>0?1.1:1)",
     "s=(e.sp.startsWith('b2_')?Math.min(sz*1.3/Math.max(iw,ih),sz*1.05/ih):sz/Math.max(iw,ih))*(e.wd>0?1.1:1)")
 
+# 36. v3.5 fixes.
+#   a) One boss per enemy base: a boss wave sends as many bosses as the level has portals (1-4);
+#      each boss's reinforcement summon is shared out so the total stays as designed.
+rep("q.push('boss');if(L.portals&&L.portals.length>=2)q.push('boss');",
+    "L.nBoss=Math.max(1,(L.portals&&L.portals.length)||1);for(let k=0;k<L.nBoss;k++)q.push('boss');")
+rep("n=Math.max(8,Math.round(n/((L.boss&&L.i>=39)?2:1)));", "n=Math.max(8,Math.round(n/Math.max(1,L.nBoss||1)));")
+#   b) Bosses ignore buildings: they take a direct line to the nearest base like flying monsters,
+#      never stop to attack towers, and can cross water.
+rep("if(e.fly){let g=L.goals.reduce(", "if(e.fly||(e.t==='boss'&&!L.demo)){let g=L.goals.reduce(")
+rep("let mx=e.vv[0]*dt,my=e.vv[1]*dt;if(!e.fly){const blocked=", "let mx=e.vv[0]*dt,my=e.vv[1]*dt;if(!e.fly&&e.t!=='boss'){const blocked=")
+#   c) Rage Mode lasts 8 s: the boss swells to 3x size and stampedes freely around the whole map,
+#      trampling towers, then calms down and resumes its normal march (see ckRage in v3.js).
+rep("if(e.rage){e.rgT=(e.rgT||0)+dt;{const rt=e.rgT,ss=x=>x*x*(3-2*x);e.rg=rt<.35?ss(rt/.35):rt<2.65?1:rt<3?ss((3-rt)/.35):0;if(rt>=.35&&rt-dt<.35){const sp2=eS(e);vRing(sp2.x,sp2.y,tw*3.2,'#ff4a3a',.6,8);vGlow(sp2.x,sp2.y,tw*2.4,'#ff3a2a',.5);L.shake=Math.max(L.shake||0,1)}}const c0=e.chg%2.2<1.3;e.chg=(e.chg||0)+dt;const c1=e.chg%2.2<1.3;if(c1&&!c0)e.smash=[];if(c1){e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const sp0=eS(e);burst(sp0.x,sp0.y+tw*.3,'#ff6a3a',3,70)}for(const t of L.tr){if(t.building||t.hp<=0||e.smash.includes(t))continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.8){e.smash.push(t);dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}}}}", "if(e.rage){if(ckRage(e,dt))return}}")
+rep("toast(lvZ('⚠ 首领狂暴！体型变大、高速冲撞、攻击力 +15%','⚠ The boss is ENRAGED! Bigger, charging, +15% attack'))",
+    "toast(lvZ('⚠ 首领狂暴 8 秒！体型暴涨，满地图横冲直撞','⚠ The boss is ENRAGED for 8 s! It swells and stampedes across the map'))")
+#   d) "Clear All Natural Obstacles" also removes swamps, and the cached ground is redrawn so the
+#      change shows (and the tiles can be built on) at once, also when bought mid-battle.
+rep("function fxClearObs(redraw){if(!L)return;L.g.forEach(q=>{q.ob=0;q.ot=null});",
+    "function fxClearObs(redraw){if(!L)return;L.g.forEach(q=>{q.ob=0;q.ot=null;q.sw=0});L.gc=null;")
+#   e) Treasure "No Item Cooldowns" (effect 19) is a permanent upgrade like the other treasures: items
+#      never go on cooldown again, starting immediately (it used to clear only the running timers).
+rep("const FXKEYS=['atk','atk5','crit','crit5','def','inv','build','unlock','clear','infight'];",
+    "const FXKEYS=['atk','atk5','crit','crit5','def','inv','build','unlock','clear','infight','nocd'];")
+rep("17:['clear',0],18:['infight',0]};", "17:['clear',0],18:['infight',0],19:['nocd',0]};")
+
+rep("L.inv[id]--;ckIU(id);L.cdn[id]=CDT[id];", "L.inv[id]--;ckIU(id);L.cdn[id]=FXon('nocd')?0:CDT[id];")
+for _k in ('river','air','bomb'):
+    rep(f"L.cdn.{_k}=CDT.{_k};", f"L.cdn.{_k}=FXon('nocd')?0:CDT.{_k};")
+rep("${TL(' · Cooldown {0}s',CDT[it.id])}", "${FXon('nocd')?lvZ(' · 无冷却',' · No cooldown'):TL(' · Cooldown {0}s',CDT[it.id])}")
+rep("""  if(id===19){
+    if(!inBattle)return {ok:false,msg:Z('请在战斗中（暂停菜单）使用此兑换码，当前兑换码未消耗','Use this code during a battle (pause menu). Your code was not used.')};
+    for(const k in L.cdn)L.cdn[k]=0;
+    refresh();return {ok:true,msg:Z('兑换成功：所有道具冷却已归零','Redeemed: all item cooldowns reset')};
+  }
+""", "")
+rep("  if(id===17&&inBattle)fxClearObs(true);\n", "  if(id===17&&inBattle)fxClearObs(true);\n  if(id===19&&inBattle)for(const k in L.cdn)L.cdn[k]=0;\n")
+rep("{id:19,g:'btl',ic:'⏱️',zh:'所有道具冷却时间归0',en:'Reset All Item Cooldowns'}", "{id:19,g:'btl',ic:'⏱️',zh:'所有道具永久无冷却',en:'No Item Cooldowns'}")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()

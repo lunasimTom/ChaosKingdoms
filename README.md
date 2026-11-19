@@ -7,7 +7,35 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.4.apk` | Android app (package `com.chaoskingdoms.game`, version 3.4, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.5.apk` | Android app (package `com.chaoskingdoms.game`, version 3.5, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.5
+
+**One boss per enemy base.** A boss wave now sends as many bosses as the level has enemy bases (portals): 1, 2, 3 or 4. Each boss starts at a different base and has its own portrait, all different on the same level. The bosses' reinforcement summons are shared out between them, so the total number of summoned monsters stays as designed.
+
+| Levels | Enemy bases | Bosses |
+| --- | --- | --- |
+| 8, 16, 24, 32 | 1 | 1 |
+| 40, 48, 56 | 2 | 2 |
+| 64, 72, 80 | 3 | 3 |
+| 88, 96, 97, 98, 99, 100 | 4 | 4 |
+
+**Bosses ignore buildings.** Bosses walk straight to the nearest base, like flying monsters. They never stop to attack towers or barricades, are never blocked by them, and can cross water. They still stun nearby towers with their stomp.
+
+**Rage Mode lasts 8 seconds.** From Level 40, a boss at 20% HP swells to three times its size and stampedes freely across the whole map for 8 s, ignoring paths and buildings. It charges towards far corners and distant towers, and tramples every tower it runs over. Then it shrinks back and resumes its normal march.
+
+**Fix: the Treasure "Reset All Item Cooldowns" did not last.** It only cleared the timers that were running when you bought it; the next time you used an item, the cooldown came back. It is now **No Item Cooldowns**, a permanent upgrade like the other Treasures: from the moment you buy it, items never go on cooldown, in every battle, and it survives restarts. The shop shows "No cooldown" for every item. Redeem codes made with Code Forge still work.
+
+**Fix: "Clear All Natural Obstacles" left the swamps.** It now also removes swamps, and the map is redrawn immediately, so those tiles can be built on straight away, including when the treasure is bought mid-battle.
+
+**Tested**
+- Bosses and bases on all 16 boss levels: the counts match, every boss starts at a different base, and no two share a portrait.
+- The Treasures redeemed end to end with genuine Code Forge codes in the Treasure tab during a battle:
+  - No Item Cooldowns: before, Meteor took a 45 s cooldown. After, every item, including River, Airstrike and Bomber, has 0, used twice in a row. It still works after a page reload and in a new level.
+  - Clear All Natural Obstacles: on Level 1 the 4 swamps and 11 obstacles vanished at once, and a tower was then built on a former swamp tile.
+- Bosses on Levels 48, 88 and 100, with 20 to 24 towers in their way: all of them walked to a base and never attacked a building.
+- Rage: exactly 8.0 s at 3x size. It roamed nearly the full width of the map (25 to 27 tiles) and wrecked towers, then returned to normal.
+- Every boss fight played to the end (sprite check every frame), boss summons, the 42-state interface walkthrough, the item-bar touch test, gameplay and the frame-time benchmark: all pass.
 
 ## What changed in v3.4
 
@@ -317,7 +345,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.4.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.5.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

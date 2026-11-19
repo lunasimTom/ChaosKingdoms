@@ -19,7 +19,8 @@ const CKCH=[
  {id:'ban',n:['禁用','Restriction'],d:['不建造{0}','Build no {0}']}
 ];
 let CK_NR=null;
-// v3.4 boss art: on two-boss levels the second boss is a random portrait, different from the first
+// v3.4 boss art: on levels with several bosses (one per enemy base), every extra boss is a random
+// portrait, different from all the others on that level
 const CK_BOSS_ART=['b2_skeleton_king','b2_demon_lord','b2_ice_dragon','b2_fire_giant','b2_necromancer','b2_death_knight','b2_dread_knight','b2_lich_king','b2_stone_golem','b2_sea_monster','b2_dragon_king','b2_vampire_lord','b2_ogre_king','b2_spider_queen','b2_giant_worm','b2_demon_beast','b2_forest_ent','b2_void_lord','b2_storm_titan'];
 function ckIU(id){if(L&&L.iu)L.iu[id]=(L.iu[id]||0)+1}
 const ckZ=a=>lvZ(a[0],a[1]);
@@ -44,7 +45,7 @@ function ckLbl(e,s,col){if(e.lbt>TM)return;e.lbt=TM+.9;const p=eS(e);txt(p.x,p.y
 function ckRole(e){
  if(L.demo)return;
  if(L.ckv!==L)ckV3Init();
- if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsp1=e.sp;else if(L.bsc===2){const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,pool=CK_BOSS_ART.filter(k=>kn(k)!==kn(L.bsp1)&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0]}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
+ if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
  const r=CK_NR;if(!r||!CKR[r])return;e.rl=r;
  if(r==='shield')e.sh=e.msh=e.mx*.45;
  if(r==='heal')e.hc=1.2;
@@ -190,3 +191,34 @@ function ckFixSprites(){const g=SP.e_golem,sp=SP.e_spider;if(!g||!sp||!g.complet
 // a boss whose sprite is missing falls back to a real one instead of drawing nothing
 function ckBossKey(k){return SP[k]?k:(SP.e_golem&&k==='e_treant'?'e_golem':'b_necromancer')}
 setTimeout(function ckFS(){if(!ckFixSprites())setTimeout(ckFS,150)},0);
+
+// ---- Rage Mode (v3.5) ----
+// From level 40 a boss at 20% HP enrages for 8 s: it swells to 3x size and stampedes freely across
+// the whole map (ignoring paths and buildings), charging tower clusters and far corners and
+// trampling every tower it runs over. Then it shrinks back and resumes its normal march.
+const CK_RAGE_T=8;
+function ckRage(e,dt){
+ e.rgT=(e.rgT||0)+dt;const rt=e.rgT,ss=x=>x*x*(3-2*x);
+ e.rg=rt<.35?ss(rt/.35):rt<CK_RAGE_T-.45?1:rt<CK_RAGE_T?ss((CK_RAGE_T-rt)/.45):0;
+ e.wd=0;e.bt=Math.max(e.bt||0,2.5);e.atk=null;e.chase=null;
+ if(rt>=.35&&rt-dt<.35){const p=eS(e);vRing(p.x,p.y,tw*3.2,'#ff4a3a',.6,8);vGlow(p.x,p.y,tw*2.4,'#ff3a2a',.5);L.shake=Math.max(L.shake||0,1)}
+ if(rt>=CK_RAGE_T){e.rage=0;e.rg=0;e.en=0;e.rw=null;e.vv[0]=e.vv[1]=0;toast(lvZ('首领的狂暴平息了','The boss calms down'));return false}
+ // choose a new stampede target: a random tower (to wreck it) or a random far spot anywhere on the map
+ // targets alternate between far corners/edges of the map and distant towers, so the stampede
+ // sweeps the whole battlefield instead of circling one spot
+ e.rwT=(e.rwT||0)-dt;
+ if(!e.rw||e.rwT<=0||Math.hypot(e.rw[0]-e.x,e.rw[1]-e.y)<1){
+  const C=L.cols-1,R=L.rows-1,far=(a,b)=>Math.hypot(a-e.x,b-e.y);let tx=0,ty=0;
+  const tws=L.tr.filter(t=>t&&!t.building&&t.hp>0&&far(t.x,t.y)>2.5);
+  e.rwN=(e.rwN||0)+1;
+  if(tws.length&&e.rwN%2===0){let bt=null,bd=-1;for(let k=0;k<4;k++){const t=tws[Math.random()*tws.length|0],d=far(t.x,t.y);if(d>bd){bd=d;bt=t}}tx=bt.x;ty=bt.y}
+  else{let bd=-1;const pts=[[0,0],[C,0],[0,R],[C,R],[C/2,0],[C/2,R],[0,R/2],[C,R/2]];for(let k=0;k<6;k++){const q=Math.random()<.6?pts[Math.random()*pts.length|0]:[Math.random()*C,Math.random()*R],x=Math.max(0,Math.min(C,q[0]+(Math.random()-.5)*1.5)),y=Math.max(0,Math.min(R,q[1]+(Math.random()-.5)*1.5)),d=far(x,y);if(d>bd){bd=d;tx=x;ty=y}}}
+  e.rw=[tx,ty];e.rwT=3;
+ }
+ const dx=e.rw[0]-e.x,dy=e.rw[1]-e.y,dl=Math.hypot(dx,dy)||1;
+ steer(e,dx/dl,dy/dl,e.d.sp*6.5*(e.sl>0?.8:1),dt);
+ e.x=Math.max(0,Math.min(L.cols-1,e.x));e.y=Math.max(0,Math.min(L.rows-1,e.y));
+ // trample: every tower (and barricade) it runs over takes a heavy hit, at most once per 1.2 s each
+ for(const t of L.tr){if(!t||t.building||t.hp<=0)continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.6+.7*(e.rg||0)&&!((t._rsm||0)>TM)){t._rsm=TM+1.2;dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}
+ e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const p=eS(e);burst(p.x,p.y+tw*.3,'#ff6a3a',3,70)}
+ return true}
