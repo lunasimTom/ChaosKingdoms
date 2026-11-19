@@ -7,7 +7,55 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.6.apk` | Android app (package `com.chaoskingdoms.game`, version 3.6, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.7.apk` | Android app (package `com.chaoskingdoms.game`, version 3.7, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.7
+
+**Fix: Rage Mode could be skipped.** With strong defences, a boss went from above 20% HP to 0 in a single volley, so Rage Mode never started. In a test with very high firepower on v3.6, the final bosses enraged for only 0.1 s before dying, without growing to full size. Now:
+- From Level 40, a boss cannot drop below 19% HP until it has enraged.
+- During its 8-second rampage it cannot be finished off; its HP stays at 3% or more, and it takes 40% less damage.
+
+Every boss now reliably grows to 3x size and stampedes for the full 8 seconds, however strong your towers are. Tested on every two-to-four-boss level, from 40 to 100.
+
+**Final bosses: brutal.** Effective HP per boss on Normal difficulty (health and defense combined), plus attack power:
+
+| Level | Bosses | v3.6 -> v3.7 | Attack |
+| --- | --- | --- | --- |
+| 72 | 3 | 72,752 -> 95,593 | x1.23 |
+| 80 | 3 | 103,345 -> 159,721 | x1.45 |
+| 88 | 4 | 140,493 -> 242,779 | x1.68 |
+| 96 | 4 | 184,771 -> 347,018 | x1.90 |
+| 97 | 4 | 268,698 -> 1,087,588 (x4.0) | x2.6 |
+| 98 | 4 | 326,166 -> 1,421,232 (x4.4) | x2.9 |
+| 99 | 4 | 391,363 -> 1,790,123 (x4.6) | x3.2 |
+| 100 | 4 | 491,701 -> 2,458,505 (x5.0) | x3.6 |
+
+Against v3.5, the Level 100 bosses are now about 34x tougher. In a fully upgraded 40-tower kill zone, a single Level 100 boss now survives about 108 seconds; in v3.6 it was 30 seconds. Attack power widens the stomp (up to 4.3 tiles), lengthens its stun (up to 4.5 s), and raises the rampage's trample damage and the lives a boss takes at a base.
+
+**New monster art.** All 18 regular monsters use the owner's new high-resolution sheet (`source/premium/monsters/`), cut out cleanly from the transparent PNG without the name plates and embedded as WebP. That is up to 240 px, against the old 70-90 px sprites. The Lich King has new art too. Facing rules were updated for the new poses.
+
+**Premium Level 100 ending.**
+- Each creature now gets a full card: a title and epithet, a lore paragraph, a battle tip, a threat rating (1 to 5 stars) and animated Health, Speed and Power bars.
+- Each card has its own colour scheme. The art sits on a slowly turning rune circle with light rays and a glowing pedestal, against a nebula backdrop with rising embers.
+- Text animates in line by line, with gold-foil titles, cinematic letterbox bars and a flash for every boss.
+- Wide screens show the art beside the text; tall screens stack them.
+- The thank-you card adds the player's journey: levels, foes defeated, boss victories and towers built.
+- Still exactly 3 seconds per creature, with the same closing messages: an invitation to the next difficulty, or "Conqueror of Chaos Inferno".
+
+**New soundtrack composer** (`source/premium/music.js`). Each level's music is now composed, not assembled:
+- Every realm has its own key, mode, tempo, chord progression and lead instrument (horn or flute).
+- A memorable two-bar motif is stated, answered, raised in sequence and resolved, with its notes landing on the chords.
+- 32-bar form: intro, theme, development, climax, resolution, then loop.
+- An orchestra of string pads, horn and flute leads, brass, a vowel-formant choir, harp arpeggios, bass, taiko, snare, hi-hats and cymbal swells, with a hall reverb.
+- Boss levels are faster, in a harmonic minor key, with a driving bass ostinato, choir and brass.
+- Each track is rendered by a fast sample-level synthesizer: about 2 seconds for 55 to 90 seconds of music, which is about 2.5x longer per track than the old composer for the same rendering time. If anything fails, the game falls back to the original music.
+
+**Tested**
+- Rage and boss strength measured on Levels 40-100, at normal and very high firepower.
+- All 16 boss fights played to the end with a sprite check every frame: no missing sprites, and Rage triggered on every boss level from 40.
+- The new monster art checked in-game at 3x zoom. Music rendered for menu, realms and boss levels: no clipping, about 2 s per track, playing in-game.
+- The ending run for real on Hard and on Chaos Inferno: 40 cards, 2.97 to 3.03 s apart. Checked in portrait and landscape.
+- The 42-state interface walkthrough, the item-bar touch test, boss summons, gameplay and the benchmark all pass.
 
 ## What changed in v3.6
 
@@ -385,7 +433,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.6.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.7.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

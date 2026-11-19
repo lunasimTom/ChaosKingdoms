@@ -65,7 +65,7 @@ function ckRes(e,d,src){
   if(src==='mage'&&(e.rl==='armor'||e.rl==='ward'||e.sh>0)){if(!(e.ab>0))ckLbl(e,lvZ('奥术破甲','ARCANE BREAK'),'#d9b8ff');e.ab=3}
  }
  if(e.mk>0)m*=1.2;
- if(e.t==='boss'){if(e.bdef)m/=e.bdef;try{CKS.bossHurt(e)}catch(_){}}
+ if(e.t==='boss'){if(e.bdef)m/=e.bdef;if(e.rage)m*=.6;try{CKS.bossHurt(e)}catch(_){}}
  d*=m*Math.max(.5,res);
  if(e.sh>0){const f=src==='cannon'?2:ty==='e'?.5:1,take=Math.min(e.sh,d*f);e.sh-=take;d-=take/f;if(e.sh<=0){e.sh=0;const p=eS(e);burst(p.x,p.y,'#ffd36a',10);ckLbl(e,lvZ('护盾破碎','SHIELD BROKEN'),'#ffd36a');e.lbt=0}if(d<=0){e.fl=.1;return 0}}
  return d;
@@ -229,6 +229,7 @@ function ckRage(e,dt){
 // Bosses from Level 64 grow steadily stronger; the final four (Levels 97-100) are true titans.
 // hp: health multiplier; def: extra damage reduction; atk: stomp reach and stun, rampage trample
 // damage, and lives taken if the boss reaches a base.
-function ckBossPow(i){if(i>=96)return[[2.8,1.35,1.6],[3.2,1.42,1.75],[3.6,1.5,1.9],[4.2,1.6,2.1]][i-96].reduce((o,v,k)=>(o[['hp','def','atk'][k]]=v,o),{});
- if(i>=63){const k=(i-63)/32;return{hp:1+1.1*k,def:1+.25*k,atk:1+.45*k}}return{hp:1,def:1,atk:1}}
+// v3.7: the final four are brutal (about 3-4x tougher than v3.6), Levels 64-95 ramp up towards them
+function ckBossPow(i){if(i>=96)return[[9,1.7,2.6],[11,1.8,2.9],[13,1.9,3.2],[16,2.1,3.6]][i-96].reduce((o,v,k)=>(o[['hp','def','atk'][k]]=v,o),{});
+ if(i>=63){const k=(i-63)/32;return{hp:1+2.4*k,def:1+.45*k,atk:1+.9*k}}return{hp:1,def:1,atk:1}}
 function ckBossPower(e){if(L.demo||e.bpw)return;const p=ckBossPow(L.i);e.bpw=1;e.hp*=p.hp;e.mx=e.hp;e.bdef=p.def;e.batk=p.atk}

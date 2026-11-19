@@ -476,6 +476,28 @@ rep("function end(win){L.over=true;sfx(win?'win':'lose');", "function end(win){L
 rep("fx:S.fx||{}}))", "fx:S.fx||{},h100:S.h100|0}))")
 rep("S.fx=fxClean(s.fx);", "S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));")
 
+# 38. v3.7: new high-resolution monster art (source/premium/monsters, from the owner's sheet) and a new
+#     Lich King; Rage Mode can no longer be skipped; the new soundtrack composer (music.js).
+_md = os.path.join(SRC, 'monsters')
+_mo = {f[:-5]: base64.b64encode(open(os.path.join(_md, f), 'rb').read()).decode()
+       for f in sorted(os.listdir(_md)) if f.startswith('e_') and f.endswith('.webp')}
+assert len(_mo) == 18, sorted(_mo)
+rep("});const SP={};for(const k in SPRD){",
+    "});Object.assign(SPRD,{" + ",".join(f"{k}:'data:image/webp;base64,{v}'" for k, v in _mo.items()) + "});const SP={};for(const k in SPRD){")
+# the old procedural troll/demon drawings must not override the new art
+rep("for(const k in R){const i=new Image();i.src=R[k];SP[k]=i}})();", "for(const k in R){if(/^e_/.test(k)&&SPRD[k]&&SPRD[k].startsWith('data:image/webp'))continue;const i=new Image();i.src=R[k];SP[k]=i}})();")
+rep("SP.e_troll=mon(", "SP._legacy_troll=mon(")
+rep("SP.e_demon=mon(", "SP._legacy_demon=mon(")
+# facing: the new monsters face the viewer; only the wolf and dragon are drawn looking left
+rep("NAT={e_wolf:-1,e_dragon:-1,b_ice_dragon:-1,e_goblin:-1,e_skeleton:-1,e_zombie:-1,e_assassin:-1,e_mystic:-1,e_shaman:-1,e_orc:-1,b_skeleton_king:1,e_necro:1}",
+    "NAT={e_wolf:-1,e_dragon:-1}")
+# Rage Mode always happens: from Level 40 a boss cannot drop below 19% HP until it has enraged,
+# and cannot be finished off (3% floor) until its 8-second rampage is over
+rep("if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25}",
+    "if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25;else if(L.i>=39&&!e.s2&&e.hp<e.mx*.19)e.hp=e.mx*.19;else if(e.rage&&(e.rgT||0)<CK_RAGE_T&&e.hp<e.mx*.03)e.hp=e.mx*.03}")
+# soundtrack: the new composer, with the original one kept as a fallback
+rep("async function song(key){", open(os.path.join(SRC,'music.js'),encoding='utf8').read()+"\nfunction song(key){return ckSong(key).catch(e=>{console.warn('ckSong',e);return songV2(key)})}\nasync function songV2(key){")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()

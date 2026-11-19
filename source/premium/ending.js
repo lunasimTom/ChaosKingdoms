@@ -1,121 +1,161 @@
-/* ===== Chaos Kingdoms v3.6 · Level 100 ending =====
-   After winning Level 100: every monster and boss is introduced one by one, from the earliest to the
-   latest level, 3 seconds each (name, level, role and a short description), then a group portrait of
-   the whole legion, a thank-you message, and a closing message about difficulty. */
+/* ===== Chaos Kingdoms v3.7 · Level 100 ending =====
+   After winning Level 100: a cinematic showcase. Every monster and boss is introduced one by one,
+   from the earliest level to the latest, 3 seconds each, with its title, lore, battle notes, threat
+   rating and stats; then a group portrait of the whole legion, a thank-you with the player's journey,
+   and a closing message about difficulty. */
+// key: [zh name, en name, zh epithet, en epithet, zh lore, en lore, zh tactic, en tactic]
 const CK_DEX={
- e_goblin:['哥布林袭击者','Goblin Raider','狡猾又贪婪，总是成群结队地冲向你的防线。','Sly and greedy, it rushes your walls in noisy packs.'],
- e_orc:['兽人斗士','Orc Brawler','皮糙肉厚的前线战士，靠蛮力撕开缺口。','A thick-skinned frontliner that bashes open any gap.'],
- e_skeleton:['骷髅战士','Skeleton Warrior','不知疼痛的亡灵士兵，骨头碎了还会继续前进。','An undead soldier that feels no pain and never stops marching.'],
- e_zombie:['腐尸','Zombie','步履蹒跚却永不停歇，数量多得令人窒息。','Slow and shambling, but endless in number.'],
- e_spider:['巨型蜘蛛','Giant Spider','从阴影中窜出的八足猎手，速度惊人。','An eight-legged hunter that darts out of the shadows.'],
- e_wolf:['恐狼','Dire Wolf','嚎叫声划破夜空，疾驰如风的掠食者。','A howling predator that runs like the wind.'],
- e_troll:['冰霜巨魔','Frost Troll','力大无穷，伤口会在寒气中慢慢愈合。','Immensely strong; its wounds close in the cold.'],
- e_ogre:['食人魔','Ogre','笨重的巨兽，一拳就能砸塌城墙。','A lumbering giant whose fist can flatten a wall.'],
- e_dknight:['暗黑骑士','Dark Knight','身披黑铁重甲的堕落骑士，几乎刀枪不入。','A fallen knight in black iron, nearly unbreakable.'],
- e_vampire:['吸血鬼','Vampire','优雅而致命，嘶鸣着扑向猎物。','Elegant and deadly, it hisses before it strikes.'],
- e_demon:['小恶魔','Imp Demon','来自深渊的捣蛋鬼，笑声令人毛骨悚然。','A mischief-maker from the abyss with a chilling laugh.'],
- e_dragon:['幼龙','Wyrmling','会飞的小龙，越过一切障碍直扑基地。','A young flying dragon that soars over every obstacle.'],
- e_mystic:['秘法师','Mystic','吟唱古老咒语的神秘法师。','A hooded mage chanting forgotten spells.'],
- e_shaman:['萨满','Shaman','以图腾之力鼓舞同伴的部落祭司。','A tribal priest who rallies its kin with totem magic.'],
- e_assassin:['暗影刺客','Shadow Assassin','来无影去无踪，转眼就到你面前。','Here and gone in a blink of shadow.'],
- e_necro:['死灵学徒','Necro Acolyte','操纵亡魂的邪恶学徒。','A dark apprentice who commands restless spirits.'],
- e_golem:['石像魔','Stone Golem','由岩石构成的守卫，沉重而坚固。','A guardian of living rock, heavy and tireless.'],
- e_ghost:['幽灵','Ghost','穿墙而过的怨灵，在空中飘荡。','A wailing spirit that drifts over everything.'],
- b2_skeleton_king:['骷髅王','Skeleton King','统御亡灵大军的骸骨君王。','Monarch of bones, ruler of the undead legion.'],
- b2_demon_lord:['恶魔领主','Demon Lord','展开烈焰双翼的地狱统帅。','A warlord of hell on burning wings.'],
- b2_ice_dragon:['冰霜巨龙','Ice Dragon','一口寒息就能冻结整片战场。','One breath of frost freezes the whole battlefield.'],
- b2_fire_giant:['炎魔巨人','Fire Giant','熔岩铸成的巨人，所到之处尽成焦土。','A giant of molten rock that scorches the earth.'],
- b2_dragon_king:['龙王','Dragon King','万龙之王，烈焰与鳞甲的化身。','King of all dragons, wrapped in scale and flame.'],
- b2_necromancer:['死灵法师','Necromancer','唤醒死者为其征战的黑暗术士。','A dark sorcerer who raises the dead to fight.'],
- b2_lich_king:['巫妖王','Lich King','以灵魂之火维系不朽的冰冷君主。','A cold sovereign kept immortal by soul-fire.'],
- b2_spider_queen:['蛛后','Spider Queen','万千蜘蛛的母后，编织死亡之网。','Mother of a thousand spiders, weaver of doom.'],
- b2_storm_titan:['风暴泰坦','Storm Titan','驾驭雷霆的远古巨人。','An ancient giant who commands the thunder.'],
- b2_forest_ent:['远古树人','Forest Ent','沉睡千年的森林守护者，愤怒时大地震颤。','A thousand-year forest guardian; the ground shakes at its wrath.'],
- b2_stone_golem:['黑曜巨像','Obsidian Colossus','坚不可摧的岩石巨像。','An unbreakable colossus of living stone.'],
- b2_demon_beast:['深红巨兽','Crimson Behemoth','长着獠牙与犄角的地狱巨兽。','A horned, tusked behemoth of the underworld.'],
- b2_void_lord:['虚空之主','Void Lord','来自虚空裂隙的水晶魔君。','A crystal tyrant from the rift of the void.'],
- b2_giant_worm:['永恒巨蠕','Eternal Wyrm','吞噬一切的巨口深渊之虫。','An abyssal worm whose maw devours everything.'],
- b2_death_knight:['死亡骑士','Death Knight','手持冰霜巨剑的不死骑士统领。','An undying knight-commander with a frost blade.'],
- b2_sea_monster:['深渊泰坦','Abyssal Titan','从深海升起的触手魔神。','A tentacled titan risen from the deep sea.'],
- b2_vampire_lord:['血族领主','Vampire Lord','举杯畅饮鲜血的不朽伯爵。','An immortal count who toasts with blood.'],
- b2_ogre_king:['食人魔王','Ogre King','挥舞狼牙棒的食人魔之王。','King of ogres, swinging a spiked club.'],
- b2_dread_knight:['恐惧骑士','Dread Knight','死亡骑士的孪生兄弟，同样冷酷无情。','The Death Knight’s grim twin, just as merciless.']
+ e_goblin:['哥布林袭击者','Goblin Raider','咧嘴的刀锋','The Grinning Blade','它们在矿坑与废墟间成群出没，手中的匕首总比笑声来得更快。贪婪驱使它们冲向一切闪光之物——包括你的金币。','They swarm out of mines and ruins in cackling packs, daggers drawn faster than their laughter. Greed drives them toward anything that glitters, your gold included.','箭塔的连射最适合清理成群的哥布林。','Rapid Archer volleys shred their packs before they spread out.'],
+ e_orc:['兽人斗士','Orc Brawler','铁拳先锋','The Iron Vanguard','兽人部落的前锋，用拳头而不是战术说话。它们以伤疤为荣，以撞开城墙为乐。','The vanguard of the orc warbands, who speak with fists rather than plans. Every scar is a trophy, and every wall is a dare.','以减速配合炮塔的范围伤害，让它们在冲锋中崩溃。','Slow them with Frost, then let Cannon blasts break the charge.'],
+ e_skeleton:['骷髅战士','Skeleton Warrior','不眠的卫兵','The Sleepless Sentry','古老战场上被唤醒的士兵，铠甲早已锈蚀，誓言却从未褪色。骨头散落一地，它们依然会重新站起。','Soldiers raised from forgotten battlefields: their armour rusted long ago, but never their oaths. Scatter their bones and they still try to rise again.','圣光塔对亡灵造成重创；破甲后物理攻击同样有效。','Holy light cuts through the undead; break any armour first.'],
+ e_zombie:['腐尸','Zombie','无尽的饥饿','The Endless Hunger','它们步履蹒跚，却永不停歇；每一个倒下的旅人，都可能成为行列中的新面孔。数量，是它们唯一的战术。','Slow, shambling and utterly relentless. Every traveller who falls may rise to join the horde, and numbers are the only tactic they need.','毒塔的持续伤害能逐渐瓦解拥挤的尸群。','Poison stacks melt the slow, crowded horde over time.'],
+ e_spider:['巨型蜘蛛','Giant Spider','暗影织者','The Shadow Weaver','它在洞穴的穹顶上静静等待，八只眼睛映着火光。一旦猎物靠近，它便化作一道紫色的闪电。','It waits on cavern ceilings with eight eyes glinting in the torchlight, then strikes like a streak of violet lightning.','速度极快——用冰霜塔让它慢下来再集火。','Lightning fast: pin it down with Frost before you focus fire.'],
+ e_wolf:['恐狼','Dire Wolf','月下猎手','The Moonlit Hunter','月光下的嚎叫宣告着狼群的到来。它们耐心追踪猎物，再以惊人的速度撕开防线。','A howl beneath the moon announces the pack. They track their prey patiently, then tear through a defence at terrifying speed.','在道路转角布置箭塔，让它们无处可逃。','Line the bends of the road with Archers: they leave no gaps to slip through.'],
+ e_troll:['冰霜巨魔','Frost Troll','雪原之怒','Wrath of the Tundra','生于永冻雪原的巨魔，皮肤厚得像冰川。严寒让它的伤口迅速愈合，愤怒让它越战越勇。','Born in the eternal tundra with a hide as thick as a glacier. The cold seals its wounds, and its rage only grows as the fight goes on.','法师与闪电能绕过它的厚皮，持续集火别让它喘息。','Mage and Lightning bypass its hide; keep the pressure on so it cannot recover.'],
+ e_ogre:['食人魔','Ogre','撼城者','The Wall-Breaker','山丘般的身躯，雷鸣般的脚步。它不懂策略，也不需要——一拳就能让城墙崩塌。','A body like a hill and footsteps like thunder. It knows nothing of strategy and needs none: one blow can bring a wall down.','用路障拖住它，在它砸墙的时候用炮塔轰击。','Stall it with Barricades and bombard it while it pounds the walls.'],
+ e_dknight:['暗黑骑士','Dark Knight','堕落的誓言','The Broken Oath','曾经的王国守护者，如今身披黑铁，为混沌而战。重甲之下，只剩冰冷的执念。','Once a guardian of the realm, now clad in black iron and sworn to chaos. Beneath the plate, only a cold obsession remains.','物理攻击收效甚微——交给法师、圣光与闪电。','Physical damage barely scratches it: bring Mage, Holy and Lightning.'],
+ e_vampire:['吸血鬼','Vampire','午夜的贵族','The Midnight Noble','优雅、傲慢而致命。它在舞会般的步伐中逼近，嘶鸣着露出獠牙。','Elegant, arrogant and deadly. It glides in as if crossing a ballroom, then bares its fangs with a hiss.','圣光塔的光芒是它最大的克星。','Holy light is its greatest bane.'],
+ e_demon:['小恶魔','Imp Demon','深渊的笑声','The Laughter of the Abyss','深渊派来的捣蛋鬼，体型虽小，怒火却比熔岩更烫。它的笑声总在战场最混乱时响起。','A mischief-maker sent up from the abyss: small in size, but its temper burns hotter than lava. Its laughter rings out wherever the battle is most chaotic.','冰霜与毒素能压制它们的狂躁冲锋。','Frost and Poison smother its frenzied charge.'],
+ e_dragon:['幼龙','Wyrmling','苍穹之焰','Flame of the Skies','年幼的飞龙，鳞片还未完全坚硬，翅膀却已能带它越过一切障碍。它直扑你的基地，喷吐着火焰。','A young dragon whose scales have not yet hardened, but whose wings already carry it over every obstacle. It dives straight for your base, breathing fire.','它会飞越道路——在基地周围布下防空火力。','It flies over the road: guard your base with a ring of towers.'],
+ e_mystic:['秘法师','Mystic','禁忌的低语','The Forbidden Whisper','兜帽之下，古老的咒语在低声回响。秘法师守护着失落的知识，也守护着混沌的秘密。','Ancient spells murmur beneath the hood. The Mystics guard lost knowledge, and the secrets of chaos with it.','身形单薄——箭塔与炮塔能迅速将其击倒。','Frail under the robes: Archers and Cannons drop them quickly.'],
+ e_shaman:['萨满','Shaman','图腾之声','Voice of the Totems','部落的祭司，以图腾之力召唤先祖的庇护。它的吟唱让周围的同伴更加勇猛。','A tribal priest who calls on the ancestors through totem magic. Its chants drive the warriors around it to greater fury.','优先击杀它，别让它的鼓舞持续生效。','Take it down first, before its chants rally the horde.'],
+ e_assassin:['暗影刺客','Shadow Assassin','无声的终结','The Silent End','来无影，去无踪。当你注意到它时，它已经越过了你的第一道防线。','Here and gone without a sound. By the time you notice it, it has already slipped past your first line.','冰霜塔是让刺客现形的最好办法。','Frost towers are the surest way to pin it in place.'],
+ e_necro:['死灵学徒','Necro Acolyte','亡魂的学徒','Apprentice of Souls','在死灵法师的阴影下修行，肩头的骷髅低声传授着禁忌的仪式。它渴望有一天能唤醒自己的亡灵大军。','It studies in the Necromancer’s shadow while the skull on its shoulder whispers forbidden rites. One day it hopes to raise an army of its own.','圣光塔对它与它召唤的亡灵同样有效。','Holy light burns both the acolyte and its restless dead.'],
+ e_golem:['石像魔','Stone Golem','活着的山岩','The Living Rock','古代法师以岩石铸造的守卫，主人早已逝去，它却仍在执行最后的命令。','A guardian carved from stone by ancient mages. Its masters are long dead, yet it still obeys their final command.','物理攻击难以撼动——魔法与元素才是关键。','Physical blows barely chip it: magic and the elements are the key.'],
+ e_ghost:['幽灵','Ghost','游荡的哀歌','The Wandering Lament','被困在两个世界之间的灵魂，在夜空中飘荡、哀泣。它穿过墙壁，越过一切障碍。','A soul trapped between two worlds, drifting and weeping across the night sky. It passes through walls and over every obstacle.','它会飞——让基地附近的塔负责拦截。','It flies: let the towers around your base intercept it.'],
+ b2_skeleton_king:['骷髅王','Skeleton King','亡者之冠','Crown of the Dead','统御亡灵大军的骸骨君王。传说他曾是一位伟大的国王，却因渴望永生而被混沌腐蚀。如今他的王冠下只剩空洞的眼眶与无尽的饥渴。','The bone monarch of the undead legion. Legend says he was once a great king, until his hunger for eternal life let chaos consume him. Beneath the crown there is nothing left but hollow eyes and endless want.','圣光的伤害能直击他的弱点。','Holy light strikes straight at his weakness.'],
+ b2_demon_lord:['恶魔领主','Demon Lord','炼狱之翼','Wings of Purgatory','展开烈焰双翼的地狱统帅，所过之处大地龟裂。他率领恶魔军团从深渊裂隙中涌出，誓要将王国化为焦土。','A warlord of hell on burning wings; the earth cracks wherever he lands. He leads the demon legions out of the abyss, sworn to turn the kingdoms to ash.','集中火力在他召唤援军之前削弱他。','Concentrate your fire before his reinforcements arrive.'],
+ b2_ice_dragon:['冰霜巨龙','Ice Dragon','永冬之息','Breath of Eternal Winter','一口寒息便能冻结整片战场。它沉睡在冰川深处千年，直到混沌的召唤将它唤醒。','One breath of frost freezes an entire battlefield. It slept for a thousand years beneath the glacier, until the call of chaos woke it.','它对冰霜免疫——火焰与物理攻击更为有效。','Frost means nothing to it: bring raw firepower.'],
+ b2_fire_giant:['炎魔巨人','Fire Giant','熔岩之心','Heart of Magma','由熔岩铸成的巨人，胸中燃烧着火山的心脏。它每踏出一步，大地都会颤抖、燃烧。','A giant forged from molten rock, with a volcano for a heart. Every step it takes makes the ground shake and burn.','冰霜塔能减缓它沉重的步伐。','Frost towers slow its crushing advance.'],
+ b2_dragon_king:['龙王','Dragon King','万龙之主','Lord of All Dragons','万龙之王，烈焰与鳞甲的化身。当他展开双翼，天空也会为之变色。','King of every dragon, an avatar of flame and scale. When he spreads his wings, the sky itself changes colour.','提前布置火力，他的冲锋极为迅猛。','Have your firepower ready early: his charge is ferocious.'],
+ b2_necromancer:['死灵法师','Necromancer','亡灵的牧者','Shepherd of the Dead','手持幽蓝法杖的黑暗术士，能让沉睡的亡者重新站起。他的每一次吟唱，都意味着又一支亡灵大军的诞生。','A dark sorcerer whose pale-blue staff makes the sleeping dead rise. Every chant means another army of the undead.','在他召唤援军时用范围伤害清理战场。','Clear his summoned hordes with area damage.'],
+ b2_lich_king:['巫妖王','Lich King','冥火永恒','The Eternal Soulfire','以灵魂之火维系不朽的冰冷君主，手中的法杖燃烧着翠绿的冥火。他统御着冰封的亡者王国，等待着征服生者的那一天。','A cold sovereign kept immortal by soul-fire, his staff blazing with emerald flame. He rules a frozen kingdom of the dead and waits for the day he conquers the living.','他的冥火会在狂暴时吞噬一切——提前削弱他。','His soulfire consumes everything when he rages: weaken him early.'],
+ b2_spider_queen:['蛛后','Spider Queen','万千之母','Mother of Thousands','万千蜘蛛的母后，在深渊中编织着死亡之网。她的王冠闪耀着诡异的光芒，子嗣们随时听候召唤。','Mother of a thousand spiders, weaving webs of doom in the abyss. Her crown glows with an eerie light, and her brood answers her every call.','用炮塔清理她召唤的蛛群。','Use Cannons to scatter the brood she calls.'],
+ b2_storm_titan:['风暴泰坦','Storm Titan','雷霆之怒','Fury of the Thunder','驾驭雷霆的远古巨人，他的每一次怒吼都伴随着闪电。传说他曾与诸神交战，如今为混沌而战。','An ancient giant who commands the thunder; lightning answers every roar. Legend says he once fought the gods, and now he fights for chaos.','分散你的塔阵，别让他一次踩晕所有防线。','Spread your towers so one stomp cannot stun them all.'],
+ b2_forest_ent:['远古树人','Forest Ent','森林之怒','Wrath of the Forest','沉睡千年的森林守护者，被混沌腐蚀后从大地中苏醒。他愤怒时大地震颤，枝叶间燃起绿色的怒火。','A forest guardian that slept for a thousand years, until chaos corrupted it and tore it from the earth. When it rages the ground trembles, and green fire burns among its leaves.','元素伤害能有效削弱他的木质躯体。','Elemental damage tears through its wooden body.'],
+ b2_stone_golem:['黑曜巨像','Obsidian Colossus','不朽的壁垒','The Undying Bulwark','由黑曜石与魔晶铸造的巨像，坚不可摧。它是古代帝国最后的守卫，如今却被混沌驱使。','A colossus of obsidian and crystal, all but unbreakable. It was the last guardian of an ancient empire, and now chaos drives it forward.','物理伤害几乎无效——依靠魔法与元素。','Physical damage barely matters: rely on magic and the elements.'],
+ b2_demon_beast:['深红巨兽','Crimson Behemoth','地狱之角','The Horns of Hell','长着獠牙与犄角的地狱巨兽，身披骸骨与紫焰。它的咆哮能让最勇敢的战士双腿发软。','A tusked, horned behemoth of the underworld, draped in bones and violet flame. Its roar can buckle the knees of the bravest warrior.','在它冲向基地之前，用冰霜拖慢它的脚步。','Slow it with Frost before it reaches your base.'],
+ b2_void_lord:['虚空之主','Void Lord','裂隙的君王','King of the Rift','来自虚空裂隙的水晶魔君，胸中的紫色核心吞噬着光芒。他的存在本身就在撕裂现实。','A crystal tyrant from the rift of the void, whose violet core devours the light. His very presence tears at the fabric of reality.','他会适应你的伤害类型——混合使用各种塔。','He adapts to your damage: mix your towers.'],
+ b2_giant_worm:['永恒巨蠕','Eternal Wyrm','吞噬之口','The Devouring Maw','吞噬一切的深渊之虫，巨口中布满利齿。它在地底穿行千里，所到之处只留下空洞。','An abyssal worm whose great maw is lined with teeth. It tunnels for miles beneath the earth, leaving nothing behind but hollow ground.','它血量极高——尽早集中所有火力。','Its health is immense: focus everything on it early.'],
+ b2_death_knight:['死亡骑士','Death Knight','冰霜之刃','The Frost Blade','手持冰霜巨剑的不死骑士统领，他的剑刃能冻结灵魂。他曾是王国最伟大的骑士，如今却成为混沌的先锋。','An undying knight-commander whose frost blade can freeze a soul. He was once the realm’s greatest knight, and now he leads the vanguard of chaos.','魔法与圣光能穿透他的重甲。','Magic and Holy light pierce his heavy armour.'],
+ b2_sea_monster:['深渊泰坦','Abyssal Titan','深海的噩梦','Nightmare of the Deep','从深海升起的触手魔神，身披古老的黄金铠甲。当它苏醒时，海洋都会为之沸腾。','A tentacled titan risen from the ocean depths, clad in ancient golden armour. When it wakes, the seas boil.','这是最终的考验——调动你的一切力量。','This is the final trial: bring everything you have.'],
+ b2_vampire_lord:['血族领主','Vampire Lord','永夜伯爵','Count of the Endless Night','举杯畅饮鲜血的不朽伯爵，蝙蝠之翼在身后展开。他已活过千年，仍渴望着更多的鲜血。','An immortal count who toasts with a goblet of blood, bat wings unfurled behind him. He has lived a thousand years, and still thirsts for more.','圣光是他无法抵挡的克星。','Holy light is the one thing he cannot withstand.'],
+ b2_ogre_king:['食人魔王','Ogre King','狼牙之王','King of the Spiked Club','挥舞狼牙棒的食人魔之王，披着战利品与伤疤。他的一击足以让整座塔楼倒塌。','King of the ogres, swinging a spiked club and wearing his trophies and scars with pride. One swing can topple an entire tower.','用路障与冰霜拖住他的冲锋。','Hold his charge with Barricades and Frost.'],
+ b2_dread_knight:['恐惧骑士','Dread Knight','冰锋的孪生','Twin of the Frozen Edge','死亡骑士的孪生兄弟，同样冷酷无情。两人曾共同守护王国，如今共同为混沌而战。','The Death Knight’s grim twin, just as merciless. Together they once guarded the realm; together they now fight for chaos.','魔法伤害能有效穿透他的铠甲。','Magic damage cuts through his armour.']
 };
 const CK_ROLE={grunt:['步兵','Footsoldier'],runner:['疾行者','Swift'],brute:['重装','Brute'],fly:['飞行','Flying'],boss:['首领','Boss'],mate:['首领同伴','Boss companion']};
+const CK_ACC={e_goblin:'#7ad04a',e_orc:'#7fb04a',e_skeleton:'#d8cfb8',e_zombie:'#4ad0a8',e_spider:'#a45bff',e_wolf:'#9aa6c4',e_troll:'#3f8bff',e_ogre:'#f0a830',e_dknight:'#5a6cff',e_vampire:'#e0405a',e_demon:'#ff4a2a',e_dragon:'#ff6a2a',e_mystic:'#3a6cff',e_shaman:'#30c8b0',e_assassin:'#8a4aff',e_necro:'#9a5aff',e_golem:'#c8a070',e_ghost:'#60c8ff',
+ b2_skeleton_king:'#8a6aff',b2_demon_lord:'#ff3a2a',b2_ice_dragon:'#4ab8ff',b2_fire_giant:'#ff7a1a',b2_dragon_king:'#ff5a1a',b2_necromancer:'#a05aff',b2_lich_king:'#4aff7a',b2_spider_queen:'#c03aff',b2_storm_titan:'#5ac8ff',b2_forest_ent:'#7ad03a',b2_stone_golem:'#7ab0e0',b2_demon_beast:'#c05aff',b2_void_lord:'#9a3aff',b2_giant_worm:'#ff4a9a',b2_death_knight:'#6aa0ff',b2_sea_monster:'#4a7aff',b2_vampire_lord:'#e0203a',b2_ogre_king:'#4a9aff',b2_dread_knight:'#7a8aff'};
 // all monsters and bosses, ordered by the first level they appear on
 function ckRoster(){const first={},role={};
  for(let i=0;i<100;i++){const pl=(POOL[i/8|0]||POOL[5]);for(const t of ['grunt','runner','brute'])for(const k of (pl[t]||[]))if(first[k]==null){first[k]=i;role[k]=t}}
- for(const k of ['e_ghost','e_dragon'])if(first[k]==null||first[k]>4){first[k]=4;role[k]='fly'}else role[k]='fly';
+ for(const k of ['e_ghost','e_dragon']){if(first[k]==null||first[k]>4)first[k]=4;role[k]='fly'}
  const out=Object.keys(first).filter(k=>CK_DEX[k]&&SP[k]).map(k=>({k,lv:first[k],role:role[k],o:0}));
- const bl=[7,15,23,31,39,47,55,63,71,79,87,95,96,97,98,99];bl.forEach((i,n)=>{const k=BOSSK[i>=96?13+(i-96):i/8|0];if(CK_DEX[k]&&!out.some(x=>x.k===k))out.push({k,lv:i,role:'boss',o:1})});
+ [7,15,23,31,39,47,55,63,71,79,87,95,96,97,98,99].forEach(i=>{const k=BOSSK[i>=96?13+(i-96):i/8|0];if(CK_DEX[k]&&!out.some(x=>x.k===k))out.push({k,lv:i,role:'boss',o:1})});
  for(const k of ['b2_vampire_lord','b2_ogre_king','b2_dread_knight'])if(CK_DEX[k]&&SP[k]&&!out.some(x=>x.k===k))out.push({k,lv:39,role:'mate',o:2});
  return out.sort((a,b)=>a.lv-b.lv||a.o-b.o)}
-const CK_END_CSS=`#ck-end{position:fixed;inset:0;z-index:10050;overflow:hidden;color:#f4ead2;font-family:Nunito,system-ui,sans-serif;background:radial-gradient(ellipse 120% 80% at 50% 35%,#1d2550 0%,#0a0d22 55%,#03040b 100%);opacity:0;transition:opacity 1s}
-#ck-end.on{opacity:1}#ck-end canvas.sky{position:absolute;inset:0;width:100%;height:100%}
-#ck-end .stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px 70px;text-align:center}
-#ck-end .card{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;width:min(520px,calc(100% - 36px))}
-#ck-end .card.in{animation:ckeIn .7s cubic-bezier(.2,.8,.2,1) both}#ck-end .card.out{animation:ckeOut .45s ease-in both}
-#ck-end .art{position:relative;width:min(62vw,280px);height:min(62vw,280px);display:grid;place-items:center}
-#ck-end .art:before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,var(--glow,#f3c04d66) 0%,transparent 68%);animation:ckePulse 3s ease-in-out infinite}
-#ck-end .art canvas{position:relative;width:100%;height:100%;filter:drop-shadow(0 14px 22px #000c);animation:ckeFloat 3s ease-in-out infinite}
-#ck-end .kick{font:900 12px/1 Cinzel,Georgia,serif;letter-spacing:.32em;text-transform:uppercase;color:#f3c04d}
-#ck-end h2{margin:0;font:900 clamp(26px,7vw,42px)/1.05 Cinzel,Georgia,serif;letter-spacing:.04em;color:#fff1bf;text-shadow:0 0 22px #f3c04d55,0 3px 0 #3a2508}
-#ck-end .boss h2{color:#ffd0c4;text-shadow:0 0 26px #ff4a3a88,0 3px 0 #3a0808}#ck-end .boss .kick{color:#ff8a6a}
-#ck-end p.d{margin:0;max-width:30em;font-size:15px;line-height:1.5;color:#c9cfe8}
-#ck-end .count{position:absolute;left:0;right:0;bottom:22px;font:800 12px/1 Nunito,sans-serif;letter-spacing:.2em;color:#8f97bd;text-align:center}
-#ck-end .bar{position:absolute;left:12%;right:12%;bottom:44px;height:3px;border-radius:3px;background:#ffffff1a;overflow:hidden}#ck-end .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a4651a,#f3c04d,#fff1bf);transition:width .6s}
-#ck-end .skip{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;z-index:2;border:1px solid #f3c04d66;background:#0b1024cc;color:#f3c04d;border-radius:99px;padding:7px 14px;font:800 12px Nunito,sans-serif;letter-spacing:.08em;cursor:pointer}
-#ck-end .group canvas{width:auto;height:auto;max-width:min(96vw,900px);max-height:68vh;filter:drop-shadow(0 18px 30px #000d)}#ck-end .card.group{width:min(900px,calc(100% - 16px))}
-#ck-end .thanks h2{font-size:clamp(28px,8vw,48px)}#ck-end .thanks p.d{font-size:16px}
-#ck-end .go{margin-top:14px;border:1px solid #fff1bf;border-radius:14px;padding:14px 26px;font:900 16px Cinzel,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:#2a1804;background:linear-gradient(180deg,#fff1bf,#f3c04d 55%,#a4651a);box-shadow:0 5px 0 #5c3508,0 12px 26px #000b;cursor:pointer}
-#ck-end .crown{font-size:46px;filter:drop-shadow(0 0 18px #f3c04d)}
-@keyframes ckeIn{from{opacity:0;transform:translate(-50%,calc(-50% + 26px)) scale(.86);filter:blur(6px)}to{opacity:1;transform:translate(-50%,-50%);filter:none}}
-@keyframes ckeOut{from{opacity:1;transform:translate(-50%,-50%)}to{opacity:0;transform:translate(-50%,calc(-50% - 18px)) scale(1.04);filter:blur(4px)}}
-@keyframes ckeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes ckePulse{0%,100%{opacity:.7;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
-@media(prefers-reduced-motion:reduce){#ck-end .card.in,#ck-end .card.out,#ck-end .art canvas,#ck-end .art:before{animation:none!important}}`;
-function ckSprCanvas(k,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const im=SP[k];if(im&&im.width){const g=c.getContext('2d'),s=Math.min(w/im.width,h/im.height)*.92;g.imageSmoothingQuality='high';g.drawImage(im,(w-im.width*s)/2,h-im.height*s-(h*.04),im.width*s,im.height*s)}return c}
-function ckGroupPortrait(list){const tall=innerHeight>innerWidth*1.1,W2=tall?900:1200,H2=tall?1400:760,c=document.createElement('canvas');c.width=W2;c.height=H2;const g=c.getContext('2d');
- const sp=g.createRadialGradient(W2/2,H2*.55,40,W2/2,H2*.55,W2*.62);sp.addColorStop(0,'#f3c04d33');sp.addColorStop(1,'#0000');g.fillStyle=sp;g.fillRect(0,0,W2,H2);
- g.fillStyle='#00000055';g.beginPath();g.ellipse(W2/2,H2*.9,W2*.47,H2*.07,0,0,7);g.fill();
+// threat (1-5 stars) and stat bars from the creature's role and the level it first appears on
+function ckThreat(x){const b=x.role==='boss'||x.role==='mate';return Math.max(1,Math.min(5,b?3+Math.round(x.lv/50):1+Math.round(x.lv/25)+(x.role==='brute'?1:0)))}
+function ckStats(x){const r=x.role,lv=x.lv/99;const S0={grunt:[.38,.5,.34],runner:[.24,.92,.28],brute:[.72,.32,.7],fly:[.42,.72,.44],boss:[.88,.36,.9],mate:[.86,.4,.86]}[r]||[.5,.5,.5];return S0.map((v,i)=>Math.min(1,v+(i===1?0:lv*.12)))}
+const CK_END_CSS=`#ck-end{position:fixed;inset:0;z-index:10050;overflow:hidden;color:#f4ead2;font-family:Nunito,system-ui,sans-serif;--acc:#f3c04d;background:#03040b;opacity:0;transition:opacity 1.2s}
+#ck-end.on{opacity:1}
+#ck-end .neb{position:absolute;inset:-10%;background:radial-gradient(ellipse 60% 45% at 50% 40%,color-mix(in srgb,var(--acc) 34%,transparent) 0%,transparent 70%),radial-gradient(ellipse 90% 70% at 50% 120%,#1a1030 0%,transparent 70%),radial-gradient(ellipse 120% 90% at 50% 30%,#131a3c 0%,#05060f 70%);transition:background 1s;animation:ckeNeb 18s ease-in-out infinite alternate}
+#ck-end canvas.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#ck-end .lb{position:absolute;left:0;right:0;height:7vh;background:#000;z-index:3;box-shadow:0 0 30px #000}#ck-end .lb.t{top:0}#ck-end .lb.b{bottom:0}
+#ck-end .flash{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle at 50% 40%,#fff6,transparent 60%);opacity:0}#ck-end .flash.go{animation:ckeFlash .7s ease-out}
+#ck-end .stage{position:absolute;inset:7vh 0;z-index:2}
+#ck-end .card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(980px,calc(100% - 32px));display:flex;align-items:center;justify-content:center;gap:clamp(14px,4vw,48px)}
+#ck-end .card.col{flex-direction:column;text-align:center}
+#ck-end .card.in{animation:ckeIn .8s cubic-bezier(.16,.84,.24,1) both}#ck-end .card.out{animation:ckeOut .5s ease-in both}
+#ck-end .art{position:relative;flex:none;width:min(46vw,42vh,340px);aspect-ratio:1;display:grid;place-items:center}
+#ck-end .art .rays{position:absolute;inset:-18%;border-radius:50%;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--acc) 30%,transparent) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 20%,transparent 68%);mask:radial-gradient(circle,#000 20%,transparent 68%);animation:ckeSpin 30s linear infinite;opacity:.55}
+#ck-end .art svg.rune{position:absolute;inset:4%;width:92%;height:92%;animation:ckeSpin 22s linear infinite reverse;opacity:.75}
+#ck-end .art .ped{position:absolute;left:14%;right:14%;bottom:7%;height:14%;border-radius:50%;background:radial-gradient(ellipse,color-mix(in srgb,var(--acc) 55%,transparent),transparent 70%);filter:blur(4px)}
+#ck-end .art canvas{position:relative;width:100%;height:100%;filter:drop-shadow(0 18px 24px #000d) drop-shadow(0 0 22px color-mix(in srgb,var(--acc) 45%,transparent));animation:ckeKen 3.2s ease-out both,ckeFloat 3.4s ease-in-out infinite}
+#ck-end .txt{flex:1;min-width:0;max-width:470px}#ck-end .card.col .txt{max-width:560px}
+#ck-end .txt>*{opacity:0;animation:ckeUp .6s cubic-bezier(.2,.8,.2,1) both}
+#ck-end .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}#ck-end .card.col .chips{justify-content:center}
+#ck-end .chip{font:800 10.5px/1 Nunito,sans-serif;letter-spacing:.16em;text-transform:uppercase;padding:5px 9px;border-radius:99px;border:1px solid color-mix(in srgb,var(--acc) 60%,#fff3);background:#0008;color:#f6e7c4}
+#ck-end .stars{color:#ffd36a;letter-spacing:2px;font-size:13px;text-shadow:0 0 8px #ffb84d}
+#ck-end h2{margin:10px 0 2px;font:900 clamp(26px,6.4vw,50px)/1.02 Cinzel,Georgia,serif;letter-spacing:.03em;background:linear-gradient(100deg,#9c6f22 0%,#fff2c8 22%,#e8b955 40%,#fff8e0 52%,#c8902e 70%,#fff2c8 88%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #2a1a05) drop-shadow(0 0 18px color-mix(in srgb,var(--acc) 40%,transparent));animation:ckeUp .6s both,ckeFoil 3s linear infinite!important}
+#ck-end .epi{font:italic 700 clamp(14px,3.4vw,18px)/1.3 Georgia,serif;color:color-mix(in srgb,var(--acc) 45%,#fff2d8);letter-spacing:.04em}
+#ck-end .rule{height:1px;margin:10px 0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--acc) 70%,#f3c04d),transparent)}#ck-end .card:not(.col) .rule{background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 70%,#f3c04d),transparent)}
+#ck-end p.lore{margin:0;font-size:clamp(13px,3.2vw,15.5px);line-height:1.55;color:#d4d8ee}
+#ck-end .bars{display:grid;gap:5px;margin-top:10px;max-width:340px}#ck-end .card.col .bars{margin:10px auto 0}
+#ck-end .bar2{display:grid;grid-template-columns:62px 1fr;align-items:center;gap:8px;font:800 10px Nunito,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a9b1d4}
+#ck-end .bar2 i{height:5px;border-radius:5px;background:#ffffff14;overflow:hidden}#ck-end .bar2 i b{display:block;height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 70%,#000),var(--acc),#fff4d0);animation:ckeFill 1.2s .9s cubic-bezier(.2,.8,.2,1) both}
+#ck-end .tip{margin-top:10px;font-size:12.5px;line-height:1.4;color:#f3dfa8}#ck-end .tip:before{content:"⚔  ";color:var(--acc)}
+#ck-end .boss h2{background:linear-gradient(100deg,#7a1010 0%,#ffd8c8 22%,#ff7a4a 40%,#fff0e0 52%,#c8402e 70%,#ffd8c8 88%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text}
+#ck-end .seal{display:inline-block;font:900 10px/1 Cinzel,serif;letter-spacing:.22em;padding:5px 9px;border-radius:4px;background:linear-gradient(180deg,#ff6a4a,#8a1010);color:#fff1e0;box-shadow:0 0 14px #ff3a2a99}
+#ck-end .count{position:absolute;left:0;right:0;bottom:calc(7vh + 10px);z-index:3;font:800 11px/1 Nunito,sans-serif;letter-spacing:.24em;color:#8f97bd;text-align:center}
+#ck-end .prog{position:absolute;left:15%;right:15%;bottom:calc(7vh + 28px);z-index:3;height:2px;background:#ffffff14}#ck-end .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a4651a,#f3c04d,#fff1bf);box-shadow:0 0 8px #f3c04d;transition:width .8s}
+#ck-end .skip{position:absolute;top:calc(7vh + 10px);right:14px;z-index:5;border:1px solid #f3c04d66;background:#0b1024cc;color:#f3c04d;border-radius:99px;padding:7px 14px;font:800 12px Nunito,sans-serif;letter-spacing:.08em;cursor:pointer}
+#ck-end .big{font:900 clamp(30px,8vw,64px)/1.02 Cinzel,Georgia,serif}
+#ck-end .group canvas{max-width:min(96vw,980px);max-height:62vh;width:auto;height:auto;filter:drop-shadow(0 18px 30px #000d);animation:ckePan 7s ease-out both}
+#ck-end .crest{font-size:clamp(40px,10vw,64px);filter:drop-shadow(0 0 20px #f3c04d);animation:ckeUp .6s cubic-bezier(.2,.8,.2,1) both,ckeFloat 3s ease-in-out .6s infinite!important}
+#ck-end .journey{display:flex;justify-content:center;gap:clamp(10px,4vw,36px);margin-top:14px;flex-wrap:wrap}#ck-end .journey div{min-width:86px}#ck-end .journey b{display:block;font:900 clamp(22px,6vw,34px)/1 Cinzel,serif;color:#fff1bf}#ck-end .journey span{font:800 10px Nunito,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#a9b1d4}
+#ck-end .go{margin-top:16px;border:1px solid #fff1bf;border-radius:14px;padding:14px 28px;font:900 16px Cinzel,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:#2a1804;background:linear-gradient(180deg,#fff1bf,#f3c04d 55%,#a4651a);box-shadow:0 5px 0 #5c3508,0 12px 26px #000b;cursor:pointer}
+@keyframes ckeIn{from{opacity:0;transform:translate(-50%,calc(-50% + 30px)) scale(.94);filter:blur(8px)}to{opacity:1;transform:translate(-50%,-50%);filter:none}}
+@keyframes ckeOut{from{opacity:1;transform:translate(-50%,-50%)}to{opacity:0;transform:translate(-50%,calc(-50% - 20px)) scale(1.03);filter:blur(6px)}}
+@keyframes ckeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ckeFill{to{width:var(--w)}}@keyframes ckeSpin{to{transform:rotate(360deg)}}
+@keyframes ckeKen{from{transform:scale(.86)}to{transform:scale(1.02)}}@keyframes ckeFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes ckeFoil{to{background-position:-220% 0}}@keyframes ckeFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+@keyframes ckeNeb{from{transform:scale(1) rotate(0)}to{transform:scale(1.08) rotate(2deg)}}@keyframes ckePan{from{transform:scale(1.12) translateY(12px);opacity:0}to{transform:none;opacity:1}}
+@media(max-height:560px){#ck-end .lb{height:3.5vh}#ck-end .stage{inset:3.5vh 0 34px}#ck-end .art{width:min(40vw,62vh,300px)}#ck-end h2{font-size:clamp(22px,7.5vh,38px);margin:6px 0 0}#ck-end .epi{font-size:14px}#ck-end .rule{margin:6px 0}#ck-end p.lore{font-size:12.5px;line-height:1.42}#ck-end .bars{gap:3px;margin-top:6px}#ck-end .tip{margin-top:6px;font-size:11.5px}#ck-end .count{bottom:8px}#ck-end .prog{bottom:24px}#ck-end .skip{top:calc(3.5vh + 6px)}#ck-end .big{font-size:clamp(26px,9vh,48px)}#ck-end .group canvas{max-height:60vh}#ck-end .journey b{font-size:22px}}
+@media(prefers-reduced-motion:reduce){#ck-end *{animation-duration:.01s!important;animation-iteration-count:1!important}}`;
+const CK_RUNE='<svg class="rune" viewBox="0 0 200 200"><g fill="none" stroke="var(--acc)" stroke-opacity=".6"><circle cx="100" cy="100" r="96" stroke-width="1"/><circle cx="100" cy="100" r="88" stroke-width="3" stroke-dasharray="2 9"/><circle cx="100" cy="100" r="72" stroke-width="1" stroke-dasharray="14 6 3 6"/><path d="M100 6 L118 40 L100 30 L82 40Z M100 194 L118 160 L100 170 L82 160Z M6 100 L40 82 L30 100 L40 118Z M194 100 L160 82 L170 100 L160 118Z" stroke-width="1.2"/></g></svg>';
+function ckSprCanvas(k,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const im=SP[k];if(im&&im.width){const g=c.getContext('2d'),s=Math.min(w/im.width,h/im.height)*.86;g.imageSmoothingQuality='high';g.drawImage(im,(w-im.width*s)/2,h-im.height*s-(h*.1),im.width*s,im.height*s)}return c}
+function ckGroupPortrait(list){const tall=innerHeight>innerWidth*1.1,W2=tall?900:1300,H2=tall?1350:780,c=document.createElement('canvas');c.width=W2;c.height=H2;const g=c.getContext('2d');
+ const sp=g.createRadialGradient(W2/2,H2*.5,30,W2/2,H2*.5,W2*.7);sp.addColorStop(0,'#f3c04d38');sp.addColorStop(.6,'#7a4aff14');sp.addColorStop(1,'#0000');g.fillStyle=sp;g.fillRect(0,0,W2,H2);
  const bosses=list.filter(x=>x.role==='boss'||x.role==='mate'),mons=list.filter(x=>!(x.role==='boss'||x.role==='mate'));
- const row=(arr,y,size,spread)=>{const n=arr.length;arr.forEach((x,i)=>{const im=SP[x.k];if(!im||!im.width)return;const s=size/Math.max(im.width,im.height),w=im.width*s,h=im.height*s,px=W2/2+(i-(n-1)/2)*spread;g.drawImage(im,px-w/2,y-h,w,h)})};
+ const row=(arr,y,size,spread)=>{const n=arr.length;g.fillStyle='#0006';g.beginPath();g.ellipse(W2/2,y+4,Math.min(W2*.48,n*spread*.55),size*.09,0,0,7);g.fill();arr.forEach((x,i)=>{const im=SP[x.k];if(!im||!im.width)return;const s=size/Math.max(im.width,im.height),w=im.width*s,h=im.height*s,px=W2/2+(i-(n-1)/2)*spread;g.drawImage(im,px-w/2,y-h,w,h)})};
  const rows=(arr,k)=>{const o=[],n=Math.ceil(arr.length/k);for(let i=0;i<k;i++)o.push(arr.slice(i*n,(i+1)*n));return o};
- if(tall){const br=rows(bosses,4),mr=rows(mons,3);br.forEach((r,i)=>row(r,H2*(.17+i*.135),205,W2/(r.length+.35)));mr.forEach((r,i)=>row(r,H2*(.71+i*.1),130,W2/(r.length+.3)))}
- else{const half=Math.ceil(bosses.length/2);row(bosses.slice(0,half),H2*.42,190,W2/(half+.6));row(bosses.slice(half),H2*.64,200,W2/(bosses.length-half+.6));row(mons,H2*.92,118,W2/(mons.length+.4))}
+ if(tall){rows(bosses,4).forEach((r,i)=>row(r,H2*(.18+i*.135),200,W2/(r.length+.35)));rows(mons,3).forEach((r,i)=>row(r,H2*(.73+i*.1),128,W2/(r.length+.3)))}
+ else{rows(bosses,2).forEach((r,i)=>row(r,H2*(.4+i*.22),200,W2/(r.length+.6)));row(mons,H2*.93,120,W2/(mons.length+.4))}
  return c}
 let CK_END=null;
 function ckEnding(onDone){
- if(CK_END)return;const zh=typeof LANG!=='undefined'&&LANG==='zh',Z=(a,b)=>zh?a:b;
+ if(CK_END)return;const zh=typeof LANG!=='undefined'&&LANG==='zh',Z=(a,b)=>zh?a:b,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  if(!document.getElementById('ck-end-css')){const st=document.createElement('style');st.id='ck-end-css';st.textContent=CK_END_CSS;document.head.appendChild(st)}
- const ov=document.createElement('div');ov.id='ck-end';ov.innerHTML='<canvas class="sky"></canvas><div class="stage"></div><div class="bar"><i></i></div><div class="count"></div><button class="skip" type="button">'+Z('跳过 ›','Skip ›')+'</button>';document.body.appendChild(ov);
- const stage=ov.querySelector('.stage'),bar=ov.querySelector('.bar i'),cnt=ov.querySelector('.count'),timers=[];let stopMusic=()=>{},live=true;
- // starfield backdrop
- const sky=ov.querySelector('canvas.sky'),sg2=sky.getContext('2d');const stars=Array.from({length:140},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.6+.3,p:Math.random()*6}));
- const drawSky=t=>{if(!live)return;const w=sky.width=sky.clientWidth,h=sky.height=sky.clientHeight;sg2.clearRect(0,0,w,h);for(const s of stars){sg2.globalAlpha=.35+.45*Math.sin(t/900+s.p);sg2.fillStyle='#fff6d8';sg2.beginPath();sg2.arc(s.x*w,s.y*h,s.r,0,7);sg2.fill()}requestAnimationFrame(drawSky)};requestAnimationFrame(drawSky);
- // pause the level music, start the ending music
+ const ov=document.createElement('div');ov.id='ck-end';ov.innerHTML='<div class="neb"></div><canvas class="fx"></canvas><div class="stage"></div><div class="flash"></div><div class="lb t"></div><div class="lb b"></div><div class="prog"><i></i></div><div class="count"></div><button class="skip" type="button">'+Z('跳过 ›','Skip ›')+'</button>';document.body.appendChild(ov);
+ const stage=ov.querySelector('.stage'),bar=ov.querySelector('.prog i'),cnt=ov.querySelector('.count'),flash=ov.querySelector('.flash'),timers=[];let stopMusic=()=>{},live=true,acc='#f3c04d';
+ // starfield + rising embers tinted with the current creature's colour
+ const fx=ov.querySelector('canvas.fx'),gx=fx.getContext('2d');const stars=Array.from({length:150},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.5+.3,p:Math.random()*6}));const emb=Array.from({length:46},()=>({x:Math.random(),y:Math.random(),v:.02+Math.random()*.05,r:Math.random()*2.2+.6,p:Math.random()*6}));
+ let lt=0;const tick=t=>{if(!live)return;const dt=Math.min(.05,(t-lt)/1000||.016);lt=t;const w=fx.width=fx.clientWidth,h=fx.height=fx.clientHeight;gx.clearRect(0,0,w,h);for(const s of stars){gx.globalAlpha=.3+.45*Math.sin(t/900+s.p);gx.fillStyle='#fff6d8';gx.beginPath();gx.arc(s.x*w,s.y*h,s.r,0,7);gx.fill()}
+  gx.globalCompositeOperation='lighter';for(const e of emb){e.y-=e.v*dt;e.x+=Math.sin(t/1400+e.p)*.0006;if(e.y<-.02){e.y=1.02;e.x=Math.random()}gx.globalAlpha=.5*(.5+.5*Math.sin(t/500+e.p));gx.fillStyle=acc;gx.beginPath();gx.arc(e.x*w,e.y*h,e.r,0,7);gx.fill()}gx.globalCompositeOperation='source-over';gx.globalAlpha=1;requestAnimationFrame(tick)};requestAnimationFrame(tick);
  try{if(typeof mb!=='undefined'&&mb&&au)mb.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}
  try{stopMusic=CKS.endingMusic()}catch(_){}
- const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1000);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.6*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
+ const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1200);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.6*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
  CK_END={finish};ov.querySelector('.skip').onclick=finish;
  const at=(ms,fn)=>timers.push(setTimeout(()=>{if(live)fn()},ms));
- const show=(html,cls,glow)=>{const old=stage.querySelector('.card');if(old){old.classList.remove('in');old.classList.add('out');setTimeout(()=>old.remove(),450)}const c=document.createElement('div');c.className='card in '+(cls||'');if(glow)c.style.setProperty('--glow',glow);c.innerHTML=html;stage.appendChild(c);return c};
+ const setAcc=c=>{acc=c;ov.style.setProperty('--acc',c)};
+ const show=(html,cls)=>{const old=stage.querySelector('.card.in');if(old){old.classList.remove('in');old.classList.add('out');setTimeout(()=>old.remove(),520)}const c=document.createElement('div');c.className='card in '+(cls||'');c.innerHTML=html;stage.appendChild(c);
+  [...c.querySelectorAll('.txt>*')].forEach((n,i)=>n.style.animationDelay=(.18+i*.12)+'s');return c};
+ const wide=()=>innerWidth>innerHeight*1.15;
  const list=ckRoster(),N=list.length,STEP=3000;
  requestAnimationFrame(()=>ov.classList.add('on'));
- show('<div class="crown">👑</div><div class="kick">'+Z('第 100 关 · 已通关','Level 100 · Complete')+'</div><h2>'+Z('混沌军团','The Chaos Legion')+'</h2><p class="d">'+Z('你击败了它们所有。现在，让我们再见一次每一位对手。','You have defeated them all. Meet every foe you faced, one last time.')+'</p>','thanks');
- const t0=3500;
- list.forEach((x,i)=>at(t0+i*STEP,()=>{const D=CK_DEX[x.k].slice(),R=CK_ROLE[x.role],boss=x.role==='boss'||x.role==='mate';if(x.role==='boss'&&typeof BOSS!=='undefined'){const bn=BOSS[x.lv>=96?13+(x.lv-96):x.lv/8|0];if(bn){D[1]=bn;D[0]=TL(bn)}}
-  const card=show('<div class="art"></div><div class="kick">'+Z((x.role==='mate'?'第 40 关起 · ':'第 '+(x.lv+1)+' 关 · ')+R[0],(x.role==='mate'?'From Level 40 · ':'Level '+(x.lv+1)+' · ')+R[1])+'</div><h2>'+Z(D[0],D[1])+'</h2><p class="d">'+Z(D[2],D[3])+'</p>',boss?'boss':'',boss?'#ff4a3a55':'#f3c04d55');
-  card.querySelector('.art').appendChild(ckSprCanvas(x.k,boss?420:320,boss?420:320));
-  bar.style.width=((i+1)/N*100)+'%';cnt.textContent=(i+1)+' / '+N;
+ setAcc('#f3c04d');show('<div class="txt"><div class="crest">👑</div><div class="chips"><span class="chip">'+Z('第 100 关 · 已通关','Level 100 · Complete')+'</span></div><h2 class="big">'+Z('混沌军团','The Chaos Legion')+'</h2><div class="epi">'+Z('你击败了它们所有。','You have defeated them all.')+'</div><div class="rule"></div><p class="lore">'+Z('在旅程落幕之前，让我们再见一次你所面对的每一位对手——从第一只哥布林，到深渊中的最后一位泰坦。','Before the journey ends, meet every foe you faced once more: from the first goblin to the last titan of the deep.')+'</p></div>','col');
+ const t0=4000;
+ list.forEach((x,i)=>at(t0+i*STEP,()=>{const D=CK_DEX[x.k].slice(),R=CK_ROLE[x.role],boss=x.role==='boss'||x.role==='mate';
+  if(x.role==='boss'&&typeof BOSS!=='undefined'){const bn=BOSS[x.lv>=96?13+(x.lv-96):x.lv/8|0];if(bn){D[1]=bn;D[0]=TL(bn)}}
+  setAcc(CK_ACC[x.k]||'#f3c04d');const st=ckStats(x),th=ckThreat(x);
+  const lvTxt=x.role==='mate'?Z('第 40 关起','From Level 40'):Z('第 '+(x.lv+1)+' 关','Level '+(x.lv+1));
+  const html='<div class="art"><div class="rays"></div>'+CK_RUNE+'<div class="ped"></div></div><div class="txt"><div class="chips">'+(boss?'<span class="seal">'+Z('首领','BOSS')+'</span>':'')+'<span class="chip">'+lvTxt+'</span>'+(x.role==='boss'?'':'<span class="chip">'+Z(R[0],R[1])+'</span>')+'<span class="stars">'+'★'.repeat(th)+'<span style="opacity:.3">'+'★'.repeat(5-th)+'</span></span></div>'
+   +'<h2>'+esc(Z(D[0],D[1]))+'</h2><div class="epi">'+esc(Z(D[2],D[3]))+'</div><div class="rule"></div><p class="lore">'+esc(Z(D[4],D[5]))+'</p>'
+   +'<div class="bars">'+[[Z('生命','Health'),st[0]],[Z('速度','Speed'),st[1]],[Z('力量','Power'),st[2]]].map(([n,v])=>'<div class="bar2">'+n+'<i><b style="--w:'+Math.round(v*100)+'%"></b></i></div>').join('')+'</div><div class="tip">'+esc(Z(D[6],D[7]))+'</div></div>';
+  const card=show(html,(boss?'boss ':'')+(wide()?'':'col'));card.querySelector('.art').appendChild(ckSprCanvas(x.k,boss?460:380,boss?460:380));
+  if(boss){flash.classList.remove('go');void flash.offsetWidth;flash.classList.add('go')}
+  bar.style.width=((i+1)/N*100)+'%';cnt.textContent=String(i+1).padStart(2,'0')+'  /  '+N;
   try{if(boss)CKS.bossSpawn({sp:x.k,t:'boss'});else CKS.die({sp:x.k,t:x.role==='brute'?'brute':x.role==='runner'?'runner':'grunt',x:null})}catch(_){}}));
  const tg=t0+N*STEP;
- at(tg,()=>{const c=show('<div class="kick">'+Z('全员集结','All together')+'</div><h2>'+Z('混沌军团全家福','The Chaos Legion')+'</h2><div class="group"></div>','group');c.querySelector('.group').appendChild(ckGroupPortrait(list));cnt.textContent='';bar.style.width='100%';try{CKS.fanfare()}catch(_){}});
- const nm=(typeof S!=='undefined'&&S.name)?String(S.name).slice(0,40):Z('指挥官','Commander');
- at(tg+7000,()=>show('<div class="crown">🏆</div><div class="kick">'+Z('旅程完成','Journey complete')+'</div><h2>'+Z('感谢你，'+nm+'！','Thank you, '+nm+'!')+'</h2><p class="d">'+Z('你守护了十二个王国，征服了全部 100 个关卡。混沌之地因你而重获和平。感谢你一路陪伴，指挥官。','You defended twelve kingdoms and conquered all 100 levels. Peace returns to the realms because of you. Thank you for playing, Commander.')+'</p>','thanks'));
+ at(tg,()=>{setAcc('#f3c04d');const c=show('<div class="txt"><div class="chips"><span class="chip">'+Z('全员集结','All together')+'</span></div><h2>'+Z('混沌军团','The Chaos Legion')+'</h2><div class="epi">'+Z(N+' 位对手 · 100 个关卡 · 1 位传奇','36 foes · 100 levels · 1 legend').replace('36',N)+'</div><div class="group"></div></div>','col');c.querySelector('.group').appendChild(ckGroupPortrait(list));cnt.textContent='';bar.style.width='100%';try{CKS.fanfare()}catch(_){}});
+ const nm=(typeof S!=='undefined'&&S.name)?String(S.name).slice(0,40):Z('指挥官','Commander'),stt=(typeof S!=='undefined'&&S.stats)||{},fmt=n=>(+n||0).toLocaleString();
+ at(tg+7500,()=>{setAcc('#ffd36a');show('<div class="txt"><div class="crest">🏆</div><div class="chips"><span class="chip">'+Z('旅程完成','Journey complete')+'</span></div><h2 class="big">'+esc(Z('感谢你，'+nm+'！','Thank you, '+nm+'!'))+'</h2><div class="rule"></div><p class="lore">'+Z('你守护了十二个王国，征服了全部 100 个关卡。混沌之地因你而重获和平，你的名字将被永远铭记。感谢你一路陪伴，指挥官。','You defended twelve kingdoms and conquered all 100 levels. Peace returns to the realms because of you, and your name will be remembered. Thank you for playing, Commander.')+'</p>'
+  +'<div class="journey"><div><b>100</b><span>'+Z('关卡','Levels')+'</span></div><div><b>'+fmt(stt.kills)+'</b><span>'+Z('击败敌人','Foes defeated')+'</span></div><div><b>'+fmt(stt.bossWins)+'</b><span>'+Z('首领之战','Boss victories')+'</span></div><div><b>'+fmt(stt.built)+'</b><span>'+Z('建造防御塔','Towers built')+'</span></div></div></div>','col')});
  const hell=(S.h100|0)>=5,nx=Math.min(4,(S.dif|0)+1),dn=d=>typeof DIFFS!=='undefined'&&DIFFS[d]?TL(DIFFS[d].name):'';
- at(tg+14000,()=>{const c=show(hell?'<div class="crown">🔥</div><div class="kick">'+Z('最高难度 · 已征服','Highest difficulty · Conquered')+'</div><h2>'+Z('混沌炼狱的征服者','Conqueror of Chaos Inferno')+'</h2><p class="d">'+Z('你已在最高难度「'+dn(4)+'」下完成了全部 100 关。再没有更艰难的挑战——你就是真正的传奇指挥官。','You have completed all 100 levels on '+dn(4)+', the highest difficulty. There is no greater challenge left: you are a true legend.')+'</p><button class="go" type="button">'+Z('继续','Continue')+'</button>'
-   :'<div class="crown">⚔️</div><div class="kick">'+Z('新的挑战','A new challenge')+'</div><h2>'+Z('敢于挑战更高难度吗？','Ready for a greater challenge?')+'</h2><p class="d">'+Z('试试「'+dn(nx)+'」难度，再次踏上征途。在主页面的难度滑块中即可切换。','Try the '+dn(nx)+' difficulty and take on the journey again. Change it with the difficulty slider on the home screen.')+'</p><button class="go" type="button">'+Z('继续','Continue')+'</button>','thanks');
+ at(tg+15500,()=>{setAcc(hell?'#ff5a2a':'#7aa2ff');const c=show(hell?'<div class="txt"><div class="crest">🔥</div><div class="chips"><span class="seal">'+Z('最高难度','Highest difficulty')+'</span><span class="chip">'+Z('已征服','Conquered')+'</span></div><h2 class="big">'+Z('混沌炼狱的征服者','Conqueror of Chaos Inferno')+'</h2><div class="rule"></div><p class="lore">'+Z('你已在最高难度「'+dn(4)+'」下完成了全部 100 关。再没有更艰难的挑战——你就是真正的传奇指挥官。','You have completed all 100 levels on '+dn(4)+', the highest difficulty. There is no greater challenge left: you are a true legend.')+'</p><button class="go" type="button">'+Z('继续','Continue')+'</button></div>'
+   :'<div class="txt"><div class="crest">⚔️</div><div class="chips"><span class="chip">'+Z('新的挑战','A new challenge')+'</span></div><h2 class="big">'+Z('敢于挑战更高难度吗？','Ready for a greater challenge?')+'</h2><div class="rule"></div><p class="lore">'+Z('试试「'+dn(nx)+'」难度，再次踏上征途。更强的敌人与更凶猛的首领正在等待着你。在主页面的难度滑块中即可切换。','Try the '+dn(nx)+' difficulty and take on the journey again. Stronger foes and fiercer bosses await. Change it with the difficulty slider on the home screen.')+'</p><button class="go" type="button">'+Z('继续','Continue')+'</button></div>','col');
   c.querySelector('.go').onclick=finish;ov.querySelector('.skip').textContent=Z('关闭 ×','Close ×')});
  return CK_END}
 // called from end(win) on Level 100: remember the hardest difficulty it was beaten on, then start the ending
