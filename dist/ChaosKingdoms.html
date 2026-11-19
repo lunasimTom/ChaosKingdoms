@@ -1340,8 +1340,8 @@ const P=(p,f)=>{c.beginPath();p.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[
 const ell=(x,y,a,b,f)=>{c.beginPath();c.ellipse(x,y,a,b,0,0,7);if(f)c.fillStyle=f;c.fill()},circ=(x,y,r,f)=>{c.beginPath();c.arc(x,y,r,0,7);if(f)c.fillStyle=f;c.fill()},seg=(a,b)=>{c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()};
 const ngon=(x,y,r,n,o)=>Array.from({length:n},(_,i)=>[x+Math.cos(o+i*6.2832/n)*r,y+Math.sin(o+i*6.2832/n)*r]);
 const pp=(x,y)=>port?{x:ox+(y+.5)*tw,y:oy+(x+.5)*tw}:{x:ox+(x+.5)*tw,y:oy+(y+.5)*tw},cell=(x,y)=>L.g[y*L.cols+x];
-function save(){try{localStorage.setItem('ck25',JSON.stringify({v:'MAX1',n:S.name,own:S.own,p:S.prog,d:S.dif,dv:2,o:LAY,g:S.gold,dm:S.diamonds||0,bs:S.bonusStars||0,rc:S.redeemedCodes||[],u:S.unl,maps:S.maps,inv:S.inv||{},l:LANG,xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{}}))}catch(e){}}
-function ld(){try{if(!localStorage.getItem('ck25')){let n=localStorage.getItem('ck25_name');if(n)S.name=n}}catch(e){}try{let s=JSON.parse(localStorage.getItem('ck25'));if(s){S.name=s.n||'';S.own=s.own!==undefined?s.own:(s.n||'');S.prog=s.p||{};S.dif=s.dv===2?Math.max(0,Math.min(4,s.d??2)):[1,2,3][Math.max(0,Math.min(2,s.d??1))];LAY=s.o||'auto';S.gold=s.g??3000;S.diamonds=Math.max(0,+s.dm||0);S.bonusStars=Math.max(0,+s.bs||0);S.redeemedCodes=Array.isArray(s.rc)?s.rc:[];S.unl=s.u||{};S.maps=s.maps||{};S.xp=Math.max(0,s.xp||0);S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},s.stats||{});S.ach=Array.isArray(s.ach)?s.ach:[];S.cc=(s.cc&&typeof s.cc==='object')?s.cc:{};S.mb=(s.mb&&typeof s.mb==='object')?s.mb:{};S.cu=(s.cu&&typeof s.cu==='object')?{a:s.cu.a|0,d:s.cu.d|0,b:s.cu.b|0,c:s.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+s.ss||0);S.fx=fxClean(s.fx);S.inv=(s.inv&&typeof s.inv==='object')?s.inv:{};if(s.l==='zh'||s.l==='en')LANG=s.l}}catch(e){}}
+function save(){try{localStorage.setItem('ck25',JSON.stringify({v:'MAX1',n:S.name,own:S.own,p:S.prog,d:S.dif,dv:2,o:LAY,g:S.gold,dm:S.diamonds||0,bs:S.bonusStars||0,rc:S.redeemedCodes||[],u:S.unl,maps:S.maps,inv:S.inv||{},l:LANG,xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},h100:S.h100|0}))}catch(e){}}
+function ld(){try{if(!localStorage.getItem('ck25')){let n=localStorage.getItem('ck25_name');if(n)S.name=n}}catch(e){}try{let s=JSON.parse(localStorage.getItem('ck25'));if(s){S.name=s.n||'';S.own=s.own!==undefined?s.own:(s.n||'');S.prog=s.p||{};S.dif=s.dv===2?Math.max(0,Math.min(4,s.d??2)):[1,2,3][Math.max(0,Math.min(2,s.d??1))];LAY=s.o||'auto';S.gold=s.g??3000;S.diamonds=Math.max(0,+s.dm||0);S.bonusStars=Math.max(0,+s.bs||0);S.redeemedCodes=Array.isArray(s.rc)?s.rc:[];S.unl=s.u||{};S.maps=s.maps||{};S.xp=Math.max(0,s.xp||0);S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},s.stats||{});S.ach=Array.isArray(s.ach)?s.ach:[];S.cc=(s.cc&&typeof s.cc==='object')?s.cc:{};S.mb=(s.mb&&typeof s.mb==='object')?s.mb:{};S.cu=(s.cu&&typeof s.cu==='object')?{a:s.cu.a|0,d:s.cu.d|0,b:s.cu.b|0,c:s.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+s.ss||0);S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));S.inv=(s.inv&&typeof s.inv==='object')?s.inv:{};if(s.l==='zh'||s.l==='en')LANG=s.l}}catch(e){}}
 function rs(){let d=Math.min(((navigator.hardwareConcurrency||4)>=6&&(navigator.deviceMemory||4)>=4)?2:1.5,(devicePixelRatio||1)*FS);cv.width=Math.round(W*d);cv.height=Math.round(H*d);c.setTransform(d,0,0,d,0,0)}
 const wantPort=()=>LAY==='p'||(LAY==='auto'&&innerHeight>innerWidth*1.05);
 let _vw=0,_vh=0;
@@ -1486,8 +1486,8 @@ function nextWave(){let iv=0,pf=L.wave>0&&!L.lk?20:0;Economy.grantBattle(pf);L.p
 function toast(s){let e=$('toast'),msg=TL(String(s));msg=msg.replace(/<img\b[^>]*>/gi,'🪙').replace(/<[^>]*>/g,'');e.textContent=msg;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1800)}
 function txt(x,y,s,k){if(!S.dmg)return;if(L.tx.length>70)L.tx.shift();L.tx.push({x,y,s,c:k,l:.8})}
 function burst(x,y,k,n,sp=90){if(L.pt.length>300)return;for(let i=0;i<n;i++){let a=Math.random()*7;L.pt.push({x,y,vx:Math.cos(a)*sp*Math.random(),vy:Math.sin(a)*sp*Math.random()-20,l:.6,m:.6,r:2+Math.random()*3,c:k})}}
-function hurt(e,d,k,src){if(e.hp<=0||e.pro>0)return;d=d/(e.t==='boss'?BOSS_DEF_MULT:DEF_MULT);d=ckRes(e,d,src);if(!(d>0))return;if(src)L.ds[src]=(L.ds[src]||0)+Math.min(d,e.hp);e.hp-=d;if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25}e.fl=.1;let p=eS(e);txt(p.x,p.y-tw*.4,_crit?(LANG==='zh'?'暴击 ':'CRIT ')+Math.round(d):Math.round(d),_crit?'#ff8a1f':(k||'#fff'));if(!e.vocalCd||e.vocalCd<=0){snd('hit_'+(e.t||'grunt'),.34);e.vocalCd=e.t==='runner'?.22:e.t==='brute'?.3:.18}if(e.hp<=0){ckOnDeath(e);L.kills++;if(!L.demo){if(e.t==='boss')heart(2,'boss slain');else if(L.kills%40===0)heart(1,'40 kills')}L.cmb=(L.ct>0?L.cmb:0)+1;L.ct=1.6;{let cb=Math.min(5,L.cmb>>2);if(cb){Economy.grantBattle(cb);txt(p.x,p.y-tw*.7,'+'+cb+' '+TL('combo'),'#ffbe3d')}}{L.kgr=(L.kgr||0)+killGold(e)*(L.bf.idol>0?2:1)*(1+(L.buffs&&L.buffs.bounty||0))*KILL_GOLD_MULT;let pay=Math.floor(L.kgr);L.kgr-=pay;if(pay>0)Economy.grantBattle(pay)}burst(p.x,p.y,`hsl(${e.hue} 70% 55%)`,e.t==='boss'?40:12);vDeath(p,e);ckCorpse(e);snd('death_'+(e.t||'grunt'),e.t==='boss'?.9:.62);sfx(e.t==='boss'?'boss':'death',.32)||beep(e.t==='boss'?80:520,.12,'square',.05);if(e.t==='boss'){L.shake=1;if(!L.demo){L.slowT=1.1;window.ckBanner&&ckBanner(lvZ('首领已被击败','Boss defeated'),lvZ('胜利','VICTORY'),0)}}}}
-function stomp(e){let q=epos(e),p=pp(q[0],q[1]);L.shake=.7;L.rg.push({x:p.x,y:p.y,r:0,l:.5,k:'#ff5b7f',mr:2.6});L.tr.forEach(t=>{if(Math.hypot(t.x-q[0],t.y-q[1])<2.6){t.st=2.5;let s=pp(t.x,t.y);burst(s.x,s.y,'#ffd37a',8)}});sfx('stomp')||beep(70,.4,'sawtooth',.1);toast('Stomp! Nearby towers are stunned')}
+function hurt(e,d,k,src){if(e.hp<=0||e.pro>0)return;d=d/(e.t==='boss'?BOSS_DEF_MULT:DEF_MULT);d=ckRes(e,d,src);if(!(d>0))return;if(src)L.ds[src]=(L.ds[src]||0)+Math.min(d,e.hp);e.hp-=d;if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25}e.fl=.1;let p=eS(e);txt(p.x,p.y-tw*.4,_crit?(LANG==='zh'?'暴击 ':'CRIT ')+Math.round(d):Math.round(d),_crit?'#ff8a1f':(k||'#fff'));if(!e.vocalCd||e.vocalCd<=0){if(!CKS.hurt(e))snd('hit_'+(e.t||'grunt'),.34);e.vocalCd=e.t==='runner'?.22:e.t==='brute'?.3:.18}if(e.hp<=0){ckOnDeath(e);L.kills++;if(!L.demo){if(e.t==='boss')heart(2,'boss slain');else if(L.kills%40===0)heart(1,'40 kills')}L.cmb=(L.ct>0?L.cmb:0)+1;L.ct=1.6;{let cb=Math.min(5,L.cmb>>2);if(cb){Economy.grantBattle(cb);txt(p.x,p.y-tw*.7,'+'+cb+' '+TL('combo'),'#ffbe3d')}}{L.kgr=(L.kgr||0)+killGold(e)*(L.bf.idol>0?2:1)*(1+(L.buffs&&L.buffs.bounty||0))*KILL_GOLD_MULT;let pay=Math.floor(L.kgr);L.kgr-=pay;if(pay>0)Economy.grantBattle(pay)}burst(p.x,p.y,`hsl(${e.hue} 70% 55%)`,e.t==='boss'?40:12);vDeath(p,e);ckCorpse(e);if(!CKS.die(e)){snd('death_'+(e.t||'grunt'),e.t==='boss'?.9:.62);sfx(e.t==='boss'?'boss':'death',.32)||beep(e.t==='boss'?80:520,.12,'square',.05)}if(e.t==='boss'){L.shake=1;if(!L.demo){L.slowT=1.1;window.ckBanner&&ckBanner(lvZ('首领已被击败','Boss defeated'),lvZ('胜利','VICTORY'),0)}}}}
+function stomp(e){let q=epos(e),p=pp(q[0],q[1]);L.shake=.7;L.rg.push({x:p.x,y:p.y,r:0,l:.5,k:'#ff5b7f',mr:2.6});L.tr.forEach(t=>{if(Math.hypot(t.x-q[0],t.y-q[1])<2.6*(1+.25*((e.batk||1)-1))){t.st=Math.min(4.5,2.5*(e.batk||1));let s=pp(t.x,t.y);burst(s.x,s.y,'#ffd37a',8)}});CKS.bossAttack(e)||sfx('stomp')||beep(70,.4,'sawtooth',.1);toast('Stomp! Nearby towers are stunned')}
 function eUp(e,dt){let d=e.d;e.fl-=dt;e.age=(e.age||0)+dt;if(e.chan>0){e.chan-=dt;e.pro=Math.max(e.pro||0,e.chan);e.vv[0]*=.8;e.vv[1]*=.8;return}if(e.pro>0)e.pro-=dt;e.vocalCd=Math.max(0,(e.vocalCd||0)-dt);e.kb=Math.max(0,(e.kb||0)-dt*7);e.sl-=dt;if(e.fz>0){e.fz-=dt;return}
  if(e.ps>0){e.ps-=dt;e.pa=(e.pa||0)+dt;if(e.pa>=.5){e.pa-=.5;hurt(e,e.pd*e.pk*.35,'#9fe05a','toxin')}if(e.ps<=0)e.pk=0}
  if(e.t==='boss'&&!L.demo){let r=e.hp/e.mx;if(!e.s1&&r<.66){e.s1=1;for(let k=0;k<4;k++)spawn('grunt',{x:e.x+(Math.random()-.5)*.9,y:e.y+(Math.random()-.5)*.9});L.shake=.5;toast('The boss calls its guards')}
@@ -1568,7 +1568,7 @@ function ckLbl(e,s,col){if(e.lbt>TM)return;e.lbt=TM+.9;const p=eS(e);txt(p.x,p.y
 function ckRole(e){
  if(L.demo)return;
  if(L.ckv!==L)ckV3Init();
- if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
+ if(e.t==='boss'){ckBossPower(e);L.bsc=(L.bsc||0)+1;{const n=L.bsc;setTimeout(()=>{try{if(e.hp>0&&!L.over)CKS.bossSpawn(e)}catch(_){}},(n-1)*650+150)}if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
  const r=CK_NR;if(!r||!CKR[r])return;e.rl=r;
  if(r==='shield')e.sh=e.msh=e.mx*.45;
  if(r==='heal')e.hc=1.2;
@@ -1588,6 +1588,7 @@ function ckRes(e,d,src){
   if(src==='mage'&&(e.rl==='armor'||e.rl==='ward'||e.sh>0)){if(!(e.ab>0))ckLbl(e,lvZ('奥术破甲','ARCANE BREAK'),'#d9b8ff');e.ab=3}
  }
  if(e.mk>0)m*=1.2;
+ if(e.t==='boss'){if(e.bdef)m/=e.bdef;try{CKS.bossHurt(e)}catch(_){}}
  d*=m*Math.max(.5,res);
  if(e.sh>0){const f=src==='cannon'?2:ty==='e'?.5:1,take=Math.min(e.sh,d*f);e.sh-=take;d-=take/f;if(e.sh<=0){e.sh=0;const p=eS(e);burst(p.x,p.y,'#ffd36a',10);ckLbl(e,lvZ('护盾破碎','SHIELD BROKEN'),'#ffd36a');e.lbt=0}if(d<=0){e.fl=.1;return 0}}
  return d;
@@ -1721,6 +1722,7 @@ setTimeout(function ckFS(){if(!ckFixSprites())setTimeout(ckFS,150)},0);
 // trampling every tower it runs over. Then it shrinks back and resumes its normal march.
 const CK_RAGE_T=8;
 function ckRage(e,dt){
+ if(!e.rgT){try{CKS.bossRage(e)}catch(_){}}
  e.rgT=(e.rgT||0)+dt;const rt=e.rgT,ss=x=>x*x*(3-2*x);
  e.rg=rt<.35?ss(rt/.35):rt<CK_RAGE_T-.45?1:rt<CK_RAGE_T?ss((CK_RAGE_T-rt)/.45):0;
  e.wd=0;e.bt=Math.max(e.bt||0,2.5);e.atk=null;e.chase=null;
@@ -1742,9 +1744,267 @@ function ckRage(e,dt){
  steer(e,dx/dl,dy/dl,e.d.sp*6.5*(e.sl>0?.8:1),dt);
  e.x=Math.max(0,Math.min(L.cols-1,e.x));e.y=Math.max(0,Math.min(L.rows-1,e.y));
  // trample: every tower (and barricade) it runs over takes a heavy hit, at most once per 1.2 s each
- for(const t of L.tr){if(!t||t.building||t.hp<=0)continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.6+.7*(e.rg||0)&&!((t._rsm||0)>TM)){t._rsm=TM+1.2;dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}
+ for(const t of L.tr){if(!t||t.building||t.hp<=0)continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.6+.7*(e.rg||0)&&!((t._rsm||0)>TM)){t._rsm=TM+1.2;dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15*(e.batk||1));const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}
  e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const p=eS(e);burst(p.x,p.y+tw*.3,'#ff6a3a',3,70)}
  return true}
+
+// ---- late-game boss power (v3.6) ----
+// Bosses from Level 64 grow steadily stronger; the final four (Levels 97-100) are true titans.
+// hp: health multiplier; def: extra damage reduction; atk: stomp reach and stun, rampage trample
+// damage, and lives taken if the boss reaches a base.
+function ckBossPow(i){if(i>=96)return[[2.8,1.35,1.6],[3.2,1.42,1.75],[3.6,1.5,1.9],[4.2,1.6,2.1]][i-96].reduce((o,v,k)=>(o[['hp','def','atk'][k]]=v,o),{});
+ if(i>=63){const k=(i-63)/32;return{hp:1+1.1*k,def:1+.25*k,atk:1+.45*k}}return{hp:1,def:1,atk:1}}
+function ckBossPower(e){if(L.demo||e.bpw)return;const p=ckBossPow(L.i);e.bpw=1;e.hp*=p.hp;e.mx=e.hp;e.bdef=p.def;e.batk=p.atk}
+
+/* ===== Chaos Kingdoms v3.6 · audio engine =====
+   Every sound is synthesized with Web Audio at play time (no extra files), through the game's own
+   effects channel (sg) and volume (sfxV), so the Master / Effects sliders and the sound toggle work.
+   - every monster type has its own voice for being hit and for dying, with random variation
+   - every boss portrait has a deep signature voice; boss cues for spawn, stomp attack, rage,
+     taking damage and death
+   - a shared hall reverb gives depth; short fanfare after a boss level; music for the ending
+   Runs inside the main game script (uses au, sg, mon, sfxV). */
+const CKS=(()=>{
+ let RV=null,NZ=null,DIST=null;const lastKind={},bossT=new WeakMap();let budget=0,budgetT=0;
+ const on=()=>typeof au!=='undefined'&&au&&mon&&au.state!=='closed'&&typeof sg!=='undefined'&&sg;
+ const R=(a,b)=>a+Math.random()*(b-a);
+ // keep crowded fights clean: at most ~14 new monster voices per 100 ms
+ let budgetCtx=null;
+ const allow=(n=1)=>{const t=au.currentTime;if(budgetCtx!==au||t-budgetT>.1||t<budgetT){budgetCtx=au;budgetT=t;budget=0}if(budget+n>14)return false;budget+=n;return true};
+ function rv(){if(RV&&RV.ctx===au)return RV.in;const c=au.createConvolver(),len=Math.floor(au.sampleRate*2.8),b=au.createBuffer(2,len,au.sampleRate);
+  for(let ch=0;ch<2;ch++){const a=b.getChannelData(ch);for(let i=0;i<len;i++){const k=i/len;a[i]=(Math.random()*2-1)*Math.pow(1-k,3)*(i<au.sampleRate*.012?i/(au.sampleRate*.012):1)}}
+  c.buffer=b;const w=au.createGain();w.gain.value=.55;c.connect(w);w.connect(sg);RV={ctx:au,in:c};return c}
+ function noiseBuf(){if(NZ&&NZ.ctx===au)return NZ.b;const b=au.createBuffer(1,au.sampleRate*2,au.sampleRate),a=b.getChannelData(0);let p=0;for(let i=0;i<a.length;i++){const w=Math.random()*2-1;p=p*.6+w*.4;a[i]=i%2?w:p}NZ={ctx:au,b};return b}
+ function shaper(){if(DIST&&DIST.ctx===au)return DIST.c;const n=1024,cv=new Float32Array(n);for(let i=0;i<n;i++){const x=i/n*2-1;cv[i]=Math.tanh(x*3.2)}DIST={ctx:au,c:cv};return cv}
+ // output node: volume (x effects slider), optional stereo pan and reverb send
+ function out(vol,wet=0,pan=0){const g=au.createGain();g.gain.value=Math.max(0,vol*sfxV);let n=g;if(pan&&au.createStereoPanner){const p=au.createStereoPanner();p.pan.value=Math.max(-1,Math.min(1,pan));g.connect(p);n=p}n.connect(sg);if(wet>0){const s=au.createGain();s.gain.value=wet;n.connect(s);s.connect(rv())}return g}
+ function env(param,t,a,peak,d,end=.0001){param.setValueAtTime(.0001,t);param.exponentialRampToValueAtTime(Math.max(.0002,peak),t+a);param.exponentialRampToValueAtTime(end,t+a+d)}
+ // tone: oscillator with pitch glide, optional vibrato and drive
+ function tone(dst,o){const t=o.t,ty=o.type||'sine',f0=o.f0,f1=o.f1||o.f0,dur=o.dur,amp=o.amp||.2;const os=au.createOscillator(),g=au.createGain();os.type=ty;os.frequency.setValueAtTime(f0,t);os.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);if(o.det)os.detune.value=o.det;
+  if(o.vib){const l=au.createOscillator(),lg=au.createGain();l.frequency.value=o.vr||6;lg.gain.value=o.vib;l.connect(lg);lg.connect(os.frequency);l.start(t);l.stop(t+dur+.05)}
+  let n=os;if(o.lp){const f=au.createBiquadFilter();f.type='lowpass';f.frequency.setValueAtTime(o.lp,t);if(o.lp1)f.frequency.exponentialRampToValueAtTime(o.lp1,t+dur);f.Q.value=o.q||.8;n.connect(f);n=f}
+  if(o.drive){const w=au.createWaveShaper();w.curve=shaper();n.connect(w);n=w}
+  n.connect(g);env(g.gain,t,o.a||.008,amp,dur);g.connect(dst);os.start(t);os.stop(t+(o.a||.008)+dur+.05)}
+ // noise: filtered noise burst with a sweeping band
+ function noise(dst,o){const t=o.t,dur=o.dur,s=au.createBufferSource();s.buffer=noiseBuf();s.loop=true;s.playbackRate.value=o.rate||1;const f=au.createBiquadFilter();f.type=o.ft||'bandpass';f.frequency.setValueAtTime(o.f0,t);f.frequency.exponentialRampToValueAtTime(Math.max(30,o.f1||o.f0),t+dur);f.Q.value=o.q||1;const g=au.createGain();s.connect(f);f.connect(g);env(g.gain,t,o.a||.005,o.amp||.2,dur);g.connect(dst);s.start(t,Math.random());s.stop(t+(o.a||.005)+dur+.05)}
+ // formant voice: a buzzy source through two vowel bands (growls, moans, shouts)
+ function vox(dst,o){const t=o.t,dur=o.dur,os=au.createOscillator();os.type=o.type||'sawtooth';os.frequency.setValueAtTime(o.f0,t);os.frequency.exponentialRampToValueAtTime(Math.max(20,o.f1||o.f0),t+dur);if(o.vib){const l=au.createOscillator(),lg=au.createGain();l.frequency.value=o.vr||7;lg.gain.value=o.vib;l.connect(lg);lg.connect(os.frequency);l.start(t);l.stop(t+dur+.05)}
+  const mix=au.createGain();(o.fm||[700,1200]).forEach((fq,i)=>{const b=au.createBiquadFilter();b.type='bandpass';b.frequency.setValueAtTime(fq,t);if(o.fm1)b.frequency.exponentialRampToValueAtTime(o.fm1[i],t+dur);b.Q.value=o.q||6;os.connect(b);b.connect(mix)});
+  let n=mix;if(o.drive){const w=au.createWaveShaper();w.curve=shaper();mix.connect(w);n=w}
+  const g=au.createGain();n.connect(g);env(g.gain,t,o.a||.02,o.amp||.3,dur);g.connect(dst);os.start(t);os.stop(t+(o.a||.02)+dur+.05)}
+ const clicks=(dst,t,n,gap,f,amp)=>{for(let i=0;i<n;i++)noise(dst,{t:t+i*gap*R(.7,1.3),dur:.018,f0:f*R(.8,1.25),q:8,amp:amp*R(.6,1)})};
+ const boom=(dst,t,f,dur,amp)=>{tone(dst,{t,type:'sine',f0:f*1.8,f1:f*.5,dur,amp});noise(dst,{t,dur:dur*.8,ft:'lowpass',f0:420,f1:60,amp:amp*.7})};
+
+ /* ---- monster voices: [hurt, die] per kind ---- */
+ const K={
+  chatter:{h:(d,t,f)=>{vox(d,{t,f0:f*1.1,f1:f*1.5,dur:.09,fm:[900,2300],amp:.28,type:'square'})},
+           x:(d,t,f)=>{vox(d,{t,f0:f*1.5,f1:f*.55,dur:.32,fm:[1000,2600],fm1:[600,1500],amp:.34,type:'square'});clicks(d,t+.1,3,.05,2200,.08)}},
+  growl:{h:(d,t,f)=>{vox(d,{t,f0:f,f1:f*.8,dur:.14,fm:[520,1100],amp:.32,drive:1})},
+         x:(d,t,f)=>{vox(d,{t,f0:f*1.2,f1:f*.5,dur:.55,fm:[600,1150],fm1:[300,700],amp:.42,drive:1,vib:8,vr:9});noise(d,{t:t+.15,dur:.25,ft:'lowpass',f0:500,f1:90,amp:.15})}},
+  rattle:{h:(d,t,f)=>{clicks(d,t,4,.025,f*2.2,.42);tone(d,{t,type:'triangle',f0:f*.8,f1:f*.5,dur:.08,amp:.08})},
+          x:(d,t,f)=>{clicks(d,t,12,.035,f*2,.2);tone(d,{t,type:'triangle',f0:f*.9,f1:f*.3,dur:.4,amp:.1});noise(d,{t:t+.32,dur:.14,f0:3000,amp:.12})}},
+  moan:{h:(d,t,f)=>{vox(d,{t,f0:f,f1:f*.9,dur:.2,fm:[400,800],amp:.26,vib:6})},
+        x:(d,t,f)=>{vox(d,{t,f0:f*1.1,f1:f*.55,dur:.9,fm:[420,820],fm1:[280,600],amp:.36,vib:10,vr:4,a:.06});noise(d,{t:t+.3,dur:.4,ft:'lowpass',f0:300,f1:80,amp:.12})}},
+  chitter:{h:(d,t,f)=>{clicks(d,t,7,.018,f,.5);tone(d,{t,type:'sawtooth',f0:f*.5,f1:f*.35,dur:.07,amp:.05,lp:3500})},
+           x:(d,t,f)=>{clicks(d,t,16,.022,f,.4);tone(d,{t:t+.05,type:'sawtooth',f0:f*.9,f1:f*.25,dur:.4,amp:.16,lp:3000})}},
+  howl:{h:(d,t,f)=>{tone(d,{t,type:'triangle',f0:f*1.2,f1:f*1.6,dur:.12,amp:.16,vib:15})},
+        x:(d,t,f)=>{vox(d,{t,f0:f,f1:f*1.6,dur:.35,fm:[800,1400],amp:.3,type:'triangle',vib:12});vox(d,{t:t+.33,f0:f*1.6,f1:f*.5,dur:.6,fm:[800,1400],fm1:[500,900],amp:.28,type:'triangle',vib:10})}},
+  bellow:{h:(d,t,f)=>{vox(d,{t,f0:f,f1:f*.75,dur:.2,fm:[350,700],amp:.38,drive:1})},
+          x:(d,t,f)=>{vox(d,{t,f0:f*1.3,f1:f*.45,dur:.75,fm:[380,760],fm1:[220,420],amp:.48,drive:1,vib:5});boom(d,t+.55,70,.5,.3)}},
+  metal:{h:(d,t,f)=>{[1,2.76,5.4].forEach((m,i)=>tone(d,{t,type:'sine',f0:f*4*m,dur:.18,amp:.08/(i+1)}))},
+         x:(d,t,f)=>{[1,2.76,5.4,8.9].forEach((m,i)=>tone(d,{t,type:'sine',f0:f*4*m,dur:.7,amp:.1/(i+1)}));vox(d,{t,f0:f,f1:f*.5,dur:.5,fm:[500,1000],amp:.28,drive:1});noise(d,{t:t+.45,dur:.2,f0:1800,amp:.16})}},
+  hiss:{h:(d,t,f)=>{noise(d,{t,dur:.12,ft:'highpass',f0:f,amp:.12})},
+        x:(d,t,f)=>{noise(d,{t,dur:.45,ft:'highpass',f0:f,f1:f*.6,amp:.16});tone(d,{t,type:'sawtooth',f0:1400,f1:500,dur:.4,amp:.07,lp:2600,vib:30,vr:18})}},
+  demon:{h:(d,t,f)=>{vox(d,{t,f0:f,f1:f*.7,dur:.15,fm:[650,1300],amp:.3,drive:1,type:'square'})},
+         x:(d,t,f)=>{vox(d,{t,f0:f*1.4,f1:f*.35,dur:.7,fm:[700,1400],fm1:[350,700],amp:.42,drive:1,vib:14,vr:11});noise(d,{t,dur:.6,f0:900,f1:200,amp:.12,q:2})}},
+  roar:{h:(d,t,f)=>{vox(d,{t,f0:f,f1:f*.8,dur:.16,fm:[600,1100],amp:.3,drive:1});noise(d,{t,dur:.12,f0:1200,amp:.07})},
+        x:(d,t,f)=>{vox(d,{t,f0:f*1.3,f1:f*.4,dur:.8,fm:[650,1200],fm1:[300,600],amp:.42,drive:1});noise(d,{t,dur:.7,f0:1500,f1:300,amp:.16,q:1.5})}},
+  chant:{h:(d,t,f)=>{tone(d,{t,type:'sine',f0:f*1.5,f1:f*1.2,dur:.16,amp:.12});tone(d,{t,type:'sine',f0:f*2.25,f1:f*1.8,dur:.16,amp:.06})},
+         x:(d,t,f)=>{[1,1.5,2].forEach((m,i)=>tone(d,{t:t+i*.05,type:'sine',f0:f*m*1.2,f1:f*m*.6,dur:.8,amp:.1,vib:5}));noise(d,{t,dur:.5,ft:'highpass',f0:4000,amp:.05})}},
+  whoosh:{h:(d,t,f)=>{noise(d,{t,dur:.12,f0:f*2,f1:f,q:2,amp:.3});tone(d,{t,type:'sine',f0:700,f1:400,dur:.08,amp:.06})},
+          x:(d,t,f)=>{noise(d,{t,dur:.35,f0:f*3,f1:f*.4,q:2,amp:.16});tone(d,{t:t+.05,type:'sine',f0:900,f1:180,dur:.4,amp:.1})}},
+  ghostly:{h:(d,t,f)=>{tone(d,{t,type:'sine',f0:f*2,f1:f*1.6,dur:.2,amp:.1,vib:20})},
+           x:(d,t,f)=>{tone(d,{t,type:'sine',f0:f*2.2,f1:f*.8,dur:1,amp:.14,vib:22,vr:5,a:.05});tone(d,{t:t+.1,type:'triangle',f0:f*3.3,f1:f*1.1,dur:.9,amp:.06,vib:18})}},
+  stone:{h:(d,t,f)=>{noise(d,{t,dur:.14,ft:'lowpass',f0:600,f1:150,amp:.42});tone(d,{t,type:'sine',f0:120,f1:70,dur:.12,amp:.12})},
+         x:(d,t,f)=>{for(let i=0;i<5;i++)noise(d,{t:t+i*R(.05,.1),dur:.18,ft:'lowpass',f0:R(400,900),f1:90,amp:.24});boom(d,t+.25,60,.6,.3)}},
+  wail:{h:(d,t,f)=>{tone(d,{t,type:'sine',f0:f*1.4,f1:f*1.8,dur:.18,amp:.1,vib:25})},
+        x:(d,t,f)=>{tone(d,{t,type:'sine',f0:f*1.8,f1:f*.5,dur:1.1,amp:.15,vib:28,vr:6,a:.04});noise(d,{t,dur:.9,ft:'highpass',f0:3500,f1:1500,amp:.04})}}
+ };
+ const MV={e_goblin:['chatter',560],e_orc:['growl',140],e_skeleton:['rattle',900],e_zombie:['moan',115],e_spider:['chitter',2600],e_wolf:['howl',430],e_troll:['growl',92],e_ogre:['bellow',82],e_dknight:['metal',170],e_vampire:['hiss',3200],e_demon:['demon',190],e_dragon:['roar',165],e_mystic:['chant',420],e_shaman:['chant',300],e_assassin:['whoosh',1400],e_necro:['ghostly',260],e_golem:['stone',70],e_ghost:['wail',650]};
+ const kindOf=e=>MV[e.sp]||(e.t==='brute'?['bellow',90]:e.t==='runner'?['chatter',600]:['growl',150]);
+ function play(e,which){if(!on())return false;const v=kindOf(e),k=K[v[0]];if(!k)return false;if(!allow(which==='x'?2:1))return true;
+  const t=au.currentTime+.005,f=v[1]*R(.9,1.12)*(e.el?.85:1),pan=e&&e.x!=null&&L&&L.cols?((port?e.y/L.rows:e.x/L.cols)-.5)*.7:0;
+  const d=out(which==='x'?(e.el?.95:.8):.5,which==='x'?.22:.1,pan);try{k[which](d,t,f)}catch(_){}return true}
+
+ /* ---- boss voices: deep roar + a signature texture per portrait ---- */
+ const BV={b2_skeleton_king:['bones',62],b2_demon_lord:['hell',55],b2_ice_dragon:['ice',70],b2_fire_giant:['fire',48],b2_dragon_king:['fire',52],b2_necromancer:['choir',66],b2_death_knight:['steel',58],b2_dread_knight:['steel',54],b2_lich_king:['choir',50],b2_stone_golem:['stone',42],b2_sea_monster:['water',46],b2_vampire_lord:['bat',72],b2_ogre_king:['brute',50],b2_spider_queen:['chitter',80],b2_giant_worm:['water',40],b2_demon_beast:['hell',45],b2_forest_ent:['wood',44],b2_void_lord:['void',38],b2_storm_titan:['thunder',50]};
+ const bvo=e=>BV[e.sp]||['brute',55];
+ function texture(d,tex,t,dur,amp){
+  if(tex==='bones')clicks(d,t,Math.round(10*dur),.06,1600,amp*.5);
+  else if(tex==='hell'){noise(d,{t,dur,f0:700,f1:180,q:3,amp:amp*.5});tone(d,{t,type:'square',f0:110,f1:55,dur,amp:amp*.15,lp:600,drive:1})}
+  else if(tex==='ice'){for(let i=0;i<6;i++)tone(d,{t:t+i*dur/7,type:'sine',f0:R(2400,4200),dur:.5,amp:amp*.12})}
+  else if(tex==='fire'){noise(d,{t,dur:dur*1.1,ft:'bandpass',f0:2500,f1:900,q:.7,amp:amp*.35});clicks(d,t,Math.round(14*dur),.05,3000,amp*.2)}
+  else if(tex==='choir'){[1,1.2,1.5,2].forEach((m,i)=>tone(d,{t:t+i*.04,type:'sine',f0:220*m,f1:200*m,dur:dur*1.1,amp:amp*.1,vib:5,a:.25}))}
+  else if(tex==='steel'){[1,2.4,4.1].forEach((m,i)=>tone(d,{t,type:'sine',f0:330*m,dur:dur*.9,amp:amp*.16/(i+1)}));noise(d,{t,dur:.25,ft:'highpass',f0:3000,amp:amp*.3})}
+  else if(tex==='stone'){for(let i=0;i<8;i++)noise(d,{t:t+i*dur/9,dur:.25,ft:'lowpass',f0:R(300,700),f1:70,amp:amp*.35})}
+  else if(tex==='water'){for(let i=0;i<10;i++)tone(d,{t:t+i*dur/11,type:'sine',f0:R(150,400),f1:R(500,900),dur:.12,amp:amp*.12})}
+  else if(tex==='bat'){tone(d,{t,type:'sawtooth',f0:2600,f1:1100,dur:dur*.6,amp:amp*.08,lp:4000,vib:60,vr:22});noise(d,{t,dur:dur*.5,ft:'highpass',f0:5000,amp:amp*.2})}
+  else if(tex==='chitter')clicks(d,t,Math.round(30*dur),.03,2400,amp*.35);
+  else if(tex==='wood'){for(let i=0;i<4;i++)tone(d,{t:t+i*dur/5,type:'sawtooth',f0:R(90,160),f1:R(60,90),dur:.4,amp:amp*.12,lp:900,q:6})}
+  else if(tex==='void'){tone(d,{t,type:'sine',f0:900,f1:40,dur:dur*1.2,amp:amp*.2});tone(d,{t,type:'sine',f0:30,f1:30,dur:dur*1.3,amp:amp*.35,vib:3,vr:.7})}
+  else if(tex==='thunder'){noise(d,{t,dur:.08,ft:'highpass',f0:2500,amp:amp*.9});noise(d,{t:t+.05,dur:dur*1.2,ft:'lowpass',f0:900,f1:60,amp:amp*.6})}
+ }
+ function roar(d,t,f,dur,amp,up){vox(d,{t,f0:up?f*.8:f*1.5,f1:up?f*1.6:f*.6,dur,fm:[420,900],fm1:up?[700,1300]:[250,520],amp,drive:1,vib:6,vr:5,a:.08,q:4});
+  vox(d,{t:t+.02,f0:(up?f*.8:f*1.5)*1.005,f1:(up?f*1.6:f*.6)*1.01,dur,fm:[300,650],amp:amp*.7,drive:1,a:.1,q:3});
+  tone(d,{t,type:'sine',f0:f*.5,f1:f*.4,dur:dur*1.1,amp:amp*.6,a:.1});noise(d,{t,dur,ft:'lowpass',f0:900,f1:200,amp:amp*.35,a:.06})}
+ const bossOut=(v,w)=>out(v,w,0);
+ const api={
+  hurt:e=>e&&e.t!=='boss'?play(e,'h'):false,
+  die:e=>{if(!e)return false;if(e.t==='boss')return api.bossDie(e);return play(e,'x')},
+  bossSpawn:e=>{if(!on())return false;const[x,f]=bvo(e),t=au.currentTime+.05,d=bossOut(1,.45);boom(d,t,45,1.2,.55);roar(d,t+.25,f,1.7,.6,false);texture(d,x,t+.3,1.6,.9);return true},
+  bossAttack:e=>{if(!on())return false;const[x,f]=bvo(e),t=au.currentTime+.01,d=bossOut(.95,.35);boom(d,t,50,.7,.6);noise(d,{t,dur:.35,ft:'lowpass',f0:1400,f1:120,amp:.4});roar(d,t+.05,f*1.1,.55,.38,false);texture(d,x,t+.05,.5,.6);return true},
+  bossRage:e=>{if(!on())return false;const[x,f]=bvo(e),t=au.currentTime+.02,d=bossOut(1.1,.5);roar(d,t,f,2.2,.7,true);texture(d,x,t+.2,2,1);for(let i=0;i<6;i++){boom(d,t+.4+i*.55,58,.35,.45);boom(d,t+.62+i*.55,52,.3,.3)}return true},
+  bossHurt:e=>{if(!on())return false;const n=au.currentTime;if((bossT.get(e)||0)>n)return true;bossT.set(e,n+R(.9,1.4));const[x,f]=bvo(e),d=bossOut(.6,.25);vox(d,{t:n+.01,f0:f*1.4,f1:f*1.1,dur:.28,fm:[450,950],amp:.35,drive:1,q:4});texture(d,x,n+.02,.25,.4);return true},
+  bossDie:e=>{if(!on())return false;const[x,f]=bvo(e),t=au.currentTime+.02,d=bossOut(1.15,.55);roar(d,t,f*1.2,2.4,.75,false);texture(d,x,t+.2,2.2,1);boom(d,t+1.6,38,2.2,.7);noise(d,{t:t+1.6,dur:2.8,ft:'lowpass',f0:220,f1:40,amp:.4,a:.2});return true},
+  // short triumphant fanfare after a boss level (brass chords, timpani, cymbal swell)
+  fanfare:()=>{if(!on())return false;const t=au.currentTime+.05,d=out(.9,.4),ch=[[262,330,392],[349,440,523],[392,494,587],[523,659,784]],du=[.45,.45,.45,1.6];let tt=t;
+   ch.forEach((c,i)=>{c.forEach(fq=>{tone(d,{t:tt,type:'sawtooth',f0:fq,dur:du[i],amp:.06,lp:2400,a:.03,det:R(-6,6)});tone(d,{t:tt,type:'sawtooth',f0:fq*1.005,dur:du[i],amp:.04,lp:1800,a:.03})});boom(d,tt,i===3?70:90,.5,.35);tt+=du[i]});
+   noise(d,{t:t+1.2,dur:1.6,ft:'highpass',f0:5000,f1:7000,amp:.08,a:.6});return true},
+  // music for the Level 100 ending: slow epic progression (pads, choir, timpani, bell melody)
+  endingMusic:()=>{if(!on())return ()=>{};const d=out(.8,.6),prog=[[220,262,330],[175,220,262],[262,330,392],[196,247,294]],bell=[660,587,523,494,523,587,659,784];let bar=0,live=true;
+   const play=()=>{if(!live||!on()||d.context!==au)return;const t=au.currentTime+.05,c=prog[bar%4];c.forEach(fq=>{tone(d,{t,type:'sawtooth',f0:fq,dur:2.6,amp:.035,lp:1100,a:.6,det:R(-8,8)});tone(d,{t,type:'sine',f0:fq*2,dur:2.6,amp:.025,a:.8,vib:4})});
+    tone(d,{t,type:'sine',f0:c[0]/2,dur:2.5,amp:.08,a:.3});boom(d,t,60,.9,.3);if(bar%2)boom(d,t+1.2,70,.6,.18);
+    for(let i=0;i<2;i++){const fq=bell[(bar*2+i)%bell.length];tone(d,{t:t+i*1.2,type:'sine',f0:fq,dur:1.4,amp:.07});tone(d,{t:t+i*1.2,type:'sine',f0:fq*2.01,dur:.8,amp:.02})}bar++};
+   play();const iv=setInterval(play,2400);return ()=>{live=false;clearInterval(iv);try{d.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}}},
+  // test hook: render a voice into any context (used by the automated sound checks)
+  _voices:()=>({monsters:Object.keys(MV),bosses:Object.keys(BV)})
+ };
+ return api})();
+// small random pan on sampled effects (tower shots etc.) so repeated hits do not sound identical
+function ckPanOut(g){try{if(au.createStereoPanner){const p=au.createStereoPanner();p.pan.value=(Math.random()-.5)*.5;g.connect(p);p.connect(sg)}else g.connect(sg)}catch(_){g.connect(sg)}}
+
+/* ===== Chaos Kingdoms v3.6 · Level 100 ending =====
+   After winning Level 100: every monster and boss is introduced one by one, from the earliest to the
+   latest level, 3 seconds each (name, level, role and a short description), then a group portrait of
+   the whole legion, a thank-you message, and a closing message about difficulty. */
+const CK_DEX={
+ e_goblin:['哥布林袭击者','Goblin Raider','狡猾又贪婪，总是成群结队地冲向你的防线。','Sly and greedy, it rushes your walls in noisy packs.'],
+ e_orc:['兽人斗士','Orc Brawler','皮糙肉厚的前线战士，靠蛮力撕开缺口。','A thick-skinned frontliner that bashes open any gap.'],
+ e_skeleton:['骷髅战士','Skeleton Warrior','不知疼痛的亡灵士兵，骨头碎了还会继续前进。','An undead soldier that feels no pain and never stops marching.'],
+ e_zombie:['腐尸','Zombie','步履蹒跚却永不停歇，数量多得令人窒息。','Slow and shambling, but endless in number.'],
+ e_spider:['巨型蜘蛛','Giant Spider','从阴影中窜出的八足猎手，速度惊人。','An eight-legged hunter that darts out of the shadows.'],
+ e_wolf:['恐狼','Dire Wolf','嚎叫声划破夜空，疾驰如风的掠食者。','A howling predator that runs like the wind.'],
+ e_troll:['冰霜巨魔','Frost Troll','力大无穷，伤口会在寒气中慢慢愈合。','Immensely strong; its wounds close in the cold.'],
+ e_ogre:['食人魔','Ogre','笨重的巨兽，一拳就能砸塌城墙。','A lumbering giant whose fist can flatten a wall.'],
+ e_dknight:['暗黑骑士','Dark Knight','身披黑铁重甲的堕落骑士，几乎刀枪不入。','A fallen knight in black iron, nearly unbreakable.'],
+ e_vampire:['吸血鬼','Vampire','优雅而致命，嘶鸣着扑向猎物。','Elegant and deadly, it hisses before it strikes.'],
+ e_demon:['小恶魔','Imp Demon','来自深渊的捣蛋鬼，笑声令人毛骨悚然。','A mischief-maker from the abyss with a chilling laugh.'],
+ e_dragon:['幼龙','Wyrmling','会飞的小龙，越过一切障碍直扑基地。','A young flying dragon that soars over every obstacle.'],
+ e_mystic:['秘法师','Mystic','吟唱古老咒语的神秘法师。','A hooded mage chanting forgotten spells.'],
+ e_shaman:['萨满','Shaman','以图腾之力鼓舞同伴的部落祭司。','A tribal priest who rallies its kin with totem magic.'],
+ e_assassin:['暗影刺客','Shadow Assassin','来无影去无踪，转眼就到你面前。','Here and gone in a blink of shadow.'],
+ e_necro:['死灵学徒','Necro Acolyte','操纵亡魂的邪恶学徒。','A dark apprentice who commands restless spirits.'],
+ e_golem:['石像魔','Stone Golem','由岩石构成的守卫，沉重而坚固。','A guardian of living rock, heavy and tireless.'],
+ e_ghost:['幽灵','Ghost','穿墙而过的怨灵，在空中飘荡。','A wailing spirit that drifts over everything.'],
+ b2_skeleton_king:['骷髅王','Skeleton King','统御亡灵大军的骸骨君王。','Monarch of bones, ruler of the undead legion.'],
+ b2_demon_lord:['恶魔领主','Demon Lord','展开烈焰双翼的地狱统帅。','A warlord of hell on burning wings.'],
+ b2_ice_dragon:['冰霜巨龙','Ice Dragon','一口寒息就能冻结整片战场。','One breath of frost freezes the whole battlefield.'],
+ b2_fire_giant:['炎魔巨人','Fire Giant','熔岩铸成的巨人，所到之处尽成焦土。','A giant of molten rock that scorches the earth.'],
+ b2_dragon_king:['龙王','Dragon King','万龙之王，烈焰与鳞甲的化身。','King of all dragons, wrapped in scale and flame.'],
+ b2_necromancer:['死灵法师','Necromancer','唤醒死者为其征战的黑暗术士。','A dark sorcerer who raises the dead to fight.'],
+ b2_lich_king:['巫妖王','Lich King','以灵魂之火维系不朽的冰冷君主。','A cold sovereign kept immortal by soul-fire.'],
+ b2_spider_queen:['蛛后','Spider Queen','万千蜘蛛的母后，编织死亡之网。','Mother of a thousand spiders, weaver of doom.'],
+ b2_storm_titan:['风暴泰坦','Storm Titan','驾驭雷霆的远古巨人。','An ancient giant who commands the thunder.'],
+ b2_forest_ent:['远古树人','Forest Ent','沉睡千年的森林守护者，愤怒时大地震颤。','A thousand-year forest guardian; the ground shakes at its wrath.'],
+ b2_stone_golem:['黑曜巨像','Obsidian Colossus','坚不可摧的岩石巨像。','An unbreakable colossus of living stone.'],
+ b2_demon_beast:['深红巨兽','Crimson Behemoth','长着獠牙与犄角的地狱巨兽。','A horned, tusked behemoth of the underworld.'],
+ b2_void_lord:['虚空之主','Void Lord','来自虚空裂隙的水晶魔君。','A crystal tyrant from the rift of the void.'],
+ b2_giant_worm:['永恒巨蠕','Eternal Wyrm','吞噬一切的巨口深渊之虫。','An abyssal worm whose maw devours everything.'],
+ b2_death_knight:['死亡骑士','Death Knight','手持冰霜巨剑的不死骑士统领。','An undying knight-commander with a frost blade.'],
+ b2_sea_monster:['深渊泰坦','Abyssal Titan','从深海升起的触手魔神。','A tentacled titan risen from the deep sea.'],
+ b2_vampire_lord:['血族领主','Vampire Lord','举杯畅饮鲜血的不朽伯爵。','An immortal count who toasts with blood.'],
+ b2_ogre_king:['食人魔王','Ogre King','挥舞狼牙棒的食人魔之王。','King of ogres, swinging a spiked club.'],
+ b2_dread_knight:['恐惧骑士','Dread Knight','死亡骑士的孪生兄弟，同样冷酷无情。','The Death Knight’s grim twin, just as merciless.']
+};
+const CK_ROLE={grunt:['步兵','Footsoldier'],runner:['疾行者','Swift'],brute:['重装','Brute'],fly:['飞行','Flying'],boss:['首领','Boss'],mate:['首领同伴','Boss companion']};
+// all monsters and bosses, ordered by the first level they appear on
+function ckRoster(){const first={},role={};
+ for(let i=0;i<100;i++){const pl=(POOL[i/8|0]||POOL[5]);for(const t of ['grunt','runner','brute'])for(const k of (pl[t]||[]))if(first[k]==null){first[k]=i;role[k]=t}}
+ for(const k of ['e_ghost','e_dragon'])if(first[k]==null||first[k]>4){first[k]=4;role[k]='fly'}else role[k]='fly';
+ const out=Object.keys(first).filter(k=>CK_DEX[k]&&SP[k]).map(k=>({k,lv:first[k],role:role[k],o:0}));
+ const bl=[7,15,23,31,39,47,55,63,71,79,87,95,96,97,98,99];bl.forEach((i,n)=>{const k=BOSSK[i>=96?13+(i-96):i/8|0];if(CK_DEX[k]&&!out.some(x=>x.k===k))out.push({k,lv:i,role:'boss',o:1})});
+ for(const k of ['b2_vampire_lord','b2_ogre_king','b2_dread_knight'])if(CK_DEX[k]&&SP[k]&&!out.some(x=>x.k===k))out.push({k,lv:39,role:'mate',o:2});
+ return out.sort((a,b)=>a.lv-b.lv||a.o-b.o)}
+const CK_END_CSS=`#ck-end{position:fixed;inset:0;z-index:10050;overflow:hidden;color:#f4ead2;font-family:Nunito,system-ui,sans-serif;background:radial-gradient(ellipse 120% 80% at 50% 35%,#1d2550 0%,#0a0d22 55%,#03040b 100%);opacity:0;transition:opacity 1s}
+#ck-end.on{opacity:1}#ck-end canvas.sky{position:absolute;inset:0;width:100%;height:100%}
+#ck-end .stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px 70px;text-align:center}
+#ck-end .card{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;width:min(520px,calc(100% - 36px))}
+#ck-end .card.in{animation:ckeIn .7s cubic-bezier(.2,.8,.2,1) both}#ck-end .card.out{animation:ckeOut .45s ease-in both}
+#ck-end .art{position:relative;width:min(62vw,280px);height:min(62vw,280px);display:grid;place-items:center}
+#ck-end .art:before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,var(--glow,#f3c04d66) 0%,transparent 68%);animation:ckePulse 3s ease-in-out infinite}
+#ck-end .art canvas{position:relative;width:100%;height:100%;filter:drop-shadow(0 14px 22px #000c);animation:ckeFloat 3s ease-in-out infinite}
+#ck-end .kick{font:900 12px/1 Cinzel,Georgia,serif;letter-spacing:.32em;text-transform:uppercase;color:#f3c04d}
+#ck-end h2{margin:0;font:900 clamp(26px,7vw,42px)/1.05 Cinzel,Georgia,serif;letter-spacing:.04em;color:#fff1bf;text-shadow:0 0 22px #f3c04d55,0 3px 0 #3a2508}
+#ck-end .boss h2{color:#ffd0c4;text-shadow:0 0 26px #ff4a3a88,0 3px 0 #3a0808}#ck-end .boss .kick{color:#ff8a6a}
+#ck-end p.d{margin:0;max-width:30em;font-size:15px;line-height:1.5;color:#c9cfe8}
+#ck-end .count{position:absolute;left:0;right:0;bottom:22px;font:800 12px/1 Nunito,sans-serif;letter-spacing:.2em;color:#8f97bd;text-align:center}
+#ck-end .bar{position:absolute;left:12%;right:12%;bottom:44px;height:3px;border-radius:3px;background:#ffffff1a;overflow:hidden}#ck-end .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a4651a,#f3c04d,#fff1bf);transition:width .6s}
+#ck-end .skip{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;z-index:2;border:1px solid #f3c04d66;background:#0b1024cc;color:#f3c04d;border-radius:99px;padding:7px 14px;font:800 12px Nunito,sans-serif;letter-spacing:.08em;cursor:pointer}
+#ck-end .group canvas{width:auto;height:auto;max-width:min(96vw,900px);max-height:68vh;filter:drop-shadow(0 18px 30px #000d)}#ck-end .card.group{width:min(900px,calc(100% - 16px))}
+#ck-end .thanks h2{font-size:clamp(28px,8vw,48px)}#ck-end .thanks p.d{font-size:16px}
+#ck-end .go{margin-top:14px;border:1px solid #fff1bf;border-radius:14px;padding:14px 26px;font:900 16px Cinzel,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:#2a1804;background:linear-gradient(180deg,#fff1bf,#f3c04d 55%,#a4651a);box-shadow:0 5px 0 #5c3508,0 12px 26px #000b;cursor:pointer}
+#ck-end .crown{font-size:46px;filter:drop-shadow(0 0 18px #f3c04d)}
+@keyframes ckeIn{from{opacity:0;transform:translate(-50%,calc(-50% + 26px)) scale(.86);filter:blur(6px)}to{opacity:1;transform:translate(-50%,-50%);filter:none}}
+@keyframes ckeOut{from{opacity:1;transform:translate(-50%,-50%)}to{opacity:0;transform:translate(-50%,calc(-50% - 18px)) scale(1.04);filter:blur(4px)}}
+@keyframes ckeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes ckePulse{0%,100%{opacity:.7;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){#ck-end .card.in,#ck-end .card.out,#ck-end .art canvas,#ck-end .art:before{animation:none!important}}`;
+function ckSprCanvas(k,w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const im=SP[k];if(im&&im.width){const g=c.getContext('2d'),s=Math.min(w/im.width,h/im.height)*.92;g.imageSmoothingQuality='high';g.drawImage(im,(w-im.width*s)/2,h-im.height*s-(h*.04),im.width*s,im.height*s)}return c}
+function ckGroupPortrait(list){const tall=innerHeight>innerWidth*1.1,W2=tall?900:1200,H2=tall?1400:760,c=document.createElement('canvas');c.width=W2;c.height=H2;const g=c.getContext('2d');
+ const sp=g.createRadialGradient(W2/2,H2*.55,40,W2/2,H2*.55,W2*.62);sp.addColorStop(0,'#f3c04d33');sp.addColorStop(1,'#0000');g.fillStyle=sp;g.fillRect(0,0,W2,H2);
+ g.fillStyle='#00000055';g.beginPath();g.ellipse(W2/2,H2*.9,W2*.47,H2*.07,0,0,7);g.fill();
+ const bosses=list.filter(x=>x.role==='boss'||x.role==='mate'),mons=list.filter(x=>!(x.role==='boss'||x.role==='mate'));
+ const row=(arr,y,size,spread)=>{const n=arr.length;arr.forEach((x,i)=>{const im=SP[x.k];if(!im||!im.width)return;const s=size/Math.max(im.width,im.height),w=im.width*s,h=im.height*s,px=W2/2+(i-(n-1)/2)*spread;g.drawImage(im,px-w/2,y-h,w,h)})};
+ const rows=(arr,k)=>{const o=[],n=Math.ceil(arr.length/k);for(let i=0;i<k;i++)o.push(arr.slice(i*n,(i+1)*n));return o};
+ if(tall){const br=rows(bosses,4),mr=rows(mons,3);br.forEach((r,i)=>row(r,H2*(.17+i*.135),205,W2/(r.length+.35)));mr.forEach((r,i)=>row(r,H2*(.71+i*.1),130,W2/(r.length+.3)))}
+ else{const half=Math.ceil(bosses.length/2);row(bosses.slice(0,half),H2*.42,190,W2/(half+.6));row(bosses.slice(half),H2*.64,200,W2/(bosses.length-half+.6));row(mons,H2*.92,118,W2/(mons.length+.4))}
+ return c}
+let CK_END=null;
+function ckEnding(onDone){
+ if(CK_END)return;const zh=typeof LANG!=='undefined'&&LANG==='zh',Z=(a,b)=>zh?a:b;
+ if(!document.getElementById('ck-end-css')){const st=document.createElement('style');st.id='ck-end-css';st.textContent=CK_END_CSS;document.head.appendChild(st)}
+ const ov=document.createElement('div');ov.id='ck-end';ov.innerHTML='<canvas class="sky"></canvas><div class="stage"></div><div class="bar"><i></i></div><div class="count"></div><button class="skip" type="button">'+Z('跳过 ›','Skip ›')+'</button>';document.body.appendChild(ov);
+ const stage=ov.querySelector('.stage'),bar=ov.querySelector('.bar i'),cnt=ov.querySelector('.count'),timers=[];let stopMusic=()=>{},live=true;
+ // starfield backdrop
+ const sky=ov.querySelector('canvas.sky'),sg2=sky.getContext('2d');const stars=Array.from({length:140},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.6+.3,p:Math.random()*6}));
+ const drawSky=t=>{if(!live)return;const w=sky.width=sky.clientWidth,h=sky.height=sky.clientHeight;sg2.clearRect(0,0,w,h);for(const s of stars){sg2.globalAlpha=.35+.45*Math.sin(t/900+s.p);sg2.fillStyle='#fff6d8';sg2.beginPath();sg2.arc(s.x*w,s.y*h,s.r,0,7);sg2.fill()}requestAnimationFrame(drawSky)};requestAnimationFrame(drawSky);
+ // pause the level music, start the ending music
+ try{if(typeof mb!=='undefined'&&mb&&au)mb.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}
+ try{stopMusic=CKS.endingMusic()}catch(_){}
+ const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1000);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.6*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
+ CK_END={finish};ov.querySelector('.skip').onclick=finish;
+ const at=(ms,fn)=>timers.push(setTimeout(()=>{if(live)fn()},ms));
+ const show=(html,cls,glow)=>{const old=stage.querySelector('.card');if(old){old.classList.remove('in');old.classList.add('out');setTimeout(()=>old.remove(),450)}const c=document.createElement('div');c.className='card in '+(cls||'');if(glow)c.style.setProperty('--glow',glow);c.innerHTML=html;stage.appendChild(c);return c};
+ const list=ckRoster(),N=list.length,STEP=3000;
+ requestAnimationFrame(()=>ov.classList.add('on'));
+ show('<div class="crown">👑</div><div class="kick">'+Z('第 100 关 · 已通关','Level 100 · Complete')+'</div><h2>'+Z('混沌军团','The Chaos Legion')+'</h2><p class="d">'+Z('你击败了它们所有。现在，让我们再见一次每一位对手。','You have defeated them all. Meet every foe you faced, one last time.')+'</p>','thanks');
+ const t0=3500;
+ list.forEach((x,i)=>at(t0+i*STEP,()=>{const D=CK_DEX[x.k].slice(),R=CK_ROLE[x.role],boss=x.role==='boss'||x.role==='mate';if(x.role==='boss'&&typeof BOSS!=='undefined'){const bn=BOSS[x.lv>=96?13+(x.lv-96):x.lv/8|0];if(bn){D[1]=bn;D[0]=TL(bn)}}
+  const card=show('<div class="art"></div><div class="kick">'+Z((x.role==='mate'?'第 40 关起 · ':'第 '+(x.lv+1)+' 关 · ')+R[0],(x.role==='mate'?'From Level 40 · ':'Level '+(x.lv+1)+' · ')+R[1])+'</div><h2>'+Z(D[0],D[1])+'</h2><p class="d">'+Z(D[2],D[3])+'</p>',boss?'boss':'',boss?'#ff4a3a55':'#f3c04d55');
+  card.querySelector('.art').appendChild(ckSprCanvas(x.k,boss?420:320,boss?420:320));
+  bar.style.width=((i+1)/N*100)+'%';cnt.textContent=(i+1)+' / '+N;
+  try{if(boss)CKS.bossSpawn({sp:x.k,t:'boss'});else CKS.die({sp:x.k,t:x.role==='brute'?'brute':x.role==='runner'?'runner':'grunt',x:null})}catch(_){}}));
+ const tg=t0+N*STEP;
+ at(tg,()=>{const c=show('<div class="kick">'+Z('全员集结','All together')+'</div><h2>'+Z('混沌军团全家福','The Chaos Legion')+'</h2><div class="group"></div>','group');c.querySelector('.group').appendChild(ckGroupPortrait(list));cnt.textContent='';bar.style.width='100%';try{CKS.fanfare()}catch(_){}});
+ const nm=(typeof S!=='undefined'&&S.name)?String(S.name).slice(0,40):Z('指挥官','Commander');
+ at(tg+7000,()=>show('<div class="crown">🏆</div><div class="kick">'+Z('旅程完成','Journey complete')+'</div><h2>'+Z('感谢你，'+nm+'！','Thank you, '+nm+'!')+'</h2><p class="d">'+Z('你守护了十二个王国，征服了全部 100 个关卡。混沌之地因你而重获和平。感谢你一路陪伴，指挥官。','You defended twelve kingdoms and conquered all 100 levels. Peace returns to the realms because of you. Thank you for playing, Commander.')+'</p>','thanks'));
+ const hell=(S.h100|0)>=5,nx=Math.min(4,(S.dif|0)+1),dn=d=>typeof DIFFS!=='undefined'&&DIFFS[d]?TL(DIFFS[d].name):'';
+ at(tg+14000,()=>{const c=show(hell?'<div class="crown">🔥</div><div class="kick">'+Z('最高难度 · 已征服','Highest difficulty · Conquered')+'</div><h2>'+Z('混沌炼狱的征服者','Conqueror of Chaos Inferno')+'</h2><p class="d">'+Z('你已在最高难度「'+dn(4)+'」下完成了全部 100 关。再没有更艰难的挑战——你就是真正的传奇指挥官。','You have completed all 100 levels on '+dn(4)+', the highest difficulty. There is no greater challenge left: you are a true legend.')+'</p><button class="go" type="button">'+Z('继续','Continue')+'</button>'
+   :'<div class="crown">⚔️</div><div class="kick">'+Z('新的挑战','A new challenge')+'</div><h2>'+Z('敢于挑战更高难度吗？','Ready for a greater challenge?')+'</h2><p class="d">'+Z('试试「'+dn(nx)+'」难度，再次踏上征途。在主页面的难度滑块中即可切换。','Try the '+dn(nx)+' difficulty and take on the journey again. Change it with the difficulty slider on the home screen.')+'</p><button class="go" type="button">'+Z('继续','Continue')+'</button>','thanks');
+  c.querySelector('.go').onclick=finish;ov.querySelector('.skip').textContent=Z('关闭 ×','Close ×')});
+ return CK_END}
+// called from end(win) on Level 100: remember the hardest difficulty it was beaten on, then start the ending
+function ckEndingQueue(){if(L.demo||L.i!==99)return;S.h100=Math.max(S.h100|0,(S.dif|0)+1);setTimeout(()=>{try{ckEnding()}catch(e){console.error(e)}},2600)}
 
 function ckSummonTick(dt){const a=L.scs;if(!a||!a.length){L.sc=null;return}if(L.over){L.scs=[];L.sc=null;return}for(const sc of a.slice()){sc.t-=dt;const n=Math.ceil(sc.t);if(sc===a[0]&&n<sc.last&&n>0){sc.last=n;beep(n<=2?880:620,.12,'square',.06)}if(sc.t<=0){a.splice(a.indexOf(sc),1);if(sc.b){sc.b.chan=0;sc.b.pro=0}bossSummon(sc.b,sc.ph)}}L.sc=a[0]||null}
 function bossSummon(boss,ph){
@@ -1784,7 +2044,7 @@ function bossSummon(boss,ph){
   vPillar(p.x,p.y,'#fff4b0',.75);
   if(!c[2]){vGlow(p.x,p.y,tw*1.3,'#ffffff',.45);vRing(p.x,p.y,tw*1.1,'#ffe48a',.5,3);vSparks(p.x,p.y,10,'#fff2b0',150,.45)}});
  L.rr=rr}
-function leak(e){let d=e.d;e.hp=-1;if(!L.demo){ckBaseSync();if(!(L.bf.shield>0))ckBaseHit(e,d.l);L.shake=.4;L.lk=1;(L.lkb=L.lkb||{})[e.t]=(L.lkb[e.t]||0)+d.l;sfx('leak')||beep(150,.3,'sawtooth',.08);if(L.lives<=0&&!L.over)end(false)}}
+function leak(e){let d=e.d;e.hp=-1;if(!L.demo){ckBaseSync();if(!(L.bf.shield>0))ckBaseHit(e,e.t==='boss'?Math.round(d.l*(e.batk||1)):d.l);L.shake=.4;L.lk=1;(L.lkb=L.lkb||{})[e.t]=(L.lkb[e.t]||0)+d.l;sfx('leak')||beep(150,.3,'sawtooth',.08);if(L.lives<=0&&!L.over)end(false)}}
 function faceTo(e,dx,dy,dt){let l=Math.hypot(dx,dy)||1,sx=(port?dy:dx)/l,sy=(port?dx:dy)/l,k=Math.min(1,(dt||.016)*10);e.vx+=(sx-e.vx)*k;e.vy+=(sy-e.vy)*k;e.ax=sx;e.ay=sy}
 function steer(e,ux,uy,sp,dt){let k=Math.min(1,dt*8);e.vv[0]+=(ux*sp-e.vv[0])*k;e.vv[1]+=(uy*sp-e.vv[1])*k;let mx=e.vv[0]*dt,my=e.vv[1]*dt;if(!e.fly&&e.t!=='boss'){const blocked=(x,y)=>waterBlocked(Math.round(x),Math.round(y));if(blocked(e.x+mx,e.y)){mx=0;e.vv[0]=0}if(blocked(e.x,e.y+my)){my=0;e.vv[1]=0}if(blocked(e.x+mx,e.y+my)){if(!blocked(e.x+mx,e.y))my=0;else if(!blocked(e.x,e.y+my))mx=0;else{mx=0;my=0}e.vv[0]*=.2;e.vv[1]*=.2}}e.x+=mx;e.y+=my;e.ph+=Math.hypot(mx,my)*6.2832/(.62*(e.t==='boss'?1.6:e.d.sz));if(Math.hypot(e.vv[0],e.vv[1])>.05)faceTo(e,e.vv[0],e.vv[1],dt)}
 
@@ -2010,7 +2270,7 @@ function rewardFx(){
   const step=now=>{if(!live())return;const k=Math.min(1,(now-st0)/dur),e=1-Math.pow(1-k,3);sp.textContent=Math.round(n*e).toLocaleString();if(now-lastTick>90&&k<1){lastTick=now;sfx('coin',.35)}if(k<1)requestAnimationFrame(step);else{tot.classList.add('pulse');sfx('upgrade',.7)}};
   requestAnimationFrame(step)},t0);
 }
-function end(win){L.over=true;sfx(win?'win':'lose');let st=L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1;let first=!S.prog[L.i],dm=[.7,.85,1,1.2,1.5][S.dif];L.gBase=Math.round(win?(120+L.i*18)*(first?1:.5)*dm:L.wave*6*dm);L.gStar=win?Math.round(L.gBase*[0,.5,1.2][st-1]):0;L.gainLv=L.gBase+L.gStar;L.st=st;L.gainBoss=win&&L.boss?Math.round((500+(L.i/8|0)*200)*(first?1:.5)*dm):0;L.gain=L.gainLv+L.gainBoss;L.refund=win&&!L.demo?L.tr.reduce((a,t)=>a+(t?Math.round((t.inv||TW[t.k].cost)*.5):0),0):0;if(!win&&!cheat()&&L.g0!=null)S.gold=Math.max(0,L.g0-(L.is||0));Economy.grantWallet(L.gain+L.refund);updWl();recordSession(win?'win':'loss');let pg=null;if(win){ckCrownEval();S.prog[L.i]=Math.max(S.prog[L.i]||0,st);pg=awardProgress(st)}else{progressStats();S.stats.streak=0}save();if(win)refreshProfileTeaser();
+function end(win){L.over=true;sfx(win?'win':'lose');if(win&&!L.demo&&L.boss)setTimeout(()=>{try{CKS.fanfare()}catch(_){}},650);if(win)ckEndingQueue();let st=L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1;let first=!S.prog[L.i],dm=[.7,.85,1,1.2,1.5][S.dif];L.gBase=Math.round(win?(120+L.i*18)*(first?1:.5)*dm:L.wave*6*dm);L.gStar=win?Math.round(L.gBase*[0,.5,1.2][st-1]):0;L.gainLv=L.gBase+L.gStar;L.st=st;L.gainBoss=win&&L.boss?Math.round((500+(L.i/8|0)*200)*(first?1:.5)*dm):0;L.gain=L.gainLv+L.gainBoss;L.refund=win&&!L.demo?L.tr.reduce((a,t)=>a+(t?Math.round((t.inv||TW[t.k].cost)*.5):0),0):0;if(!win&&!cheat()&&L.g0!=null)S.gold=Math.max(0,L.g0-(L.is||0));Economy.grantWallet(L.gain+L.refund);updWl();recordSession(win?'win':'loss');let pg=null;if(win){ckCrownEval();S.prog[L.i]=Math.max(S.prog[L.i]||0,st);pg=awardProgress(st)}else{progressStats();S.stats.streak=0}save();if(win)refreshProfileTeaser();
  const _endL=L;setTimeout(()=>{if(L!==_endL)return;modal(win?`<img class="bn" src="${SPRD.victory}" alt="Victory"><p>${TL('{0} enemies beaten, {1} lives left.',L.kills,L.lives)} </p>${rewardPanel(st,pg)}${ckCrownHtml()}${rep()}${pg?(window.vrkCard?window.vrkCard(pg):''):''}${pg&&pg.newA.length?`<p class="vlink" data-prof="victory" style="color:#f4d58b">${ckResIcon('medal')} ${TL('Achievement unlocked')}: ${pg.newA.map(a=>TL(a.name)+' +'+(a.gold||0)).join('、')}</p>`:''}${pg&&pg.newSecrets&&pg.newSecrets.length?`<p style="color:#f4d58b">✦ ${TL('Secret map discovered!')} ${pg.newSecrets.map(i=>TL(R[i].n)).join('、')}</p>`:''}${L.i<99&&isOpen(L.i+1)?'<button class="bt" id="m1">'+TL('Next level')+'</button>':''}<button class="bt g" id="m2">${TL('World map')}</button>`:`<img class="bn" src="${SPRD.defeat}" alt="Defeat"><p>${TL('The monsters got through on wave {0}.',L.wave)} ${tip()} <b style="color:var(--gold)">${TL('Wallet +{0}',L.gain)}</b></p>${rep()}<button class="bt r" id="m1">${TL('Retry level')}</button><button class="bt g" id="m2">${TL('World map')}</button>`,win&&L.i<99&&isOpen(L.i+1)?()=>start(L.i+1):win?null:()=>start(L.i));if(win)rewardFx()},900)}
 function upd(dt){TKN++;
  if(L.demo){L.stim-=dt;if(L.stim<=0){spawn('grunt');L.stim=2}}
@@ -3304,7 +3564,7 @@ const pauseM=()=>{modal(`<div class="pause-title"><span class="pause-emblem">✦
 let sg,ag,am=null,an='',musV=1,sfxV=.8,ambV=.5,masV=1,au,mg,mt,mon=false,mb,dl,nb,mk='',mst=0,nxt=0,mOff=0,PW={};
 const SB={},AMB={menu:'wind',r0:'wind',r1:'drone',r2:'wind',r3:'drone',r4:'rain',r5:'rain',r6:'drone',r7:'drone',boss:'drone'};
 function sfxLoad(){Object.entries(SFXD).forEach(([k,v])=>{let b=atob(v),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);au.decodeAudioData(u.buffer,x=>SB[k]=x,()=>{})})}
-function sfx(k,v=1){if(!mon||!au||!SB[k])return false;let s=au.createBufferSource(),g=au.createGain();s.buffer=SB[k];s.playbackRate.value=.95+Math.random()*.1;g.gain.value=v*sfxV;s.connect(g);g.connect(sg);s.start();return true}
+function sfx(k,v=1){if(!mon||!au||!SB[k])return false;let s=au.createBufferSource(),g=au.createGain();s.buffer=SB[k];s.playbackRate.value=.88+Math.random()*.24;g.gain.value=v*sfxV*(.8+Math.random()*.2);s.connect(g);ckPanOut(g);s.start();return true}
 function ambSet(n){if(!au||!n||!SB[n]||an===n)return;an=n;if(am){try{am.stop()}catch(e){}}am=au.createBufferSource();am.buffer=SB[n];am.loop=true;am.connect(ag);am.start()}
 document.addEventListener('input',e=>{let i=e.target.id,v=e.target.value/100;if(i==='vm'){musV=v;if(mb&&mon)mb.gain.setTargetAtTime(.6*v,au.currentTime,.05)}else if(i==='vs')sfxV=v;else if(i==='va'){ambV=v;if(ag)ag.gain.value=.25*v}else if(i==='vx'){masV=v;if(mg)mg.gain.value=.7*v}});
 function beep(f,d=.15,ty='triangle',v=.1){if(!mon||!au)return;let o=au.createOscillator(),g=au.createGain(),t=au.currentTime;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start();o.stop(t+d)}
@@ -4797,7 +5057,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.5 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.6 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

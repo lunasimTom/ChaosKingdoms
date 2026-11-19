@@ -456,6 +456,26 @@ rep("""  if(id===19){
 rep("  if(id===17&&inBattle)fxClearObs(true);\n", "  if(id===17&&inBattle)fxClearObs(true);\n  if(id===19&&inBattle)for(const k in L.cdn)L.cdn[k]=0;\n")
 rep("{id:19,g:'btl',ic:'⏱️',zh:'所有道具冷却时间归0',en:'Reset All Item Cooldowns'}", "{id:19,g:'btl',ic:'⏱️',zh:'所有道具永久无冷却',en:'No Item Cooldowns'}")
 
+# 37. v3.6: late-game boss power, the new audio engine (audio.js) and the Level 100 ending (ending.js).
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'audio.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'ending.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+# monster voices: hit and death sounds per monster type (falls back to the old synth if sound is off)
+rep("if(!e.vocalCd||e.vocalCd<=0){snd('hit_'+(e.t||'grunt'),.34);", "if(!e.vocalCd||e.vocalCd<=0){if(!CKS.hurt(e))snd('hit_'+(e.t||'grunt'),.34);")
+rep("snd('death_'+(e.t||'grunt'),e.t==='boss'?.9:.62);sfx(e.t==='boss'?'boss':'death',.32)||beep(e.t==='boss'?80:520,.12,'square',.05);",
+    "if(!CKS.die(e)){snd('death_'+(e.t||'grunt'),e.t==='boss'?.9:.62);sfx(e.t==='boss'?'boss':'death',.32)||beep(e.t==='boss'?80:520,.12,'square',.05)}")
+# boss stomp: signature attack sound; reach and stun grow with the boss's attack power
+rep("if(Math.hypot(t.x-q[0],t.y-q[1])<2.6){t.st=2.5;", "if(Math.hypot(t.x-q[0],t.y-q[1])<2.6*(1+.25*((e.batk||1)-1))){t.st=Math.min(4.5,2.5*(e.batk||1));")
+rep("sfx('stomp')||beep(70,.4,'sawtooth',.1);toast('Stomp! Nearby towers are stunned')", "CKS.bossAttack(e)||sfx('stomp')||beep(70,.4,'sawtooth',.1);toast('Stomp! Nearby towers are stunned')")
+# a boss that reaches a base takes more lives on late levels
+rep("if(!(L.bf.shield>0))ckBaseHit(e,d.l);", "if(!(L.bf.shield>0))ckBaseHit(e,e.t==='boss'?Math.round(d.l*(e.batk||1)):d.l);")
+# varied sampled effects (tower shots etc.): wider pitch/volume spread and a little stereo movement
+rep("s.playbackRate.value=.95+Math.random()*.1;g.gain.value=v*sfxV;s.connect(g);g.connect(sg);s.start();return true}",
+    "s.playbackRate.value=.88+Math.random()*.24;g.gain.value=v*sfxV*(.8+Math.random()*.2);s.connect(g);ckPanOut(g);s.start();return true}")
+# boss level won: fanfare; Level 100 won: the ending sequence
+rep("function end(win){L.over=true;sfx(win?'win':'lose');", "function end(win){L.over=true;sfx(win?'win':'lose');if(win&&!L.demo&&L.boss)setTimeout(()=>{try{CKS.fanfare()}catch(_){}},650);if(win)ckEndingQueue();")
+# remember the hardest difficulty Level 100 was beaten on
+rep("fx:S.fx||{}}))", "fx:S.fx||{},h100:S.h100|0}))")
+rep("S.fx=fxClean(s.fx);", "S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()

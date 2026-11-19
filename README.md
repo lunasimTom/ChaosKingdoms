@@ -7,7 +7,47 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.5.apk` | Android app (package `com.chaoskingdoms.game`, version 3.5, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.6.apk` | Android app (package `com.chaoskingdoms.game`, version 3.6, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.6
+
+**Stronger late-game bosses.** From Level 72, bosses grow steadily stronger, and the final four levels are true titans:
+
+| Level | Bosses | Effective HP each (v3.5 -> v3.6, Normal) | Attack power |
+| --- | --- | --- | --- |
+| 72 | 3 | 53,704 -> 72,752 (x1.35) | x1.11 |
+| 80 | 3 | 59,266 -> 103,345 (x1.74) | x1.23 |
+| 88 | 4 | 64,827 -> 140,493 (x2.17) | x1.34 |
+| 96 | 4 | 70,389 -> 184,771 (x2.62) | x1.45 |
+| 97 | 4 | 71,084 -> 268,698 (x3.78) | x1.60 |
+| 98 | 4 | 71,779 -> 326,166 (x4.54) | x1.75 |
+| 99 | 4 | 72,475 -> 391,363 (x5.40) | x1.90 |
+| 100 | 4 | 73,170 -> 491,701 (x6.72) | x2.10 |
+
+Effective HP counts health and defense together. Attack power scales the stomp's reach and stun time (up to 3.3 tiles and 4.5 s), the rampage's trample damage, and the lives a boss takes if it reaches a base. In a fully upgraded 40-tower kill zone, a Level 100 boss used to die in about 3 seconds; it now takes about 16 seconds, and there are four of them.
+
+**New sound engine.** Every sound is synthesized live with Web Audio, through the game's own Effects volume and sound toggle, with a hall reverb for depth (`source/premium/audio.js`).
+- Each of the 18 monster types has its own voice for being hit and for dying. Some examples: the Goblin chatters, Skeletons rattle, Zombies moan, Spiders chitter, the Dire Wolf howls, the Dark Knight clangs, the Vampire hisses, the Golem crumbles and the Ghost wails. Pitch varies every time, and monsters are panned by their position on the map.
+- Each of the 19 boss portraits has a deep signature voice: a layered roar plus its own texture, such as bones, hellfire, ice, flame, choir, steel, stone, water, bats, chitter, wood, the void or thunder.
+- Boss cues: spawning (impact, roar and texture), stomp attack, Rage Mode (rising roar and war drums), taking damage (throttled grunts) and death (a long falling roar, collapse and rumble).
+- A short victory fanfare plays after every boss level.
+- Tower and effect samples vary more in pitch, volume and stereo position, so repeated shots sound less mechanical.
+- In big fights, new monster voices are capped at about 14 per 100 ms, to keep the mix clean.
+
+**Level 100 ending** (`source/premium/ending.js`). After winning Level 100, a cinematic sequence starts with its own music:
+- An opening card, then every monster and boss introduced one by one, from the lowest level to the highest (36 in all). Each shows for exactly 3 seconds, with its art, name, first level, role and a short description, and plays its own voice.
+- A group portrait of the whole Chaos Legion.
+- A thank-you message to the commander by name.
+- Then a difficulty message. If the player has never finished Level 100 on Chaos Inferno (the highest difficulty), it invites them to try the next difficulty up. If they have, it hails them as "Conqueror of Chaos Inferno" instead.
+
+The sequence can be skipped, and Continue returns to the Victory panel. The game saves the hardest difficulty Level 100 was beaten on.
+
+**Tested**
+- Boss stats compared with v3.5 on every boss level, plus a time-to-kill measurement against a maxed defense.
+- Every monster and boss sound rendered offline and measured: all audible, and the 18 monster death sounds are all distinct.
+- The sound engine in real fights with audio on: no errors, every cue fires, and frame time is no worse than v3.5.
+- The Level 100 ending run for real on Hard and on Chaos Inferno: 40 cards, each monster on screen for 2.98 to 3.02 s, the right closing message for each case, and Continue back to the Victory panel. Also checked in Chinese.
+- The 42-state interface walkthrough, the item-bar touch test, boss fights, boss summons, gameplay and the 40-tower benchmark all pass.
 
 ## What changed in v3.5
 
@@ -345,7 +385,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.5.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.6.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

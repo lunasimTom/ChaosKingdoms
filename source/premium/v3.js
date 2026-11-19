@@ -45,7 +45,7 @@ function ckLbl(e,s,col){if(e.lbt>TM)return;e.lbt=TM+.9;const p=eS(e);txt(p.x,p.y
 function ckRole(e){
  if(L.demo)return;
  if(L.ckv!==L)ckV3Init();
- if(e.t==='boss'){L.bsc=(L.bsc||0)+1;if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
+ if(e.t==='boss'){ckBossPower(e);L.bsc=(L.bsc||0)+1;{const n=L.bsc;setTimeout(()=>{try{if(e.hp>0&&!L.over)CKS.bossSpawn(e)}catch(_){}},(n-1)*650+150)}if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
  const r=CK_NR;if(!r||!CKR[r])return;e.rl=r;
  if(r==='shield')e.sh=e.msh=e.mx*.45;
  if(r==='heal')e.hc=1.2;
@@ -65,6 +65,7 @@ function ckRes(e,d,src){
   if(src==='mage'&&(e.rl==='armor'||e.rl==='ward'||e.sh>0)){if(!(e.ab>0))ckLbl(e,lvZ('奥术破甲','ARCANE BREAK'),'#d9b8ff');e.ab=3}
  }
  if(e.mk>0)m*=1.2;
+ if(e.t==='boss'){if(e.bdef)m/=e.bdef;try{CKS.bossHurt(e)}catch(_){}}
  d*=m*Math.max(.5,res);
  if(e.sh>0){const f=src==='cannon'?2:ty==='e'?.5:1,take=Math.min(e.sh,d*f);e.sh-=take;d-=take/f;if(e.sh<=0){e.sh=0;const p=eS(e);burst(p.x,p.y,'#ffd36a',10);ckLbl(e,lvZ('护盾破碎','SHIELD BROKEN'),'#ffd36a');e.lbt=0}if(d<=0){e.fl=.1;return 0}}
  return d;
@@ -198,6 +199,7 @@ setTimeout(function ckFS(){if(!ckFixSprites())setTimeout(ckFS,150)},0);
 // trampling every tower it runs over. Then it shrinks back and resumes its normal march.
 const CK_RAGE_T=8;
 function ckRage(e,dt){
+ if(!e.rgT){try{CKS.bossRage(e)}catch(_){}}
  e.rgT=(e.rgT||0)+dt;const rt=e.rgT,ss=x=>x*x*(3-2*x);
  e.rg=rt<.35?ss(rt/.35):rt<CK_RAGE_T-.45?1:rt<CK_RAGE_T?ss((CK_RAGE_T-rt)/.45):0;
  e.wd=0;e.bt=Math.max(e.bt||0,2.5);e.atk=null;e.chase=null;
@@ -219,6 +221,14 @@ function ckRage(e,dt){
  steer(e,dx/dl,dy/dl,e.d.sp*6.5*(e.sl>0?.8:1),dt);
  e.x=Math.max(0,Math.min(L.cols-1,e.x));e.y=Math.max(0,Math.min(L.rows-1,e.y));
  // trample: every tower (and barricade) it runs over takes a heavy hit, at most once per 1.2 s each
- for(const t of L.tr){if(!t||t.building||t.hp<=0)continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.6+.7*(e.rg||0)&&!((t._rsm||0)>TM)){t._rsm=TM+1.2;dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15);const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}
+ for(const t of L.tr){if(!t||t.building||t.hp<=0)continue;if(Math.hypot(t.x-e.x,t.y-e.y)<.6+.7*(e.rg||0)&&!((t._rsm||0)>TM)){t._rsm=TM+1.2;dmgTower(t,(EATK.boss||100)*.6*(1+L.i*.06)*1.15*(e.batk||1));const tp=pp(t.x,t.y);burst(tp.x,tp.y,'#ff8a5a',12,140);L.shake=Math.max(L.shake||0,.35)}}
  e.dust=(e.dust||0)-dt;if(e.dust<=0){e.dust=.07;const p=eS(e);burst(p.x,p.y+tw*.3,'#ff6a3a',3,70)}
  return true}
+
+// ---- late-game boss power (v3.6) ----
+// Bosses from Level 64 grow steadily stronger; the final four (Levels 97-100) are true titans.
+// hp: health multiplier; def: extra damage reduction; atk: stomp reach and stun, rampage trample
+// damage, and lives taken if the boss reaches a base.
+function ckBossPow(i){if(i>=96)return[[2.8,1.35,1.6],[3.2,1.42,1.75],[3.6,1.5,1.9],[4.2,1.6,2.1]][i-96].reduce((o,v,k)=>(o[['hp','def','atk'][k]]=v,o),{});
+ if(i>=63){const k=(i-63)/32;return{hp:1+1.1*k,def:1+.25*k,atk:1+.45*k}}return{hp:1,def:1,atk:1}}
+function ckBossPower(e){if(L.demo||e.bpw)return;const p=ckBossPow(L.i);e.bpw=1;e.hp*=p.hp;e.mx=e.hp;e.bdef=p.def;e.batk=p.atk}
