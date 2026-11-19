@@ -190,3 +190,12 @@ html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;
 /* v3.3: the item bar scrolls sideways with a swipe; taps still reach the buttons */
 #inv{touch-action:pan-x;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 #inv .iv{touch-action:pan-x}
+/* v3.9: Tips button + level tips panel */
+.tab.ck-tipt{padding:0 10px!important;font-size:16px!important;min-width:38px}
+.ck-tips{max-height:min(62vh,560px);overflow-y:auto;text-align:left;padding-right:4px;-webkit-overflow-scrolling:touch}
+.ck-tips h3{text-align:center;margin:0 0 6px}
+.ck-tips h4{margin:12px 0 6px;font:900 12px/1.2 Cinzel,Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:#f3c04d;border-bottom:1px solid #f3c04d44;padding-bottom:4px}
+.ck-tips ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.ck-tips li{display:grid;gap:2px;padding:7px 9px;border-radius:9px;background:#ffffff0b;border:1px solid #ffffff14}
+.ck-tips li b{font-size:13px;color:#fff1bf}.ck-tips li b em{font-style:normal;font-weight:900}
+.ck-tips li span{font-size:12.5px;line-height:1.42;color:#cfd5ee}

@@ -36,7 +36,6 @@ function ckV3Init(){
   let cand=L.g.filter(q=>free(q)&&(L.g.some(o=>o.p&&Math.abs(o.x-q.x)+Math.abs(o.y-q.y)===1)||L.portals.some(p=>G.some(g=>seg(q,p,g)<1.6))));if(cand.length<2)cand=L.g.filter(free);
   for(let k=0;k<2&&cand.length;k++){const q=cand.splice(r()*cand.length|0,1)[0];q.shr=1;for(let j=cand.length-1;j>=0;j--)if(Math.hypot(cand[j].x-q.x,cand[j].y-q.y)<4)cand.splice(j,1)}}
  L.ckN=(L.ckN||0)+1;
- setTimeout(()=>{if(L&&L.ckv===L&&!L.over&&!L.demo&&L.ch)toast('👑 '+ckZ(L.ch.n)+' · '+ckChalTxt(L.ch))},3800);
 }
 // terrain multiplier [damage, range] for a tower
 function ckTerr(t){if(!L||L.demo||!L.g||L.ckv!==L||t.x==null)return CK_T1;if(t._tfN===L.ckN&&t._tfL===L)return t._tf;let dm=1,rg=1;const q=ckCell(t.x,t.y);if(q&&q.shr){dm*=1.2;rg*=1.1}if(L.i>=4&&L.portals.some(p=>Math.hypot(p[0]-t.x,p[1]-t.y)<2.5))dm*=.85;t._tf=[dm,rg];t._tfN=L.ckN;t._tfL=L;return t._tf}
@@ -50,7 +49,7 @@ function ckRole(e){
  if(r==='shield')e.sh=e.msh=e.mx*.45;
  if(r==='heal')e.hc=1.2;
  if(r==='disr')e.dt=4+Math.random()*3;
- if(!S.seenR[r]){S.seenR[r]=1;const R0=CKR[r];setTimeout(()=>toast(R0.g+' '+ckZ(R0.tip)),400)}
+ if(!S.seenR[r])S.seenR[r]=1;
 }
 // damage pipeline: types, resistances (capped at 50%), combos, shields
 function ckRes(e,d,src){
@@ -159,7 +158,7 @@ function ckChipCovered(){
  for(const id of ['shop','hp','modal']){const e=document.getElementById(id);if(e&&!e.hidden&&(id!=='modal'||e.classList.contains('on'))&&getComputedStyle(e).display!=='none')return true}
  // anything else drawn over the chip's spot (tower panel, tips, profile, other overlays)
  const r=ckChip.getBoundingClientRect();if(!r.width||!r.height)return false;
- const y=r.top+r.height/2;for(const x of [r.left+4,r.left+r.width/2,r.right-4]){const e=document.elementFromPoint(x,y);if(e&&e.id!=='cv')return true}
+ const y=r.top+r.height/2;for(const x of [r.left+4,r.left+r.width/2,r.right-4]){const e=document.elementFromPoint(x,y);if(e&&e.id!=='cv'&&!(e.closest&&e.closest('#toast,#ck-v3')))return true}
  return false}
 function ckChipVis(){if(!ckChip)return;const show=!!ckChip._has&&ckInBattle();ckChip.hidden=!show;if(show)ckChip.style.visibility=ckChipCovered()?'hidden':''}
 setInterval(ckChipVis,120);
@@ -246,3 +245,42 @@ function ckBossSiege(e,dt){e.vv[0]*=.5;e.vv[1]*=.5;e.sgT=(e.sgT==null?.6:e.sgT)-
  const p=eS(e);L.shake=Math.max(L.shake||0,.55);vRing(p.x,p.y,tw*1.5,'#ff5b3a',.5,5);burst(p.x,p.y+tw*.3,'#ffb08a',10,120);try{CKS.bossAttack(e)}catch(_){}
  if(!e.sgMsg){e.sgMsg=1;toast(lvZ('⚠ 首领正在攻击你的基地！快击败它！','⚠ The boss is attacking your base! Bring it down!'))}
  if(L.lives<=0&&!L.over)end(false)}
+
+// ---- Tips panel (v3.9) ----
+// Opened on demand from the 💡 button next to the Build / Shop tabs: explains everything that matters on THIS level
+// (its bases, portals, shrines, terrain, enemy roles, bosses, crown) plus combos and controls.
+// Nothing opens by itself at the start of a level any more.
+function ckTipsHtml(){
+ const Z=lvZ,i=L.i,li=(ic,t,d)=>`<li><b>${ic} ${t}</b><span>${d}</span></li>`,sec=(t,items)=>items.length?`<h4>${t}</h4><ul>${items.join('')}</ul>`:'';
+ const nb=(L.base&&L.base.L===L)?L.base.length:1,np=L.portals.length,shr=L.g.filter(q=>q.shr).length,sw=L.g.filter(q=>q.sw).length,wt=L.g.filter(q=>q.wtr).length;
+ const lvl=[],ene=[],boss=[],gen=[];
+ // this level
+ lvl.push(li('🗺',Z('关卡概况','Overview'),Z(`第 ${i+1} 关 · ${L.waves} 波 · ${np} 个出怪口 · ${nb} 座基地`,`Level ${i+1} · ${L.waves} waves · ${np} monster portal${np>1?'s':''} · ${nb} base${nb>1?'s':''}`)));
+ if(nb>1)lvl.push(li('🏰',Z('多座基地','Multiple bases'),Z(`每座基地有独立生命值，全部被摧毁才会失败。失去一座后，剩下的怪物都会涌向其余基地。`,`Each base has its own health; you only lose when all ${nb} fall. Lose one and every monster turns on the bases left.`)));
+ lvl.push(li('🛡',Z('基地升级','Base upgrades'),Z('点击基地：加固（最大生命 +20%）、修复（场上无敌人时回血）、屏障（每波抵挡漏怪）。','Tap a base: Fortify (+20% max health), Repair (heals while the field is clear), Barrier (blocks leaks each wave).')));
+ if(shr)lvl.push(li('✴',Z('神殿 ×'+shr,'Shrines ×'+shr),Z('地图上旋转的金色圆环。建在上面的塔伤害 +20%、射程 +10%——留给你最强的塔。','The rotating gold circles. A tower built on one gets +20% damage and +10% range: save them for your best towers.')));
+ if(i>=4)lvl.push(li('🟣',Z('出怪口腐蚀','Portal corruption'),Z('出怪口周围的紫色虚线圈内，塔的伤害 -15%。别把塔都堆在出口。','Inside the dashed purple ring around each portal, towers deal 15% less damage. Don’t camp the portals.')));
+ if(sw)lvl.push(li('🟢',Z('沼泽','Swamps'),Z('沼泽会减慢怪物，但不能建塔；在旁边建塔利用减速。','Swamps slow monsters but can’t be built on. Build beside them to exploit the slow.')));
+ if(wt)lvl.push(li('🌊',Z('水域','Water'),Z('河流与湖泊不能建塔，地面怪物也无法穿过。','Rivers and lakes can’t be built on, and ground monsters can’t cross them.')));
+ if(L.ch){const st=L.chOk?(S.crown&&S.crown[i]?Z('（已获得）',' (already earned)'):''):Z('（本局已失败）',' (failed this run)');lvl.push(li('👑',Z('皇冠挑战：','Crown: ')+ckZ(L.ch.n),ckChalTxt(L.ch)+st+Z('。完成后通关可获得一次性金币奖励。','. Win while it holds for a one-time gold reward.')))}
+ // enemies on this level (the waves are fixed, so this list is exact)
+ const rc={};let fly=i>=4,maxN=0;for(let w=1;w<=L.waves;w++){const q=(L.nq&&L.nq.w===w)?L.nq.q:mkWave(w);maxN=Math.max(maxN,q.length);for(const t of q){const r=t.split('|')[1];if(r)rc[r]=(rc[r]||0)+1}}
+ for(const r of Object.keys(CKR))if(rc[r])ene.push(li(`<em style="color:${CKR[r].c}">${CKR[r].g}</em>`,ckZ(CKR[r].n)+' ×'+rc[r],ckZ(CKR[r].tip)));
+ if(fly)ene.push(li('🦇',Z('飞行怪物','Flyers'),Z('幽灵和幼龙会飞越道路与障碍，直扑基地——在基地周围布防。','Ghosts and Wyrmlings fly over the road and obstacles straight at a base: guard your bases.')));
+ if(i>=6)ene.push(li('👑',Z('精英怪','Elites'),Z('头顶金冠的精英怪生命 ×2.2，击杀奖励 ×3。','Elites wear a gold crown: 2.2x health, 3x gold.')));
+ if(!ene.length)ene.push(li('⚔',Z('基础怪物','Basic monsters'),Z('这一关只有普通怪物——专心布置你的第一道防线。','Only basic monsters here: focus on building your first line.')));
+ // bosses
+ if(L.boss){const n=np,ty=['m','p','e'][(i/8|0)%3],nm=i>=96?BOSS[13+(i-96)]:BOSS[i/8|0];
+  boss.push(li('💀',Z('首领：','Boss: ')+TL(nm)+(n>1?' ×'+n:''),Z(`最后一波出现${n>1?n+'个首领，每个出怪口一个':'首领'}。首领无视建筑，直线冲向基地；到达后会持续攻击基地直到被击败。`,`Arrives in the final wave${n>1?': '+n+' bosses, one from each portal':''}. Bosses ignore buildings and march straight at a base, then besiege it until killed.`)));
+  boss.push(li('🎯',Z('弱点：','Weakness: ')+ckZ(CKDTN[ty]),Z(`${CKDTN[ty][0]}伤害 +30%。`,`${CKDTN[ty][1]} damage deals +30%.`)+(i>=39?Z('它每 10 秒会适应受到最多的伤害类型（-35%）——混合使用不同的塔。',' Every 10 s it adapts to the damage type hurting it most (-35%): mix your towers.'):'')));
+  if(i>=32)boss.push(li('📣',Z('召唤援军','Reinforcements'),Z('生命降到 50% 和 25% 时，首领会在金色护盾中召唤援军 5 秒（期间无敌）。','At 50% and 25% health the boss channels reinforcements for 5 s behind a golden shield (invulnerable).')));
+  if(i>=39)boss.push(li('🔥',Z('狂暴模式','Rage Mode'),Z('生命降到 20% 时，首领体型暴涨三倍，8 秒内满地图横冲直撞、践踏防御塔（期间受到的伤害 -40%），之后恢复正常。','At 20% health it swells to 3x size and stampedes across the map for 8 s, trampling towers (taking 40% less damage), then calms down.')));
+  boss.push(li('💥',Z('践踏','Stomp'),Z('首领会定期践踏，击晕附近的塔——把塔分散开。','It stomps regularly, stunning nearby towers: spread your defences.')))}
+ // general
+ gen.push(li('⚔',Z('伤害类型','Damage types'),Z('物理：箭塔、炮塔 · 魔法：法师、圣光、闪电 · 元素：冰霜、毒。抗性最多 50%，每种塔都有用。','Physical: Archer, Cannon · Magic: Mage, Holy, Lightning · Elemental: Frost, Poison. Resistances never exceed 50%.')));
+ gen.push(li('✨',Z('组合技','Combos'),Z('碎冰：箭/炮打冰冻敌人 +40% · 圣印：圣光命中后全体 +20% · 奥术破甲：法师削弱护甲/结界/护盾 · 炮塔对减速 +30% · 闪电对中毒 +30% · 炮塔对护盾 ×2。','Shatter: Archer/Cannon vs frozen +40% · Marked: Holy hit, all towers +20% · Arcane Break: Mage weakens armour, wards and shields · Cannon +30% vs slowed · Lightning +30% vs poisoned · Cannon x2 vs shields.')));
+ gen.push(li('🎒',Z('道具','Items'),Z('在商店购买，存放在底部道具栏。点击使用；滑动道具栏可以查看更多。','Buy in the Shop; they wait in the bar at the bottom. Tap to use, swipe the bar to see more.')));
+ gen.push(li('⏩',Z('提前召唤','Call early'),Z('点击“召唤”提前开始下一波，可以获得额外金币。','Tap Call to start the next wave early for bonus coins.')));
+ return `<div class="ck-tips"><h3>💡 ${Z('本关提示','Level tips')}</h3>${sec(Z('本关特点','This level'),lvl)}${sec(Z('本关敌人','Enemies on this level'),ene)}${sec(Z('首领战','Boss fight'),boss)}${sec(Z('战斗要点','How to fight'),gen)}</div><button class="bt" id="m1">${Z('继续战斗','Back to battle')}</button>`}
+function ckOpenTips(){if(!L||L.demo||L.over||S.mode!=='play')return;modal(ckTipsHtml())}
+document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-cktips]');if(!b)return;ev.preventDefault();ev.stopPropagation();ckOpenTips()},true);

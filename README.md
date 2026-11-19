@@ -7,7 +7,24 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.8.apk` | Android app (package `com.chaoskingdoms.game`, version 3.8, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.9.apk` | Android app (package `com.chaoskingdoms.game`, version 3.9, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.9
+
+**Fix: levels could freeze at the start.** Some levels opened a pop-up by themselves half a second after starting ("Multiple bases", "Base upgrades"). It paused the game and could leave it stuck. A crown message and first-time enemy tips also popped up at the start. Nothing opens by itself any more.
+
+**New: Tips panel.** A 💡 button next to the Build and Shop tabs opens a panel for the current level. The game pauses while it is open, and "Back to battle" resumes. The panel is built from the level itself, so every level shows what matters there:
+- **This level:** waves, portals and bases, the multiple-bases rules when there is more than one base, base upgrades, how many shrines there are and what they do (+20% damage, +10% range), portal corruption, swamps, water, and the crown challenge with its status.
+- **Enemies on this level:** the exact enemy roles in this level's waves, with how many of each and how to beat them; flyers; elites.
+- **Boss fight** (boss levels only): the boss's name and how many come, its weakness and adaptation, reinforcements at 50% and 25%, Rage Mode, its siege of your base, and its stomp.
+- **How to fight:** damage types, every combo, items and calling waves early.
+
+Fully translated into Chinese.
+
+**Tested**
+- Levels 1, 3, 13, 30, 48, 88 and 100 started on a fresh save. No pop-up opened, and the game kept running; on v3.8, Level 3 froze behind a pop-up.
+- The 💡 button tapped on an emulated Pixel 7: each panel listed the right items for that level, paused the game, and closed back into the battle. Also checked in Chinese.
+- The 42-state interface walkthrough (portrait and landscape), the item-bar touch test and gameplay all pass.
 
 ## What changed in v3.8
 
@@ -462,7 +479,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.8.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.9.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

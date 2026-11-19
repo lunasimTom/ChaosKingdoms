@@ -511,6 +511,11 @@ rep("o.connect(g);g.connect(mg);o.start();o.stop(t+d)}", "o.connect(g);g.connect
 rep("let t=au.currentTime,d=sg||mg||au.destination,V=v*sfxV", "let t=au.currentTime,d=sg||mg||au.destination,V=v*sfxV*.7")
 rep("let sg,ag,am=null,", "const CK_SFXQ={build:.3,upgrade:.35,sell:.35,coin:.3,bank:.35,perfect:.5,wave:.55,arrow:.6,cannon:.7,ice:.6,zap:.6,toxin:.6,leak:.6};let sg,ag,am=null,")
 
+# 40. v3.9: no automatic pop-ups when a level starts (they paused the game and could leave it stuck);
+#     the information lives in an on-demand, level-specific Tips panel instead (see v3.js).
+rep("toast('Wave 1 arrives in 14s. Build now!');ckTips(i)}", "toast('Wave 1 arrives in 14s. Build now!')}")
+rep('<button class="tab" data-t="s" data-i18n="Shop">Shop</button>', '<button class="tab" data-t="s" data-i18n="Shop">Shop</button><button class="tab ck-tipt" type="button" data-cktips="1" aria-label="Tips" title="Tips">💡</button>')
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
