@@ -1324,7 +1324,7 @@ function renderTreasure(){return `<div class="treasure-scroll">${window.CKTopup&
 function renderShop(){const sh=$('shop');if(!sh)return;if(tab!=='s'||S.mode!=='play'||!L){sh.hidden=true;return}
  let old=sh.querySelector('.shl'),st=old?old.scrollTop:0;const zh=LANG==='zh';
  const tabs=`<div class="shop-tabs"><button class="shop-tab ${shopPage==='items'?'on':''}" data-shop-page="items">${zh?'道具':'Items'}</button><button class="shop-tab ${shopPage==='treasure'?'on':''}" data-shop-page="treasure">✧ ${zh?'宝藏':'Treasures'}</button></div>`;
- const body=shopPage==='treasure'?renderTreasure():`<div class="shl">${IT.map(it=>{let lim=it.stock!=null,s=lim?L.stock[it.id]:null,pr=lim?it.cost:L.price[it.id],out=lim&&!s,lk=!itemOpen(it.id),D=DET[it.id];return`<div class="si${['legion','air','bomb','heli'].includes(it.id)?' new':''}" style="${lk?'opacity:.5;filter:grayscale(.7)':''}"><div class="sw" data-cdid="${it.id}"><img src="${SPRD[it.sp]}" alt=""><span class="cdo"></span><span class="cdt"></span></div><div class="sd"><b class="f">${it.n}</b><p>${D.fx}</p><small><b>${TL('Stats:')}</b> ${D.st}${FXon('nocd')?lvZ(' · 无冷却',' · No cooldown'):TL(' · Cooldown {0}s',CDT[it.id])}</small><small><b>${TL('Use:')}</b> ${D.use}</small></div><div class="sb"><button class="bt pay" data-id="${it.id}" data-cost="${pr}" ${out||lk?'disabled':''}>${lk?'🔒 Lv.'+LV_ITEM[it.id]:out?TL('Sold<br>out').replace('<br>',' '):`<span class="buytxt">${TL('Buy<br>').replace('<br>','')}</span>${COIN}<span class="price">${pr}</span>`}</button><small>${lk?'<a class="vlink" data-prof="shop" style="color:#ffd37a">'+(LANG==='zh'?'统帅档案 ›':'Rank ›')+'</a><br>':''}${TL('Owned {0}',L.inv[it.id]||0)}${lim?'<br>'+TL('Left {0}',s):''}</small></div></div>`}).join('')}</div>`;
+ const body=shopPage==='treasure'?renderTreasure():`<div class="shl">${IT.filter(it=>!it.rare).map(it=>{let lim=it.stock!=null,s=lim?L.stock[it.id]:null,pr=lim?it.cost:L.price[it.id],out=lim&&!s,lk=!itemOpen(it.id),D=DET[it.id];return`<div class="si${['legion','air','bomb','heli'].includes(it.id)?' new':''}" style="${lk?'opacity:.5;filter:grayscale(.7)':''}"><div class="sw" data-cdid="${it.id}"><img src="${SPRD[it.sp]}" alt=""><span class="cdo"></span><span class="cdt"></span></div><div class="sd"><b class="f">${it.n}</b><p>${D.fx}</p><small><b>${TL('Stats:')}</b> ${D.st}${FXon('nocd')?lvZ(' · 无冷却',' · No cooldown'):TL(' · Cooldown {0}s',CDT[it.id])}</small><small><b>${TL('Use:')}</b> ${D.use}</small></div><div class="sb"><button class="bt pay" data-id="${it.id}" data-cost="${pr}" ${out||lk?'disabled':''}>${lk?'🔒 Lv.'+LV_ITEM[it.id]:out?TL('Sold<br>out').replace('<br>',' '):`<span class="buytxt">${TL('Buy<br>').replace('<br>','')}</span>${COIN}<span class="price">${pr}</span>`}</button><small>${lk?'<a class="vlink" data-prof="shop" style="color:#ffd37a">'+(LANG==='zh'?'统帅档案 ›':'Rank ›')+'</a><br>':''}${TL('Owned {0}',L.inv[it.id]||0)}${lim?'<br>'+TL('Left {0}',s):''}</small></div></div>`}).join('')}</div>`;
  sh.innerHTML=`<div class="shh"><b class="f">${TL('Shop')}</b><small>${shopPage==='items'?TL('Read what each item does, then press Buy. Bought items wait in the inventory bar at the bottom.'):(zh?'资源宝藏 · 兑换码获取':'Resource treasury · redeem codes')}<br><b class="vlink" data-prof="shop" style="color:#ffd37a">Lv.${plLevel()} · ${lvInfo()} ›</b></small><button class="bt g" data-x="1">${TL('Close ✕')}</button></div>${tabs}${body}`;
  sh.hidden=false;let sc=sh.querySelector('.shl');if(sc)sc.scrollTop=st}
 $('shop').onclick=e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.x){tab='t';render()}else if(b.dataset.shopPage){shopPage=b.dataset.shopPage;renderShop()}else if(b.dataset.ck){if(window.CKTopup&&CKTopup.pick)CKTopup.pick(+b.dataset.ck)}else if(b.dataset.id)buy(b.dataset.id)};
@@ -1340,8 +1340,8 @@ const P=(p,f)=>{c.beginPath();p.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[
 const ell=(x,y,a,b,f)=>{c.beginPath();c.ellipse(x,y,a,b,0,0,7);if(f)c.fillStyle=f;c.fill()},circ=(x,y,r,f)=>{c.beginPath();c.arc(x,y,r,0,7);if(f)c.fillStyle=f;c.fill()},seg=(a,b)=>{c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()};
 const ngon=(x,y,r,n,o)=>Array.from({length:n},(_,i)=>[x+Math.cos(o+i*6.2832/n)*r,y+Math.sin(o+i*6.2832/n)*r]);
 const pp=(x,y)=>port?{x:ox+(y+.5)*tw,y:oy+(x+.5)*tw}:{x:ox+(x+.5)*tw,y:oy+(y+.5)*tw},cell=(x,y)=>L.g[y*L.cols+x];
-function save(){try{localStorage.setItem('ck25',JSON.stringify({v:'MAX1',n:S.name,own:S.own,p:S.prog,d:S.dif,dv:2,o:LAY,g:S.gold,dm:S.diamonds||0,bs:S.bonusStars||0,rc:S.redeemedCodes||[],u:S.unl,maps:S.maps,inv:S.inv||{},l:LANG,xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},h100:S.h100|0}))}catch(e){}}
-function ld(){try{if(!localStorage.getItem('ck25')){let n=localStorage.getItem('ck25_name');if(n)S.name=n}}catch(e){}try{let s=JSON.parse(localStorage.getItem('ck25'));if(s){S.name=s.n||'';S.own=s.own!==undefined?s.own:(s.n||'');S.prog=s.p||{};S.dif=s.dv===2?Math.max(0,Math.min(4,s.d??2)):[1,2,3][Math.max(0,Math.min(2,s.d??1))];LAY=s.o||'auto';S.gold=s.g??3000;S.diamonds=Math.max(0,+s.dm||0);S.bonusStars=Math.max(0,+s.bs||0);S.redeemedCodes=Array.isArray(s.rc)?s.rc:[];S.unl=s.u||{};S.maps=s.maps||{};S.xp=Math.max(0,s.xp||0);S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},s.stats||{});S.ach=Array.isArray(s.ach)?s.ach:[];S.cc=(s.cc&&typeof s.cc==='object')?s.cc:{};S.mb=(s.mb&&typeof s.mb==='object')?s.mb:{};S.cu=(s.cu&&typeof s.cu==='object')?{a:s.cu.a|0,d:s.cu.d|0,b:s.cu.b|0,c:s.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+s.ss||0);S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));S.inv=(s.inv&&typeof s.inv==='object')?s.inv:{};if(s.l==='zh'||s.l==='en')LANG=s.l}}catch(e){}}
+function save(){try{localStorage.setItem('ck25',JSON.stringify({v:'MAX1',n:S.name,own:S.own,p:S.prog,d:S.dif,dv:2,o:LAY,g:S.gold,dm:S.diamonds||0,bs:S.bonusStars||0,rc:S.redeemedCodes||[],u:S.unl,maps:S.maps,inv:S.inv||{},l:LANG,xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},h100:S.h100|0,fr:S.frag|0,ru:S.rune|0}))}catch(e){}}
+function ld(){try{if(!localStorage.getItem('ck25')){let n=localStorage.getItem('ck25_name');if(n)S.name=n}}catch(e){}try{let s=JSON.parse(localStorage.getItem('ck25'));if(s){S.name=s.n||'';S.own=s.own!==undefined?s.own:(s.n||'');S.prog=s.p||{};S.dif=s.dv===2?Math.max(0,Math.min(4,s.d??2)):[1,2,3][Math.max(0,Math.min(2,s.d??1))];LAY=s.o||'auto';S.gold=s.g??3000;S.diamonds=Math.max(0,+s.dm||0);S.bonusStars=Math.max(0,+s.bs||0);S.redeemedCodes=Array.isArray(s.rc)?s.rc:[];S.unl=s.u||{};S.maps=s.maps||{};S.xp=Math.max(0,s.xp||0);S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},s.stats||{});S.ach=Array.isArray(s.ach)?s.ach:[];S.cc=(s.cc&&typeof s.cc==='object')?s.cc:{};S.mb=(s.mb&&typeof s.mb==='object')?s.mb:{};S.cu=(s.cu&&typeof s.cu==='object')?{a:s.cu.a|0,d:s.cu.d|0,b:s.cu.b|0,c:s.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+s.ss||0);S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));S.frag=Math.max(0,Math.min(3,s.fr|0));S.rune=Math.max(0,s.ru|0);S.inv=(s.inv&&typeof s.inv==='object')?s.inv:{};if(s.l==='zh'||s.l==='en')LANG=s.l}}catch(e){}}
 function rs(){let d=Math.min(((navigator.hardwareConcurrency||4)>=6&&(navigator.deviceMemory||4)>=4)?2:1.5,(devicePixelRatio||1)*FS);cv.width=Math.round(W*d);cv.height=Math.round(H*d);c.setTransform(d,0,0,d,0,0)}
 const wantPort=()=>LAY==='p'||(LAY==='auto'&&innerHeight>innerWidth*1.05);
 let _vw=0,_vh=0;
@@ -1486,7 +1486,7 @@ function nextWave(){let iv=0,pf=L.wave>0&&!L.lk?20:0;Economy.grantBattle(pf);L.p
 function toast(s){let e=$('toast'),msg=TL(String(s));msg=msg.replace(/<img\b[^>]*>/gi,'🪙').replace(/<[^>]*>/g,'');e.textContent=msg;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1800)}
 function txt(x,y,s,k){if(!S.dmg)return;if(L.tx.length>70)L.tx.shift();L.tx.push({x,y,s,c:k,l:.8})}
 function burst(x,y,k,n,sp=90){if(L.pt.length>300)return;for(let i=0;i<n;i++){let a=Math.random()*7;L.pt.push({x,y,vx:Math.cos(a)*sp*Math.random(),vy:Math.sin(a)*sp*Math.random()-20,l:.6,m:.6,r:2+Math.random()*3,c:k})}}
-function hurt(e,d,k,src){if(e.hp<=0||e.pro>0)return;d=d/(e.t==='boss'?BOSS_DEF_MULT:DEF_MULT);d=ckRes(e,d,src);if(!(d>0))return;if(src)L.ds[src]=(L.ds[src]||0)+Math.min(d,e.hp);e.hp-=d;if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25;else if(L.i>=39&&!e.s2&&e.hp<e.mx*.19)e.hp=e.mx*.19;else if(e.rage&&(e.rgT||0)<CK_RAGE_T&&e.hp<e.mx*.03)e.hp=e.mx*.03}e.fl=.1;let p=eS(e);txt(p.x,p.y-tw*.4,_crit?(LANG==='zh'?'暴击 ':'CRIT ')+Math.round(d):Math.round(d),_crit?'#ff8a1f':(k||'#fff'));if(!e.vocalCd||e.vocalCd<=0){if(!CKS.hurt(e))snd('hit_'+(e.t||'grunt'),.34);e.vocalCd=e.t==='runner'?.22:e.t==='brute'?.3:.18}if(e.hp<=0){ckOnDeath(e);L.kills++;if(!L.demo){if(e.t==='boss')heart(2,'boss slain');else if(L.kills%40===0)heart(1,'40 kills')}L.cmb=(L.ct>0?L.cmb:0)+1;L.ct=1.6;{let cb=Math.min(5,L.cmb>>2);if(cb){Economy.grantBattle(cb);txt(p.x,p.y-tw*.7,'+'+cb+' '+TL('combo'),'#ffbe3d')}}{L.kgr=(L.kgr||0)+killGold(e)*(L.bf.idol>0?2:1)*(1+(L.buffs&&L.buffs.bounty||0))*KILL_GOLD_MULT;let pay=Math.floor(L.kgr);L.kgr-=pay;if(pay>0)Economy.grantBattle(pay)}burst(p.x,p.y,`hsl(${e.hue} 70% 55%)`,e.t==='boss'?40:12);vDeath(p,e);ckCorpse(e);if(!CKS.die(e)){snd('death_'+(e.t||'grunt'),e.t==='boss'?.9:.62);sfx(e.t==='boss'?'boss':'death',.32)||beep(e.t==='boss'?80:520,.12,'square',.05)}if(e.t==='boss'){L.shake=1;if(!L.demo){L.slowT=1.1;window.ckBanner&&ckBanner(lvZ('首领已被击败','Boss defeated'),lvZ('胜利','VICTORY'),0)}}}}
+function hurt(e,d,k,src){if(e.hp<=0||e.pro>0)return;d=d/(e.t==='boss'?BOSS_DEF_MULT:DEF_MULT);d=ckRes(e,d,src);if(!(d>0))return;if(src)L.ds[src]=(L.ds[src]||0)+Math.min(d,e.hp);e.hp-=d;if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;else if(!e.m25&&e.hp<e.mx*.25)e.hp=e.mx*.25;else if(L.i>=39&&!e.s2&&e.hp<e.mx*.19)e.hp=e.mx*.19;else if(e.rage&&(e.rgT||0)<CK_RAGE_T&&e.hp<e.mx*.03)e.hp=e.mx*.03}e.fl=.1;let p=eS(e);txt(p.x,p.y-tw*.4,_crit?(LANG==='zh'?'暴击 ':'CRIT ')+Math.round(d):Math.round(d),_crit?'#ff8a1f':(k||'#fff'));if(!e.vocalCd||e.vocalCd<=0){if(!CKS.hurt(e))snd('hit_'+(e.t||'grunt'),.34);e.vocalCd=e.t==='runner'?.22:e.t==='brute'?.3:.18}if(e.hp<=0){ckOnDeath(e);L.kills++;if(!L.demo){if(e.t==='boss')heart(2,'boss slain');else if(L.kills%40===0)heart(1,'40 kills')}L.cmb=(L.ct>0?L.cmb:0)+1;L.ct=1.6;{let cb=Math.min(5,L.cmb>>2);if(cb){Economy.grantBattle(cb);txt(p.x,p.y-tw*.7,'+'+cb+' '+TL('combo'),'#ffbe3d')}}{L.kgr=(L.kgr||0)+killGold(e)*(L.bf.idol>0?2:1)*(L.bf.midas>0?3:1)*(1+(L.buffs&&L.buffs.bounty||0))*KILL_GOLD_MULT;let pay=Math.floor(L.kgr);L.kgr-=pay;if(pay>0)Economy.grantBattle(pay)}burst(p.x,p.y,`hsl(${e.hue} 70% 55%)`,e.t==='boss'?40:12);vDeath(p,e);ckCorpse(e);if(!CKS.die(e)){snd('death_'+(e.t||'grunt'),e.t==='boss'?.9:.62);sfx(e.t==='boss'?'boss':'death',.32)||beep(e.t==='boss'?80:520,.12,'square',.05)}if(e.t==='boss'){L.shake=1;if(!L.demo){L.slowT=1.1;window.ckBanner&&ckBanner(lvZ('首领已被击败','Boss defeated'),lvZ('胜利','VICTORY'),0)}}}}
 function stomp(e){let q=epos(e),p=pp(q[0],q[1]);L.shake=.7;L.rg.push({x:p.x,y:p.y,r:0,l:.5,k:'#ff5b7f',mr:2.6});L.tr.forEach(t=>{if(Math.hypot(t.x-q[0],t.y-q[1])<2.6*(1+.25*((e.batk||1)-1))){t.st=Math.min(4.5,2.5*(e.batk||1));let s=pp(t.x,t.y);burst(s.x,s.y,'#ffd37a',8)}});CKS.bossAttack(e)||sfx('stomp')||beep(70,.4,'sawtooth',.1);toast('Stomp! Nearby towers are stunned')}
 function eUp(e,dt){let d=e.d;e.fl-=dt;e.age=(e.age||0)+dt;if(e.chan>0){e.chan-=dt;e.pro=Math.max(e.pro||0,e.chan);e.vv[0]*=.8;e.vv[1]*=.8;return}if(e.pro>0)e.pro-=dt;e.vocalCd=Math.max(0,(e.vocalCd||0)-dt);e.kb=Math.max(0,(e.kb||0)-dt*7);e.sl-=dt;if(e.fz>0){e.fz-=dt;return}
  if(e.ps>0){e.ps-=dt;e.pa=(e.pa||0)+dt;if(e.pa>=.5){e.pa-=.5;hurt(e,e.pd*e.pk*.35,'#9fe05a','toxin')}if(e.ps<=0)e.pk=0}
@@ -1594,6 +1594,7 @@ function ckRes(e,d,src){
 }
 function ckOnDeath(e){
  if(L.demo)return;
+ try{ckLootOnDeath(e)}catch(err){console.warn('loot',err)}
  if(e.rl==='split'){for(let k=0;k<2;k++){spawn('runner',{x:e.x+(k?.25:-.25),y:e.y+(Math.random()-.5)*.3});const c=L.en[L.en.length-1];c.hp=c.mx=c.mx*.35;c.pro=.35;c.el=0;c.rl=null}}
 }
 // designed waves: deterministic per level and wave, themed by pattern and realm
@@ -1623,6 +1624,7 @@ function ckWaveSum(q){const o={n:q.length,b:0,r:{}};for(const s of q){const[t,ro
 let ckUiT=0,ckChip=null;
 function ckV3Tick(dt){
  if(L.ckv!==L)ckV3Init();
+ if(L.bf.midas>0)L.bf.midas=Math.max(0,L.bf.midas-dt);if(L.loot)for(const l of L.loot)if(!l.boss)l.age=(l.age||0)+dt;
  // item use tracking (per-level stock) and challenge bookkeeping
  let nt=0;for(const t of L.tr)if(t&&t.k!=='wall')nt++;L.mtw=Math.max(L.mtw,nt);
  if(L.chOk&&L.ch){const c=L.ch.id;if((c==='noleak'&&L.lives<L.mxl)||(c==='cap'&&L.mtw>L.ch.a)||(c==='noitem'&&Object.keys(L.iu).length)||(c==='ban'&&L.tr.some(t=>t&&t.k===L.ch.k))){L.chOk=false;toast('👑 '+lvZ('挑战失败：','Crown lost: ')+ckChalTxt(L.ch))}}
@@ -1812,6 +1814,159 @@ function ckTipsHtml(){
 function ckOpenTips(){if(!L||L.demo||L.over||S.mode!=='play')return;if(L.ckv!==L)ckV3Init();modal(ckTipsHtml())}
 document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-cktips]');if(!b)return;ev.preventDefault();ev.stopPropagation();ckOpenTips()},true);
 
+/* ===== Chaos Kingdoms v4.1 · loot =====
+   Boss treasure: when the FINAL boss of a level dies, every tower and barricade vanishes and a big
+   treasure explodes out of the boss across the whole map at once. The player then has exactly 5
+   seconds (real time, paused while a menu is open) to tap tiles and collect; from second 4 the loot
+   fades, at second 5 whatever is left is gone for good.
+   Medium monsters (brutes and elites) sometimes drop a small common item anywhere on the map; it lasts
+   20 s of game time.
+   Tapping a tile with loot always collects it first, before any other tile interaction.
+   Diamonds come only from boss treasure (and the existing voucher codes). 4 fragments forge 1 diamond.
+   1 diamond can be exchanged for 10,000 gold; nothing can be exchanged into diamonds. */
+const CKT=[ // rarity tiers
+ {k:'common',n:['普通','Common'],c:'#c9cfdc',glow:0},
+ {k:'uncommon',n:['优秀','Uncommon'],c:'#7de07a',glow:.35},
+ {k:'rare',n:['稀有','Rare'],c:'#4aa8ff',glow:.55},
+ {k:'epic',n:['史诗','Epic'],c:'#b35cff',glow:.75},
+ {k:'legendary',n:['传说','Legendary'],c:'#ffc23a',glow:.95},
+ {k:'mythic',n:['神话','Mythic'],c:'#ff5ad0',glow:1.1}];
+const CKT_W=[50.2,25,14,7,3,.8];   // base chance per treasure piece (%)
+// rare items: powerful single-use battle items that are never sold in the shop
+const CK_RARE={
+ r_chrono:{ic:'⏳',c:'#7ad8ff',n:['时光水晶','Chrono Crystal'],d:['冻结所有小怪 8 秒，首领减速 6 秒。','Freezes every monster for 8 s and slows bosses for 6 s.']},
+ r_dragon:{ic:'🐉',c:'#ff6a2a',n:['龙焰卷轴','Dragonfire Scroll'],d:['对所有小怪造成其最大生命 35% 的伤害，对首领造成 6%。','Burns every monster for 35% of its max health, and bosses for 6%.']},
+ r_aegis:{ic:'🏰',c:'#ffd36a',n:['王者庇护','Aegis of Kings'],d:['所有存活基地恢复满血，并获得 15 秒漏怪护盾。','Restores every standing base to full health and shields them from leaks for 15 s.']},
+ r_forge:{ic:'⚒️',c:'#ffb84d',n:['大师锻炉','Master Forge'],d:['所有 1–2 级防御塔立即提升一级。','Instantly upgrades every level 1-2 tower by one level.']},
+ r_midas:{ic:'👑',c:'#ffe066',n:['点金御印','Midas Seal'],d:['45 秒内击杀金币 ×3。','Triples kill gold for 45 s.']},
+ r_war:{ic:'🎺',c:'#ff7a7a',n:['战神号角','War Horn of Ages'],d:['25 秒内所有防御塔伤害 +35%、攻速 +60%。','All towers deal +35% damage and fire 60% faster for 25 s.']}};
+const CK_BASIC=['fbomb','ibomb','trap','frz','rep'];   // ordinary consumables that may drop
+const ckLZ=a=>lvZ(a[0],a[1]);
+// ---- icons: pre-rendered once per kind ----
+const CKL_IMG={};
+function ckLootIcon(kind,col){const key=kind+'|'+col;if(CKL_IMG[key])return CKL_IMG[key];const S2=96,cv=document.createElement('canvas');cv.width=cv.height=S2;const g=cv.getContext('2d');
+ const gr=g.createRadialGradient(S2/2,S2*.42,4,S2/2,S2/2,S2*.46);gr.addColorStop(0,'#ffffffee');gr.addColorStop(.5,col);gr.addColorStop(1,'#000000aa');
+ g.fillStyle=gr;g.beginPath();g.arc(S2/2,S2/2,S2*.42,0,7);g.fill();g.lineWidth=5;g.strokeStyle='#1a1206';g.stroke();g.lineWidth=2.5;g.strokeStyle='#fff8';g.beginPath();g.arc(S2/2,S2/2,S2*.36,0,7);g.stroke();
+ const it=CKL_ICON[kind];if(it&&it.img){const im=SP[it.img]||null;if(im&&im.width){const s=S2*.62/Math.max(im.width,im.height);g.drawImage(im,S2/2-im.width*s/2,S2/2-im.height*s/2,im.width*s,im.height*s)}}
+ else{g.font=`${S2*.46}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillText(it?it.e:'🎁',S2/2,S2/2+2)}
+ return CKL_IMG[key]=cv}
+const CKL_ICON={gold:{e:'🪙'},star:{e:'⭐'},frag:{e:'💠'},dia:{e:'💎'},rune:{e:'📜'},item:{e:'🧪'}};
+for(const k in CK_RARE)CKL_ICON[k]={e:CK_RARE[k].ic};
+// register rare items as inventory items (never listed in the shop), once the game's tables exist
+function ckRareReg(){try{if(typeof IT==='undefined'||IT.some(x=>x.id==='r_chrono'))return;
+ for(const id in CK_RARE){const R=CK_RARE[id],cv=document.createElement('canvas');cv.width=cv.height=96;const g=cv.getContext('2d');const gr=g.createRadialGradient(48,40,6,48,48,46);gr.addColorStop(0,'#fff');gr.addColorStop(.45,R.c);gr.addColorStop(1,'#2a1406');g.fillStyle=gr;g.beginPath();g.arc(48,48,44,0,7);g.fill();g.lineWidth=5;g.strokeStyle='#ffd36a';g.stroke();g.font='48px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(R.ic,48,51);
+  SPRD['i_'+id]=cv.toDataURL();IT.push({id,sp:'i_'+id,cost:0,stock:null,rare:1,get n(){return ckLZ(R.n)},get d(){return ckLZ(R.d)+lvZ('（稀有·商店不出售）',' (Rare · not sold in the shop)')}});CDT[id]=3}}catch(e){console.warn('ckRareReg',e)}}
+setTimeout(ckRareReg,0);
+function ckUseRare(id){if(L.cdn[id]>0)return;const R=CK_RARE[id];L.inv[id]--;ckIU(id);L.cdn[id]=FXon('nocd')?0:3;const al=L.en.filter(e=>e.hp>0);
+ if(id==='r_chrono'){for(const e of al){if(e.t==='boss')e.sl=Math.max(e.sl||0,6);else e.fz=Math.max(e.fz||0,8)}vFlash('#9ff0ff',.35)}
+ else if(id==='r_dragon'){for(const e of al){const pro=e.pro;e.pro=0;hurt(e,e.mx*(e.t==='boss'?.06*BOSS_DEF_MULT:.35*DEF_MULT),'#ff8a3a');if(e.hp>0)e.pro=pro;const p=eS(e);burst(p.x,p.y,'#ff7a2a',8,120)}vFlash('#ff7a2a',.35);L.shake=Math.max(L.shake||0,.6)}
+ else if(id==='r_aegis'){ckBaseSync();for(const b of L.base)if(!b.dead){b.hp=b.max;const p=pp(b.x,b.y);vRing(p.x,p.y,tw*1.2,'#ffd36a',.6,5)}ckBaseTotal();L.bf.shield=Math.max(L.bf.shield||0,15)}
+ else if(id==='r_forge'){let n=0;for(const t of L.tr)if(t&&!t.building&&t.k!=='wall'&&t.lv<3){t.lv++;t.mhp=thp(t);t.hp=t.mhp;n++;const p=pp(t.x,t.y);burst(p.x,p.y,'#ffd36a',10,120)}sfx('upgrade',.6)}
+ else if(id==='r_midas'){L.bf.midas=Math.max(L.bf.midas||0,45)}
+ else if(id==='r_war'){L.bf.horn=Math.max(L.bf.horn||0,25);L.bf.ovc=Math.max(L.bf.ovc||0,25)}
+ try{CKS.pickup(4)}catch(_){}toast(R.ic+' '+ckLZ(R.n)+' · '+ckLZ(R.d));invR()}
+// ---- treasure generation ----
+function ckRoll(w){let s=0;for(const x of w)s+=x;let r=Math.random()*s;for(let i=0;i<w.length;i++){if((r-=w[i])<0)return i}return 0}
+function ckPiece(tier,boss,replay){const i=L.i,dm=[.7,.85,1,1.2,1.5][S.dif]||1,gS=Math.round((40+i*4)*dm),pick=a=>a[Math.random()*a.length|0],rare=()=>pick(Object.keys(CK_RARE));
+ // medium monsters: common tier only, gold goes to battle coins
+ if(!boss){const r=Math.random();if(r<.6)return{kind:'gold',amt:Math.round(gS*.5),bat:1};if(r<.8)return{kind:'star',amt:1};return{kind:'item',id:pick(CK_BASIC),amt:1}}
+ if(replay&&tier>2)tier=2;   // replays never drop epic or better
+ if(tier===0)return Math.random()<.75?{kind:'gold',amt:gS}:{kind:'star',amt:1};
+ if(tier===1){const r=Math.random();return r<.4?{kind:'gold',amt:gS*3}:r<.65?{kind:'star',amt:2}:r<.85?{kind:'frag',amt:1}:{kind:'item',id:pick(CK_BASIC),amt:1}}
+ if(tier===2){const r=Math.random();if(!replay&&r<.3)return{kind:rare(),amt:1,rare:1};return r<.55?{kind:'gold',amt:gS*8}:r<.8?{kind:'frag',amt:2}:{kind:'item',id:pick(IT.filter(x=>!x.rare&&x.stock==null).map(x=>x.id)),amt:2}}
+ if(tier===3){const r=Math.random();return r<.3?{kind:'dia',amt:1}:r<.6?{kind:'rune',amt:1}:r<.85?{kind:rare(),amt:1,rare:1}:{kind:'star',amt:5}}
+ if(tier===4){const r=Math.random();return r<.34?{kind:'dia',amt:2}:r<.67?{kind:'rune',amt:2}:{kind:rare(),amt:2,rare:1}}
+ return{kind:'jackpot',amt:1,bundle:[{kind:'dia',amt:4},{kind:'rune',amt:3},{kind:rare(),amt:2},{kind:rare(),amt:1}]}}
+function ckTreasure(){const i=L.i,replay=!!(S.prog&&S.prog[i]),dm=[.7,.85,1,1.2,1.5][S.dif]||1,nb=Math.max(1,L.nBoss||1),perf=.9+.2*Math.max(0,Math.min(1,L.lives/Math.max(1,L.mxl)));
+ let n=Math.min(80,Math.round((26+i*.3)*dm*perf*(1+.15*(nb-1))));if(replay)n=Math.max(5,Math.round(n*.25));
+ // better tiers grow with level, difficulty and how well the base was defended
+ const up=(.8+i/250)*([.8,.9,1,1.15,1.3][S.dif]||1)*perf,w=CKT_W.map((x,t)=>t>=2?x*up:x);
+ const out=[];for(let k=0;k<n;k++){let t=ckRoll(w);if(replay&&t>2)t=2;out.push(Object.assign({tier:t},ckPiece(t,true,replay)))}return{list:out,replay}}
+// ---- state ----
+function ckLootReset(){L.loot=[];L.lw=null}
+function ckLootBusy(){return !!(L&&L.lw&&!L.lw.done)}
+function ckTileAny(){return[Math.random()*L.cols|0,Math.random()*L.rows|0]}
+// final-boss check: no other boss alive or still queued, last wave reached
+function ckIsFinalBoss(e){return !L.demo&&L.boss&&L.wave>=L.waves&&!L.q.some(t=>String(t).split('|')[0]==='boss')&&!L.en.some(o=>o!==e&&o.t==='boss'&&o.hp>0)}
+function ckLootOnDeath(e){if(L.demo||L.over)return;L.loot=L.loot||[];
+ if(e.t==='boss'){if(ckIsFinalBoss(e))ckLootBurst(e);return}
+ if((e.t==='brute'||e.el)&&Math.random()<(e.el?.25:.12)){const p=ckPiece(0,false,false),[x,y]=ckTileAny(),sp=eS(e);L.loot.push(Object.assign({x,y,tier:0,born:TM,life:20,fx:sp.x,fy:sp.y,ft0:performance.now(),fdur:420,boss:0},p))}}
+function ckLootBurst(e){
+ const sp=eS(e),T=ckTreasure();L.loot=(L.loot||[]).filter(l=>!l.boss);
+ // the boss's death clears the field: remaining monsters and queued spawns vanish
+ L.q=[];L.scs=[];L.sc=null;for(const o of L.en)if(o!==e&&o.hp>0)o.hp=-1;
+ // every tower and barricade disappears at once (terrain stays); the refund is computed from this snapshot
+ L.trSnap=L.tr.slice();for(const t of L.tr){const p=pp(t.x,t.y);burst(p.x,p.y,'#ffd36a',12,170);vRing(p.x,p.y,tw*.7,'#fff1a8',.45,3);const q=ckCell(t.x,t.y);if(q)q.tw=0}
+ L.tr=[];try{showSel(null)}catch(_){}try{replan()}catch(_){}
+ L.shake=Math.max(L.shake||0,1.3);vFlash('#ffe08a',.5);vGlow(sp.x,sp.y,tw*4,'#ffd36a',.7);vRing(sp.x,sp.y,tw*5,'#fff1a8',.8,8);burst(sp.x,sp.y,'#ffd36a',60,320);
+ // all pieces burst out together; spread over the map, at most 2 per tile
+ const used={},now=performance.now(),FLY=520;let best=-1;
+ for(const p of T.list){let x,y,k=0;do{[x,y]=ckTileAny();k++}while((used[x+','+y]|0)>=2&&k<40);used[x+','+y]=(used[x+','+y]|0)+1;
+  const tp=pp(x,y);L.loot.push(Object.assign({x,y,born:TM,life:null,fx:sp.x,fy:sp.y,ft0:now,fdur:FLY*(.75+Math.random()*.5),boss:1,ang:Math.random()*6.28},p));best=Math.max(best,p.tier)}
+ L.lw={t0:now+FLY,el:0,last:now,total:T.list.length,got:0,done:false,replay:T.replay};
+ try{CKS.lootBurst(best)}catch(_){}
+ if(best>=4){const t=CKT[best];window.ckBanner&&ckBanner(ckLZ(t.n)+lvZ(' 宝藏！',' TREASURE!'),best>=5?lvZ('神话掉落','MYTHIC DROP'):lvZ('传说掉落','LEGENDARY DROP'),1)}
+ ckLootUi(true);requestAnimationFrame(ckLootLoop)}
+// real-time 5 s window (paused while a menu, the shop or pause is open)
+function ckLootLoop(now){const w=L&&L.lw;if(!w||w.done)return;const dt=Math.max(0,Math.min(100,now-w.last));w.last=now;
+ const frozen=mOpen||L.paused||tab==='s'||document.hidden;if(!frozen&&now>=w.t0)w.el+=dt;
+ if(w.el>=5000){w.done=true;const left=L.loot.filter(l=>l.boss).length;L.loot=L.loot.filter(l=>!l.boss);ckLootUi(false);
+  toast(lvZ(`宝藏收集 ${w.got} / ${w.total}`,`Treasure collected: ${w.got} / ${w.total}`)+(left?lvZ(`（${left} 件已消失）`,` (${left} vanished)`):''));try{save()}catch(_){}return}
+ ckLootUi(true);requestAnimationFrame(ckLootLoop)}
+function ckLootAlpha(l){if(l.boss){const w=L.lw;if(!w)return 0;const el=w.el;return el<4000?1:Math.max(0,1-(el-4000)/1000)}const age=l.age||0;if(age>l.life)return 0;return age>l.life-5?(.35+.65*Math.abs(Math.sin(TM*6))):1}
+// ---- pickup ----
+function ckLootTap(q){if(!L||L.demo||!L.loot||!L.loot.length||!q)return false;
+ const here=L.loot.filter(l=>l.x===q.x&&l.y===q.y&&ckLootAlpha(l)>0);if(!here.length)return false;
+ L.loot=L.loot.filter(l=>!here.includes(l));let top=0;for(const l of here){ckGrant(l);top=Math.max(top,l.tier);if(l.boss&&L.lw)L.lw.got++}
+ try{CKS.pickup(top)}catch(_){}const p=pp(q.x,q.y);burst(p.x,p.y,CKT[top].c,8+top*4,140);if(top>=3)vRing(p.x,p.y,tw*.9,CKT[top].c,.5,4);
+ if(L.lw&&!L.lw.done)ckLootUi(true);try{save()}catch(_){}return true}
+function ckGrant(l){const p=pp(l.x,l.y);
+ if(l.kind==='jackpot'){for(const b of l.bundle)ckGrant(Object.assign({x:l.x,y:l.y,tier:5,boss:1},b));return}
+ let label='',col=CKT[l.tier].c,to='dia';
+ if(l.kind==='gold'){if(l.bat){Economy.grantBattle(l.amt);to='coin'}else{Economy.grantWallet(l.amt);if(L.g0!=null)L.g0+=l.amt;to='coin'}label='+'+l.amt.toLocaleString()+' 🪙'}
+ else if(l.kind==='star'){S.bonusStars=(S.bonusStars||0)+l.amt;label='+'+l.amt+' ⭐';to='star'}
+ else if(l.kind==='frag'){S.frag=(S.frag|0)+l.amt;label='+'+l.amt+' 💠';ckForge()}
+ else if(l.kind==='dia'){S.diamonds=(S.diamonds||0)+l.amt;label='+'+l.amt+' 💎'}
+ else if(l.kind==='rune'){S.rune=(S.rune|0)+l.amt;label='+'+l.amt+' 📜 '+lvZ('强化符','Rune');to='star'}
+ else if(l.kind==='item'){L.inv[l.id]=(L.inv[l.id]||0)+l.amt;const it=IT.find(x=>x.id===l.id);label='+'+l.amt+' '+(it?it.n:l.id);to='inv'}
+ else if(CK_RARE[l.kind]){L.inv[l.kind]=(L.inv[l.kind]||0)+l.amt;const R=CK_RARE[l.kind];label=R.ic+' '+ckLZ(R.n)+(l.amt>1?' ×'+l.amt:'');to='inv';ckRareCard(R,l.tier)}
+ txt(p.x,p.y-tw*.5,label,col);ckFly(l,p,to);try{invR()}catch(_){}}
+function ckForge(){let n=0;while((S.frag|0)>=4){S.frag-=4;S.diamonds=(S.diamonds||0)+1;n++}if(n){toast(lvZ(`+${n} 💎 钻石锻造完成！`,`+${n} 💎 Diamond Forged!`));try{CKS.pickup(4)}catch(_){}const e=document.getElementById('dia');if(e){e.classList.remove('ck-forge');void e.offsetWidth;e.classList.add('ck-forge')}}}
+// item flies from the tile to its counter in the top bar (or the item bar)
+function ckFly(l,p,to){try{const cv=document.getElementById('cv'),r=cv.getBoundingClientRect(),k=r.width/W,sx=r.left+p.x*k,sy=r.top+p.y*k;
+ const tgt=to==='coin'?document.getElementById('coin'):to==='inv'?document.getElementById('inv'):document.getElementById('dia');const tr=tgt?tgt.getBoundingClientRect():{left:innerWidth/2,top:10,width:0,height:0};
+ const ic=CKL_ICON[l.kind==='item'?'item':l.kind]||{e:'🎁'},el=document.createElement('div');el.className='ck-fly';el.textContent=ic.e;el.style.left=sx+'px';el.style.top=sy+'px';el.style.setProperty('--c',CKT[l.tier].c);document.body.appendChild(el);
+ const dx=tr.left+tr.width/2-sx,dy=tr.top+tr.height/2-sy;el.animate([{transform:'translate(-50%,-50%) scale(1.3)',opacity:1},{transform:`translate(calc(-50% + ${dx*.35}px),calc(-50% + ${dy*.35-40}px)) scale(1.1)`,opacity:1,offset:.35},{transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(.5)`,opacity:.2}],{duration:650,easing:'cubic-bezier(.3,.1,.3,1)'}).onfinish=()=>{el.remove();if(tgt){tgt.classList.remove('ck-bump');void tgt.offsetWidth;tgt.classList.add('ck-bump')}}}catch(_){}}
+function ckRareCard(R,tier){const el=document.createElement('div');el.className='ck-rcard';el.style.setProperty('--c',CKT[Math.max(2,tier)].c);el.innerHTML=`<i>${R.ic}</i><div><small>${lvZ('稀有道具','RARE ITEM')} · ${ckLZ(CKT[Math.max(2,tier)].n)}</small><b>${ckLZ(R.n)}</b><span>${ckLZ(R.d)}</span></div>`;document.body.appendChild(el);setTimeout(()=>el.classList.add('out'),1500);setTimeout(()=>el.remove(),2000)}
+// ---- countdown UI ----
+let CKLU=null;
+function ckLootUi(on){if(!CKLU){CKLU=document.createElement('div');CKLU.id='ck-loot';CKLU.innerHTML='<div class="r"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/></svg><b>5</b></div><div class="t"></div><div class="c"></div>';(document.getElementById('ck-bossbar')||document.body).parentNode.appendChild(CKLU)}
+ const w=L&&L.lw;if(!on||!w||w.done){CKLU.hidden=true;return}CKLU.hidden=false;const left=Math.max(0,5000-w.el),sec=Math.ceil(left/1000);
+ CKLU.querySelector('b').textContent=w.el<=0?'5':sec;CKLU.querySelector('circle').style.strokeDashoffset=(276.5*(1-left/5000)).toFixed(1);CKLU.classList.toggle('late',w.el>=3000);
+ CKLU.querySelector('.t').textContent=w.replay?lvZ('快点收集宝藏！（重玩奖励 25%）','Grab the treasure! (replay: 25%)'):lvZ('快点收集宝藏！','Grab the treasure!');
+ CKLU.querySelector('.c').textContent=lvZ(`已收集 ${w.got} / ${w.total}`,`Collected ${w.got} / ${w.total}`)}
+// ---- drawing (top layer, above towers and monsters) ----
+function ckLootDraw(){if(!L||!L.loot||!L.loot.length)return;const now=performance.now(),u=tw/100;let drop=[];
+ for(const l of L.loot){const a=ckLootAlpha(l);if(a<=0){if(!l.boss)drop.push(l);continue}
+  const tp=pp(l.x,l.y),ft=Math.min(1,(now-l.ft0)/l.fdur),e=1-Math.pow(1-ft,3);let x=l.fx+(tp.x-l.fx)*e,y=l.fy+(tp.y-l.fy)*e-Math.sin(ft*Math.PI)*tw*1.6;
+  const bob=ft>=1?Math.sin(TM*3+l.x*1.7+l.y)*tw*.05:0,T=CKT[l.tier],sz=tw*(.48+.05*l.tier)*(ft<1?.7+.3*e:1);y-=bob;
+  c.save();c.globalAlpha=a;
+  if(ft>=1){c.fillStyle='#0006';c.beginPath();c.ellipse(tp.x,tp.y+tw*.22,sz*.38,sz*.12,0,0,7);c.fill()}
+  if(T.glow){const r=sz*(.8+.15*Math.sin(TM*4+l.x));const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,T.c+'cc');g.addColorStop(1,T.c+'00');c.globalCompositeOperation='lighter';c.globalAlpha=a*T.glow*.8;c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill();c.globalCompositeOperation='source-over';c.globalAlpha=a}
+  if(l.tier>=4&&ft>=1&&window.CK_Q!==0){const bw=sz*.5,g=c.createLinearGradient(0,y-tw*3,0,y);g.addColorStop(0,T.c+'00');g.addColorStop(1,T.c+'88');c.globalCompositeOperation='lighter';c.fillStyle=g;c.fillRect(x-bw/2,y-tw*3,bw,tw*3);c.globalCompositeOperation='source-over'}
+  if(l.tier>=5&&ft>=1&&Math.random()<.3)burst(x+(Math.random()-.5)*sz,y+(Math.random()-.5)*sz,['#ff5ad0','#7ad8ff','#ffe066'][Math.random()*3|0],1,60);
+  const ic=ckLootIcon(l.kind==='item'?'item':l.kind==='jackpot'?'dia':l.kind,T.c);c.drawImage(ic,x-sz/2,y-sz/2,sz,sz);
+  if(l.kind==='jackpot'){c.font=`900 ${sz*.32|0}px Nunito,sans-serif`;c.textAlign='center';c.fillStyle='#fff';c.strokeStyle='#000';c.lineWidth=3;c.strokeText('★',x+sz*.34,y-sz*.3);c.fillText('★',x+sz*.34,y-sz*.3)}
+  c.restore()}
+ if(drop.length)L.loot=L.loot.filter(l=>!drop.includes(l))}
+// ---- diamond -> gold exchange and runes, inside the attribute upgrade screen ----
+function ckExchange(){if((S.diamonds||0)<1){toast(lvZ('钻石不足','Not enough diamonds'));return false}S.diamonds-=1;Economy.grantWallet(10000);try{updWl()}catch(_){}save();toast(lvZ('已兑换：1 💎 → 10,000 🪙','Exchanged: 1 💎 → 10,000 🪙'));try{sfx('coin',.6)}catch(_){}return true}
+function ckUseRune(k){if((S.rune|0)<1){toast(lvZ('没有强化符','No Enhancement Runes'));return false}if(cuLv(k)>=CU_MAX){toast(lvZ('该属性已满级','This attribute is already at max level'));return false}
+ S.rune-=1;S.cu=S.cu||{a:0,d:0,b:0,c:0};S.cu[k]=cuLv(k)+1;save();try{sfx('perfect',.5)}catch(_){}toast(lvZ('强化符生效！','Enhancement Rune applied!'));return true}
+function ckCuExtra(k){const zh=LANG==='zh',r=S.rune|0,max=cuLv(k)>=CU_MAX;
+ return `<div class="ck-cux"><div class="ck-rune"><span><em>📜</em>${zh?'强化符':'Enhancement Runes'} <b>×${r}</b></span><small>${zh?'每张强化符可免费强化所选属性一次。':'Each rune upgrades the selected attribute once, for free.'}</small><button type="button" class="cu-go ${r&&!max?'':'off'}" id="ckrune" ${r&&!max?'':'disabled'}>${max?(zh?'已满级':'MAX'):(zh?'使用强化符':'Use a rune')}</button></div>
+ <div class="ck-xch"><span><em>💎</em>${zh?'钻石兑换金币':'Diamond exchange'} <b>${(S.diamonds||0).toLocaleString()}</b>${(S.frag|0)?` <small>💠 ${S.frag}/4</small>`:''}</span><small>${zh?'1 钻石 = 10,000 金币（金币无法兑换钻石）':'1 diamond = 10,000 gold (gold cannot be exchanged for diamonds)'}</small><button type="button" class="cu-go ${(S.diamonds||0)>=1?'':'off'}" id="ckxch" ${(S.diamonds||0)>=1?'':'disabled'}>${zh?'兑换 1 💎':'Exchange 1 💎'}</button></div></div>`}
+
 /* ===== Chaos Kingdoms v3.6 · audio engine =====
    Every sound is synthesized with Web Audio at play time (no extra files), through the game's own
    effects channel (sg) and volume (sfxV), so the Master / Effects sliders and the sound toggle work.
@@ -1932,6 +2087,13 @@ const CKS=(()=>{
     tone(d,{t,type:'sine',f0:c[0]/2,dur:2.5,amp:.08,a:.3});boom(d,t,60,.9,.3);if(bar%2)boom(d,t+1.2,70,.6,.18);
     for(let i=0;i<2;i++){const fq=bell[(bar*2+i)%bell.length];tone(d,{t:t+i*1.2,type:'sine',f0:fq,dur:1.4,amp:.07});tone(d,{t:t+i*1.2,type:'sine',f0:fq*2.01,dur:.8,amp:.02})}bar++};
    play();const iv=setInterval(play,2400);return ()=>{live=false;clearInterval(iv);try{d.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}}},
+  // loot: pickup chime brighter and richer with rarity; treasure burst = gold crash + rising sparkle
+  pickup:(tier=0)=>{if(!on())return false;const t=au.currentTime+.005,d=out(.55+.08*tier,.25+.05*tier,0),base=[880,988,1175,1319,1568,1760][Math.min(5,tier)];
+   tone(d,{t,type:'triangle',f0:base,dur:.12,amp:.18});tone(d,{t:t+.06,type:'sine',f0:base*1.5,dur:.18+.05*tier,amp:.14});
+   if(tier>=2)tone(d,{t:t+.12,type:'sine',f0:base*2,dur:.3+.08*tier,amp:.1});if(tier>=4){[1,1.25,1.5,2].forEach((m,i)=>tone(d,{t:t+.18+i*.07,type:'sine',f0:base*m,dur:.5,amp:.08}));noise(d,{t,dur:.6,ft:'highpass',f0:6000,amp:.06})}return true},
+  lootBurst:(best=0)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.5,0);boom(d,t,55,1,.6);noise(d,{t,dur:1.4,ft:'highpass',f0:4000,f1:7000,amp:.18,a:.02});
+   for(let i=0;i<14;i++)tone(d,{t:t+.05+i*.045,type:'sine',f0:R(1400,3600),dur:.25,amp:.07});
+   if(best>=4){[523,659,784,1047].forEach((f,i)=>tone(d,{t:t+.35+i*.11,type:'sawtooth',f0:f,dur:.6,amp:.05,lp:2600}))}return true},
   // test hook: render a voice into any context (used by the automated sound checks)
   _voices:()=>({monsters:Object.keys(MV),bosses:Object.keys(BV)})
  };
@@ -2366,7 +2528,7 @@ function rewardFx(){
   const step=now=>{if(!live())return;const k=Math.min(1,(now-st0)/dur),e=1-Math.pow(1-k,3);sp.textContent=Math.round(n*e).toLocaleString();if(now-lastTick>90&&k<1){lastTick=now;sfx('coin',.35)}if(k<1)requestAnimationFrame(step);else{tot.classList.add('pulse');sfx('upgrade',.7)}};
   requestAnimationFrame(step)},t0);
 }
-function end(win){L.over=true;sfx(win?'win':'lose');if(win&&!L.demo&&L.boss)setTimeout(()=>{try{CKS.fanfare()}catch(_){}},650);if(win)ckEndingQueue();let st=L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1;let first=!S.prog[L.i],dm=[.7,.85,1,1.2,1.5][S.dif];L.gBase=Math.round(win?(120+L.i*18)*(first?1:.5)*dm:L.wave*6*dm);L.gStar=win?Math.round(L.gBase*[0,.5,1.2][st-1]):0;L.gainLv=L.gBase+L.gStar;L.st=st;L.gainBoss=win&&L.boss?Math.round((500+(L.i/8|0)*200)*(first?1:.5)*dm):0;L.gain=L.gainLv+L.gainBoss;L.refund=win&&!L.demo?L.tr.reduce((a,t)=>a+(t?Math.round((t.inv||TW[t.k].cost)*.5):0),0):0;if(!win&&!cheat()&&L.g0!=null)S.gold=Math.max(0,L.g0-(L.is||0));Economy.grantWallet(L.gain+L.refund);updWl();recordSession(win?'win':'loss');let pg=null;if(win){ckCrownEval();S.prog[L.i]=Math.max(S.prog[L.i]||0,st);pg=awardProgress(st)}else{progressStats();S.stats.streak=0}save();if(win)refreshProfileTeaser();
+function end(win){L.over=true;sfx(win?'win':'lose');if(win&&!L.demo&&L.boss)setTimeout(()=>{try{CKS.fanfare()}catch(_){}},650);if(win)ckEndingQueue();let st=L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1;let first=!S.prog[L.i],dm=[.7,.85,1,1.2,1.5][S.dif];L.gBase=Math.round(win?(120+L.i*18)*(first?1:.5)*dm:L.wave*6*dm);L.gStar=win?Math.round(L.gBase*[0,.5,1.2][st-1]):0;L.gainLv=L.gBase+L.gStar;L.st=st;L.gainBoss=win&&L.boss?Math.round((500+(L.i/8|0)*200)*(first?1:.5)*dm):0;L.gain=L.gainLv+L.gainBoss;L.refund=win&&!L.demo?(L.trSnap||L.tr).reduce((a,t)=>a+(t?Math.round((t.inv||TW[t.k].cost)*.5):0),0):0;if(!win&&!cheat()&&L.g0!=null)S.gold=Math.max(0,L.g0-(L.is||0));Economy.grantWallet(L.gain+L.refund);updWl();recordSession(win?'win':'loss');let pg=null;if(win){ckCrownEval();S.prog[L.i]=Math.max(S.prog[L.i]||0,st);pg=awardProgress(st)}else{progressStats();S.stats.streak=0}save();if(win)refreshProfileTeaser();
  const _endL=L;setTimeout(()=>{if(L!==_endL)return;modal(win?`<img class="bn" src="${SPRD.victory}" alt="Victory"><p>${TL('{0} enemies beaten, {1} lives left.',L.kills,L.lives)} </p>${rewardPanel(st,pg)}${ckCrownHtml()}${rep()}${pg?(window.vrkCard?window.vrkCard(pg):''):''}${pg&&pg.newA.length?`<p class="vlink" data-prof="victory" style="color:#f4d58b">${ckResIcon('medal')} ${TL('Achievement unlocked')}: ${pg.newA.map(a=>TL(a.name)+' +'+(a.gold||0)).join('、')}</p>`:''}${pg&&pg.newSecrets&&pg.newSecrets.length?`<p style="color:#f4d58b">✦ ${TL('Secret map discovered!')} ${pg.newSecrets.map(i=>TL(R[i].n)).join('、')}</p>`:''}${L.i<99&&isOpen(L.i+1)?'<button class="bt" id="m1">'+TL('Next level')+'</button>':''}<button class="bt g" id="m2">${TL('World map')}</button>`:`<img class="bn" src="${SPRD.defeat}" alt="Defeat"><p>${TL('The monsters got through on wave {0}.',L.wave)} ${tip()} <b style="color:var(--gold)">${TL('Wallet +{0}',L.gain)}</b></p>${rep()}<button class="bt r" id="m1">${TL('Retry level')}</button><button class="bt g" id="m2">${TL('World map')}</button>`,win&&L.i<99&&isOpen(L.i+1)?()=>start(L.i+1):win?null:()=>start(L.i));if(win)rewardFx()},900)}
 function upd(dt){TKN++;
  if(L.demo){L.stim-=dt;if(L.stim<=0){spawn('grunt');L.stim=2}}
@@ -2377,7 +2539,7 @@ function upd(dt){TKN++;
  // MAX 1: no random three-choice reward cards between waves.
  if(!L.demo){L.tr.forEach(t=>{if(t.building){const BD=buildDur();t.buildT=Math.min(BD,(t.buildT||0)+dt);t.hp=Math.min(t.mhp,t.hp+t.mhp*dt/BD);if(t.buildT>=BD){t.building=0;t.hp=t.mhp;t.bt=TM;let p=pp(t.x,t.y);vGlow(p.x,p.y-tw*.28,tw*1.05,'#a8f5ff',.48);vRing(p.x,p.y+tw*.12,tw*.78,'#fff4c2',.48,6);vRing(p.x,p.y+tw*.12,tw*1.12,'#70eaff',.58,4);vSparks(p.x,p.y-tw*.25,22,'#b9f6ff',150,.55);burst(p.x,p.y,'#fff',14,95);sfx('upgrade')||beep(820,.18,'triangle',.08);toast(TL('{0} completed!',TW[t.k].n));}}else tUp(t,dt)});
   L.shots.forEach(s=>{s.t+=dt;let k=Math.min(1,s.t/s.dur);if(s.e.hp>0){let q=eS(s.e);s.tx=q.x;s.ty=q.y;[s.wx,s.wy]=epos(s.e)}s.gx=s.fx+(s.tx-s.fx)*k;s.gy=s.fy+(s.ty-s.fy)*k;s.h=s.arc?Math.sin(Math.PI*k)*s.arc:0;if(k>=1){hit(s);s.dead=1}});L.shots=L.shots.filter(s=>!s.dead);L.shots.forEach(vTrail);
-  if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over)end(true)}
+  if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over&&!ckLootBusy())end(true)}
  vUpd(dt);L.pt.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=200*dt;p.l-=dt});L.pt=L.pt.filter(p=>p.l>0);
  L.tx.forEach(t=>{t.y-=30*dt;t.l-=dt});L.tx=L.tx.filter(t=>t.l>0);L.bo.forEach(b=>b.l-=dt);L.bo=L.bo.filter(b=>b.l>0);L.rg.forEach(r=>{r.l-=dt;r.r+=dt*r.mr/(r.k==='#ff5b7f'?.5:.35)});L.rg=L.rg.filter(r=>r.l>0);L.shake=Math.max(0,L.shake-dt*1.6)}
 /* ---------- tower art: split 2.5D rig, fixed base + 180 individually rasterized turret headings ---------- */
@@ -3325,7 +3487,7 @@ const BG={c:null,k:''};function draw(){lay();c.save();c.clearRect(0,0,W,H);{let 
  ground();drawDecals();L.g.forEach(q=>{if(q.ob&&!(TERR.on()&&L.kit))dOb(q)});drawRiver();dPortal();dBase();ckBaseDraw();
  L.g.forEach(q=>{if(q.nb){let p=pp(q.x,q.y);c.fillStyle='rgba(255,40,80,'+(.22+.08*Math.sin(TM*3))+')';c.fillRect(p.x-tw/2,p.y-tw/2,tw,tw);c.strokeStyle='rgba(255,90,110,.45)';c.lineWidth=1;c.strokeRect(p.x-tw/2+.5,p.y-tw/2+.5,tw-1,tw-1)}});
  if(S.mode==='play'){let h=selT||(bm?hov:null);if(h){let k=TW[selT?selT.k:selK],p=pp(h.x,h.y),q=cell(h.x,h.y),ok=!selT&&!q.p&&!q.ob&&!q.sw&&!q.wtr&&!q.sp&&!q.nb&&afford(k.cost),rg=selT?ts(selT).rg:k.rg;c.fillStyle=selT?'#ffd34a44':ok?'#8be05a66':'#ff5b7f66';c.fillRect(p.x-tw/2,p.y-tw/2,tw,tw);c.strokeStyle='#ffffffbb';c.lineWidth=2;if(selT){c.setLineDash([6,5]);c.beginPath();c.arc(p.x,p.y,rg*tw,0,7);c.stroke();c.setLineDash([])}}}
- ckV3Ground();L.tr.slice().sort((a,b)=>a.y-b.y).forEach(dTw);{const _o=L.en.map(e=>[eS(e).y,e]);_o.sort((a,b)=>a[0]-b[0]);for(let i=0;i<_o.length;i++)dEn(_o[i][1])}ckCorpses();L.shots.forEach(dShot);drawFx();dAir();
+ ckV3Ground();L.tr.slice().sort((a,b)=>a.y-b.y).forEach(dTw);{const _o=L.en.map(e=>[eS(e).y,e]);_o.sort((a,b)=>a[0]-b[0]);for(let i=0;i<_o.length;i++)dEn(_o[i][1])}ckCorpses();L.shots.forEach(dShot);drawFx();dAir();ckLootDraw();
  L.rg.forEach(r=>{c.strokeStyle=r.k;c.globalAlpha=Math.max(0,r.l*2);c.lineWidth=4;c.beginPath();c.arc(r.x,r.y,r.r*tw,0,7);c.stroke();c.globalAlpha=1});
  L.bo.forEach(b=>{c.globalAlpha=Math.min(1,b.l*6);c.shadowBlur=12;c.shadowColor='#c9a0ff';c.lineJoin='round';[['#c9a0ff',6],['#fff',2.5]].forEach(s=>{c.strokeStyle=s[0];c.lineWidth=s[1]*tw/100*1.5;c.beginPath();b.p.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.stroke()});c.shadowBlur=0;c.globalAlpha=1});
  L.pt.forEach(p=>{c.globalAlpha=Math.max(0,p.l/p.m);circ(p.x,p.y,p.r,p.c)});c.globalAlpha=1;c.font=`900 ${Math.max(12,tw*.26)}px Nunito`;c.textAlign='center';L.tx.forEach(t=>{c.globalAlpha=Math.min(1,t.l*2);c.lineWidth=3;c.strokeStyle='#170f2e';c.strokeText(t.s,t.x,t.y);c.fillStyle=t.c;c.fillText(t.s,t.x,t.y)});c.globalAlpha=1;
@@ -3333,7 +3495,7 @@ const BG={c:null,k:''};function draw(){lay();c.save();c.clearRect(0,0,W,H);{let 
 function tileAt(mx,my){let sx=Math.floor((mx-ox)/tw),sy=Math.floor((my-oy)/tw),x=port?sy:sx,y=port?sx:sy;return x>=0&&y>=0&&x<L.cols&&y<L.rows?cell(x,y):null}
 function pos(ev){let r=cv.getBoundingClientRect();return[(ev.clientX-r.left)*W/r.width,(ev.clientY-r.top)*H/r.height]}
 cv.addEventListener('pointermove',ev=>{if(S.mode==='play')hov=tileAt(...pos(ev))});cv.addEventListener('pointerleave',()=>hov=null);
-cv.addEventListener('pointerdown',ev=>{if(S.mode!=='play'||L.over)return;ev.preventDefault();if(L.paused){toast('Resume to build or interact');return;}let q=tileAt(...pos(ev));hov=q;if(!q){L.placing=null;showSel(null);return}if(L.placing==='river'){let ri=q.x,lim=L.cols;if(ri<1||ri>lim-2){toast('Pick a spot away from the gates');return}placeRiver(ri);return}if(L.placing==='air'){placeAir(q);return}if(L.placing==='bomb'){placeBomb(q);return}
+cv.addEventListener('pointerdown',ev=>{if(S.mode!=='play'||L.over)return;ev.preventDefault();if(L.paused){toast('Resume to build or interact');return;}let q=tileAt(...pos(ev));hov=q;if(!q){L.placing=null;showSel(null);return}if(ckLootTap(q))return;if(L.placing==='river'){let ri=q.x,lim=L.cols;if(ri<1||ri>lim-2){toast('Pick a spot away from the gates');return}placeRiver(ri);return}if(L.placing==='air'){placeAir(q);return}if(L.placing==='bomb'){placeBomb(q);return}
  {const bb=L.base&&L.base.L===L&&L.base.find(b=>!b.dead&&b.x===q.x&&b.y===q.y);if(bb){ckBasePanel(bb);return}}let t=L.tr.find(t=>t.x===q.x&&t.y===q.y);if(t){if(t.building){toast(TL('Energy core')+' · '+Math.floor(t.hp/t.mhp*100)+'%');return}showSel(selT===t?null:t);return}if(q.p||q.ob||q.sp||q.nb||q.rv||q.wtr||q.sw){toast(q.nb?lvZ('出怪口附近禁止建造','No building near monster portals'):q.sw?'Swamp: slows monsters. Build beside it.':q.p?'Choose another open tile':q.sp?'Keep the gates clear':'Something is in the way');return}
  if(!bm){toast('Pick a tower first (keys 1-8)');return}let d=TW[selK];if(!charge(d.cost)){toast('Not enough coins');return}let n={k:selK,x:q.x,y:q.y,lv:1,cd:0,rc:0,st:0,a:0,av:0,inv:d.cost,bt:TM,tg:0,building:1,buildT:0},s=pp(q.x,q.y);n.mhp=thp(n);n.hp=0;q.tw=n;L.tr.push(n);replan();burst(s.x,s.y,'#9cefff',14,100);vGlow(s.x,s.y-tw*.25,tw*.7,'#72eaff',.7);vRing(s.x,s.y,tw*.72,'#8defff',.7,4);vSparks(s.x,s.y,12,'#c9f8ff',150,.5);sfx('build')||beep(420,.08,'triangle',.07);L.built++;toast(TL('Energy core forming · {0}s',+buildDur().toFixed(1)));showSel(null)});
 const SELL=.7,SC=[e=>e.pr,e=>-e.pr,e=>e.hp,e=>-e.hp,e=>e.d.sp*(e.sl>0?.5:1)*1e3+e.pr*.001],TN=['First','Last','Strong','Weak','Fast'];
@@ -3377,7 +3539,7 @@ function placeRiver(index){if(!(L.inv.river>0)){L.placing=null;render();return}c
  L.en.forEach(e=>{if(!e.fly){e.tc=null;e.vv=[0,0];e.atk=null;e._nav=e._nav||{};e._nav.wander=null;e._nav.wanderT=0;e._nav.wanderRecent=[];e._nav.stuck=0;e._nav.best=1e9;e._nav.bt=0}});replan();computeDF();vFlash('#5ab8ff',.25);L.shake=.3;
  toast('The river spans the whole map for 30s. Ground enemies can only cross at bridges.');render()}
 function endRiver(){if(!L.rv)return;const r=L.rv; if(r.cells)r.cells.forEach(([x,y,old])=>{cell(x,y).rv=old});else if(r.axis==='col')for(let y=0;y<L.rows;y++)cell(r.index??r.row,y).rv=0;else for(let x=0;x<L.cols;x++)cell(x,r.index??r.row).rv=0;L.rv=null;replan();computeDF();toast('The river dried up')}
-function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;if(L.cdn[id]>0)return toast(TL('{0} is cooling down: {1}s',it.n,Math.ceil(L.cdn[id])));let en=L.en.filter(e=>e.hp>0);
+function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;if(CK_RARE[id])return ckUseRare(id);if(L.cdn[id]>0)return toast(TL('{0} is cooling down: {1}s',it.n,Math.ceil(L.cdn[id])));let en=L.en.filter(e=>e.hp>0);
  if(id==='river'){if(L.rv)return toast('A river is already flowing');if(L.placing==='river'){L.placing=null;render();return toast('River placement cancelled')}L.placing='river';render();return toast('River selected: tap any row on the map to place it (Q to cancel)')}
  if(id==='air'||id==='bomb'){if(L.placing===id){L.placing=null;render();return toast('Cancelled')}L.placing=id;render();return toast(id==='air'?'Tap the map where enemies bunch up (Q cancels)':'Tap a lane: the jets fly along it (Q cancels)')}
  if(id==='heli'&&L.hel)return toast('A gunship is already on station');
@@ -3439,7 +3601,7 @@ addEventListener('keydown',e=>{if(S.mode!=='play'||e.target.tagName==='INPUT')re
  else if(k==='escape'){if(mOpen)closeM();else showSel(null)}});
 function setCd(n,txt){let e=$('cd'),h;if(n===null)h=txt;else{let parts=TL('in {0}s','\u0001').split('\u0001');h='<i class="cdp">'+(parts[0]||'')+'</i><i class="cdn">'+n+'</i><i class="cdp">'+(parts[1]||'')+'</i>'}if(e.dataset.h!==h){e.dataset.h=h;e.innerHTML=h}}
 function setT(id,v){let e=$(id);v=''+v;if(e.textContent!==v)e.textContent=v}
-function hud(){if(S.mode!=='play')return;if(typeof updWl==='function')updWl();{let j=JSON.stringify(S.inv||{});if(j!==window.__ij){window.__ij=j;save()}}posTP();{let pl=L.placing;document.querySelectorAll('#inv .iv').forEach(b=>b.classList.toggle('act',b.dataset.use===pl));document.querySelectorAll('[data-cdid]').forEach(e=>{let id=e.dataset.cdid,r=L.cdn[id]||0;e.style.setProperty('--p',r>0?r/CDT[id]:0);let t=e.querySelector('.cdt'),v=r>0?Math.ceil(r):'';if(t&&t.textContent!=v)t.textContent=v})}setT('coin',ckCoinFmt(Economy.battleBalance()));setT('dia',(S.diamonds||0).toLocaleString());setT('lives',L.lives);$('lvw').classList.toggle('low',L.lives<=Math.max(3,L.mxl*.25));{let wb=$('wbar');if(wb)wb.style.width=(L.waves?Math.min(100,L.wave/L.waves*100):0)+'%'}setT('wv',L.wave+'/'+L.waves);{let q=L.nq?L.nq.q.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{}):null;L.nt=q?TL('Next: ')+Object.entries(q).map(([k,v])=>v+' '+TL(k)).join(', '):''}let f=L.wave>=L.waves;setCd(f?null:Math.ceil(L.cd),f?TL('Final'):'');$('skip').style.visibility=f?'hidden':'visible';
+function hud(){if(S.mode!=='play')return;if(typeof updWl==='function')updWl();{let j=JSON.stringify(S.inv||{});if(j!==window.__ij){window.__ij=j;save()}}posTP();{let pl=L.placing;document.querySelectorAll('#inv .iv').forEach(b=>b.classList.toggle('act',b.dataset.use===pl));document.querySelectorAll('[data-cdid]').forEach(e=>{let id=e.dataset.cdid,r=L.cdn[id]||0;e.style.setProperty('--p',r>0?r/CDT[id]:0);let t=e.querySelector('.cdt'),v=r>0?Math.ceil(r):'';if(t&&t.textContent!=v)t.textContent=v})}setT('coin',ckCoinFmt(Economy.battleBalance()));setT('dia',(S.diamonds||0).toLocaleString()+((S.frag|0)?' 💠'+S.frag+'/4':''));setT('lives',L.lives);$('lvw').classList.toggle('low',L.lives<=Math.max(3,L.mxl*.25));{let wb=$('wbar');if(wb)wb.style.width=(L.waves?Math.min(100,L.wave/L.waves*100):0)+'%'}setT('wv',L.wave+'/'+L.waves);{let q=L.nq?L.nq.q.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{}):null;L.nt=q?TL('Next: ')+Object.entries(q).map(([k,v])=>v+' '+TL(k)).join(', '):''}let f=L.wave>=L.waves;setCd(f?null:Math.ceil(L.cd),f?TL('Final'):'');$('skip').style.visibility=f?'hidden':'visible';
  let b=[];if(L.bf.ovc>0)b.push(TL('Speed {0}s',Math.ceil(L.bf.ovc)));if(L.bf.idol>0)b.push(TL('Gold ×2 {0}s',Math.ceil(L.bf.idol)));if(L.bf.horn>0)b.push(TL('Horn {0}s',Math.ceil(L.bf.horn)));if(L.bf.shield>0)b.push(TL('Shield {0}s',Math.ceil(L.bf.shield)));if(L.bf.aid>0)b.push(TL('Aid {0}s',Math.ceil(L.bf.aid)));setT('nxt',b.length?b.join(' · '):'');$('nxt').style.color=b.length?'var(--mint)':'';
  document.querySelectorAll('[data-cost]').forEach(x=>x.classList.toggle('no',!afford(+x.dataset.cost)))}
 function refreshProfileTeaser(){progressStats();let ri=rankAt(S.xp),next=RANKS[ri+1];$('ptitle').textContent=rankTitle(ri)+' · Lv.'+(ri+1);$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'))}
@@ -3490,13 +3652,13 @@ addEventListener('pagehide',()=>{try{if(S.mode==='play')recordSession('quit',tru
 
 /*XFER_BEGIN*/
 const XT=(e,z)=>LANG==='zh'?z:e;
-function xferObj(){progressStats();return{game:'Chaos Kingdoms',kind:'progress',v:1,t:new Date().toISOString(),n:S.name,own:S.own,p:S.prog,d:S.dif,g:S.gold,u:S.unl,maps:S.maps,inv:S.inv||{},xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{}}}
+function xferObj(){progressStats();return{game:'Chaos Kingdoms',kind:'progress',v:1,t:new Date().toISOString(),n:S.name,own:S.own,p:S.prog,d:S.dif,g:S.gold,u:S.unl,maps:S.maps,inv:S.inv||{},xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},ru:S.rune|0}}
 function xferEncode(){let j=JSON.stringify(xferObj()),b='';try{let u=new TextEncoder().encode(j);for(let i=0;i<u.length;i++)b+=String.fromCharCode(u[i]);return 'CK1:'+btoa(b)}catch(e){return j}}
 function xferParse(t){t=String(t||'').trim();if(!t)throw 0;let j;if(t.startsWith('CK1:')){let b=atob(t.slice(4).replace(/\s+/g,'')),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);j=JSON.parse(new TextDecoder().decode(u))}else j=JSON.parse(t);
  if(!j||j.game!=='Chaos Kingdoms'||j.kind!=='progress'||typeof j.p!=='object'||j.p===null)throw 0;return j}
 function xferApply(j){const o=v=>(v&&typeof v==='object'&&!Array.isArray(v))?v:{};
  S.name=String(j.n||'').slice(0,40);S.own=j.own!==undefined?String(j.own||''):S.name;S.prog=o(j.p);S.dif=Math.max(0,Math.min(4,(+j.d)|0));S.gold=Number.isFinite(+j.g)?Math.max(0,+j.g):3000;S.unl=o(j.u);S.maps=o(j.maps);S.inv=o(j.inv);S.xp=Math.max(0,+j.xp||0);
- S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},o(j.stats));S.ach=Array.isArray(j.ach)?j.ach.map(String):[];S.cc=o(j.cc);S.mb=o(j.mb);S.cu=(j.cu&&typeof j.cu==='object')?{a:j.cu.a|0,d:j.cu.d|0,b:j.cu.b|0,c:j.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+j.ss||0);S.fx=fxClean(j.fx);selectedRealm=0;
+ S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},o(j.stats));S.ach=Array.isArray(j.ach)?j.ach.map(String):[];S.cc=o(j.cc);S.mb=o(j.mb);S.cu=(j.cu&&typeof j.cu==='object')?{a:j.cu.a|0,d:j.cu.d|0,b:j.cu.b|0,c:j.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+j.ss||0);S.fx=fxClean(j.fx);S.rune=Math.max(0,+j.ru||0);selectedRealm=0;
  save();try{localStorage.setItem('ck25_name',S.name)}catch(e){}$('nm').value=S.name;$('chip').hidden=!cheat();updWl();updateDifficulty();refreshProfileTeaser();if(S.mode==='map')buildMap()}
 function openXfer(fromPause){
  const back=()=>{closeM();if(fromPause===true&&typeof pauseM==='function')pauseM()};
@@ -3653,7 +3815,7 @@ function unlockSecret(idx){
 }
 $('nm').oninput=e=>{S.name=e.target.value;try{localStorage.setItem('ck25_name',S.name)}catch(_){}clearTimeout($('nm')._t);$('nm')._t=setTimeout(save,400);$('chip').hidden=!cheat();updWl();if(L){hud();render()}};
 const GOLD_CODES={};
-$('play').onclick=()=>{S.name=$('nm').value.trim()||'Commander';{let k0=normalizeCheatCode(S.name),special=Object.prototype.hasOwnProperty.call(GOLD_CODES,k0);if(!special){if(S.own&&S.own!==S.name){S.gold=3000;S.diamonds=0;S.bonusStars=0;S.fx={};S.cc={};S.mb={};S.cu={a:0,d:0,b:0,c:0};S.ss=0;S.prog={};S.unl={};S.maps={};S.xp=0;S.inv={};S.ach=[];S.stats={wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0};selectedRealm=0}S.own=S.name}}S.cc=S.cc||{};{let k=normalizeCheatCode(S.name);if(Object.prototype.hasOwnProperty.call(GOLD_CODES,k)&&!S.cc[k]){S.cc[k]=1;Economy.grantWallet(GOLD_CODES[k]);setTimeout(()=>toast('🪙 +'+GOLD_CODES[k].toLocaleString()),300)}}updWl();save();if(!mOff)music(true);$('mt').textContent=mapT();toMap()};
+$('play').onclick=()=>{S.name=$('nm').value.trim()||'Commander';{let k0=normalizeCheatCode(S.name),special=Object.prototype.hasOwnProperty.call(GOLD_CODES,k0);if(!special){if(S.own&&S.own!==S.name){S.gold=3000;S.diamonds=0;S.frag=0;S.rune=0;S.bonusStars=0;S.fx={};S.cc={};S.mb={};S.cu={a:0,d:0,b:0,c:0};S.ss=0;S.prog={};S.unl={};S.maps={};S.xp=0;S.inv={};S.ach=[];S.stats={wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0};selectedRealm=0}S.own=S.name}}S.cc=S.cc||{};{let k=normalizeCheatCode(S.name);if(Object.prototype.hasOwnProperty.call(GOLD_CODES,k)&&!S.cc[k]){S.cc[k]=1;Economy.grantWallet(GOLD_CODES[k]);setTimeout(()=>toast('🪙 +'+GOLD_CODES[k].toLocaleString()),300)}}updWl();save();if(!mOff)music(true);$('mt').textContent=mapT();toMap()};
 $('back').onclick=()=>{show('title');$('chip').hidden=!cheat()};
 const pauseM=()=>{modal(`<div class="pause-title"><span class="pause-emblem">✦</span><h2 class="f">${TL('Paused')}</h2><p>${L.reg.n}　·　${TL('Level {0}',L.i+1)}</p></div><div class="pause-settings">${sl()}${tg()}</div><button class="bt" id="m1">▶ ${TL('Resume')}</button><button class="bt pay" id="picklevel">✦ ${TL('Select level')}</button><div class="pause-secondary"><button class="bt g" id="m3">↻ ${TL('Restart level')}</button><button class="bt g musbtn">${mon?TL('♪ Music: on'):TL('♪ Music: off')}</button></div><div class="row2"><button class="bt g rotbtn">⟳ ${TL('Screen: ')}${TL('Auto')}</button><button class="bt g langbtn">🌐 ${LANG==='zh'?'中文':'EN'}</button></div><button class="bt r" id="m2">⌂ ${TL('Quit to map')}</button>`);if(au)au.suspend().catch(()=>{});$('m1').onclick=()=>{closeM();resumeGameAudio()};$('m2').onclick=()=>{closeM();resumeGameAudio();toMap()};$('m3').onclick=()=>{closeM();resumeGameAudio();start(L.i)};$('picklevel').onclick=pauseLevelPicker;reM=pauseM};$('menu').onclick=pauseM;
 /* ---------- arcade action score (NES-style pulse, triangle bass, noise drums) ---------- */
@@ -4181,10 +4343,10 @@ function cuOpen(k,flash){
   <div class="cu-pips">${pp}</div>
   ${max?`<div class="cu-max">${zh?'已强化至满级':'Fully upgraded'}</div>`:`<div class="cu-lab">${zh?'下一级强化消耗':'Next upgrade cost'}</div><div class="cu-cost"><div class="${okS?'ok':'no'}"><em>${ckResIcon('star')}</em><b>${sc}</b><small>${zh?'持有':'Have'} ${fmt(haveS)}</small></div><div class="${okG?'ok':'no'}"><em>${ckResIcon('coin')}</em><b>${gc.toLocaleString()}</b><small>${zh?'持有':'Have'} ${fmt(haveG)}</small></div>${dc?`<div class="${okD?'ok':'no'}"><em>${ckResIcon('diamond')}</em><b>${dc}</b><small>${zh?'持有':'Have'} ${fmt(haveD)}</small></div>`:`<div class="cu-free"><em>${ckResIcon('diamond')}</em><b>0</b><small>${zh?'前四级免费':'Free · first 4 levels'}</small></div>`}</div>`}
   <button type="button" class="cu-go ${can?'':'off'}" id="cugo" ${max?'disabled':''}>${max?(zh?'已满级':'MAX'):can?((zh?'强化 ':'Upgrade ')+upl):(!okS?(zh?'星星不足':'Not enough stars'):!okG?(zh?'金币不足':'Not enough coins'):(zh?'钻石不足':'Not enough diamonds'))}</button></div>
- <div class="cu-note">${note}</div></div>
+ ${ckCuExtra(k)}<div class="cu-note">${note}</div></div>
  <button class="bt g" id="m1">${zh?'返回档案':'Back'}</button>`;
  modal(h,()=>{openProfile()});
- const b=document.getElementById('cugo');if(b&&!max)b.onclick=()=>cuUpgrade(k);
+ const b=document.getElementById('cugo');if(b&&!max)b.onclick=()=>cuUpgrade(k);{const r=document.getElementById('ckrune');if(r)r.onclick=()=>{if(ckUseRune(k))cuOpen(k,true)};const x=document.getElementById('ckxch');if(x)x.onclick=()=>{if(ckExchange())cuOpen(k)}}
  document.querySelectorAll('#mbox [data-cut]').forEach(t=>t.onclick=()=>cuOpen(t.dataset.cut));
 }
 window.cuOpen=cuOpen;
@@ -5249,6 +5411,25 @@ html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;
 .ck-tips li{display:grid;gap:2px;padding:7px 9px;border-radius:9px;background:#ffffff0b;border:1px solid #ffffff14}
 .ck-tips li b{font-size:13px;color:#fff1bf}.ck-tips li b em{font-style:normal;font-weight:900}
 .ck-tips li span{font-size:12.5px;line-height:1.42;color:#cfd5ee}
+/* v4.1 loot */
+#ck-loot{position:absolute;left:50%;top:12%;z-index:46;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none}
+#ck-loot[hidden]{display:none!important}
+#ck-loot .r{position:relative;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#3a2a06f0 0 58%,#1a1204f0 60%);box-shadow:0 0 0 2px #ffd36a,0 0 26px #ffc23acc,0 10px 24px #000c}
+#ck-loot .r svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}#ck-loot circle{fill:none;stroke:#fff1a8;stroke-width:6;stroke-linecap:round;stroke-dasharray:276.5}
+#ck-loot b{font:900 44px/1 'Cinzel',Georgia,serif;color:#fff6d8;text-shadow:0 3px 0 #4a2a04,0 0 16px #ffc23a}
+#ck-loot.late .r{box-shadow:0 0 0 2px #ff6a4a,0 0 26px #ff3a2acc,0 10px 24px #000c}#ck-loot.late b{color:#ffd0c4;text-shadow:0 3px 0 #4a0a04,0 0 16px #ff4a3a}
+#ck-loot .t{padding:5px 14px;border-radius:99px;background:#2a1a04ee;border:1px solid #ffd36a99;font:900 13px/1.2 'Nunito',sans-serif;letter-spacing:.08em;color:#fff1bf;text-transform:uppercase;white-space:nowrap;box-shadow:0 6px 16px #000a}
+#ck-loot .c{font:800 12px 'Nunito',sans-serif;color:#ffe9a8;text-shadow:0 1px 2px #000}
+.ck-fly{position:fixed;z-index:10040;pointer-events:none;font-size:26px;filter:drop-shadow(0 0 8px var(--c)) drop-shadow(0 2px 2px #000)}
+.ck-bump{animation:ckBump .35s ease-out}.ck-forge{animation:ckForge .9s ease-out}
+@keyframes ckBump{40%{transform:scale(1.35);filter:brightness(1.6)}}
+@keyframes ckForge{0%,100%{filter:none}30%{transform:scale(1.5);filter:brightness(2) drop-shadow(0 0 10px #7ad8ff)}}
+.ck-rcard{position:fixed;left:50%;bottom:24%;z-index:10045;transform:translateX(-50%);display:flex;gap:10px;align-items:center;max-width:min(92vw,380px);padding:10px 14px;border-radius:14px;background:linear-gradient(170deg,#1a1430f2,#0a0816f2);border:1px solid var(--c);box-shadow:0 0 24px var(--c),0 12px 30px #000c;color:#f4ead2;animation:ckRIn .35s cubic-bezier(.2,.9,.3,1.2) both;pointer-events:none}
+.ck-rcard.out{animation:ckROut .45s ease-in both}.ck-rcard i{font-style:normal;font-size:34px;filter:drop-shadow(0 0 10px var(--c))}
+.ck-rcard small{display:block;font:900 10px Nunito,sans-serif;letter-spacing:.16em;color:var(--c)}.ck-rcard b{display:block;font:900 16px Cinzel,Georgia,serif;color:#fff1bf}.ck-rcard span{display:block;font-size:12px;line-height:1.35;color:#cfd5ee}
+@keyframes ckRIn{from{opacity:0;transform:translate(-50%,20px) scale(.9)}}@keyframes ckROut{to{opacity:0;transform:translate(-50%,-14px)}}
+.ck-cux{display:grid;gap:8px;margin:10px 0 4px}.ck-cux>div{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:8px 10px;border-radius:10px;background:#ffffff0c;border:1px solid #ffffff1a}
+.ck-cux span{font-weight:800;color:#fff1bf}.ck-cux span em{font-style:normal;margin-right:5px}.ck-cux small{grid-column:1;font-size:11.5px;color:#aeb6d6}.ck-cux .cu-go{grid-column:2;grid-row:1/3;margin:0;padding:8px 12px;font-size:13px;white-space:nowrap}
 </style>
 <script id="ck-fixes">
 /* runtime fixes (source-level fixes live in build.py) */
@@ -5297,7 +5478,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v4.0 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v4.1 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

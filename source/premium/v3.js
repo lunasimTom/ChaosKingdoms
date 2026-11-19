@@ -71,6 +71,7 @@ function ckRes(e,d,src){
 }
 function ckOnDeath(e){
  if(L.demo)return;
+ try{ckLootOnDeath(e)}catch(err){console.warn('loot',err)}
  if(e.rl==='split'){for(let k=0;k<2;k++){spawn('runner',{x:e.x+(k?.25:-.25),y:e.y+(Math.random()-.5)*.3});const c=L.en[L.en.length-1];c.hp=c.mx=c.mx*.35;c.pro=.35;c.el=0;c.rl=null}}
 }
 // designed waves: deterministic per level and wave, themed by pattern and realm
@@ -100,6 +101,7 @@ function ckWaveSum(q){const o={n:q.length,b:0,r:{}};for(const s of q){const[t,ro
 let ckUiT=0,ckChip=null;
 function ckV3Tick(dt){
  if(L.ckv!==L)ckV3Init();
+ if(L.bf.midas>0)L.bf.midas=Math.max(0,L.bf.midas-dt);if(L.loot)for(const l of L.loot)if(!l.boss)l.age=(l.age||0)+dt;
  // item use tracking (per-level stock) and challenge bookkeeping
  let nt=0;for(const t of L.tr)if(t&&t.k!=='wall')nt++;L.mtw=Math.max(L.mtw,nt);
  if(L.chOk&&L.ch){const c=L.ch.id;if((c==='noleak'&&L.lives<L.mxl)||(c==='cap'&&L.mtw>L.ch.a)||(c==='noitem'&&Object.keys(L.iu).length)||(c==='ban'&&L.tr.some(t=>t&&t.k===L.ch.k))){L.chOk=false;toast('👑 '+lvZ('挑战失败：','Crown lost: ')+ckChalTxt(L.ch))}}

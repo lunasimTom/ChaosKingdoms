@@ -118,6 +118,13 @@ const CKS=(()=>{
     tone(d,{t,type:'sine',f0:c[0]/2,dur:2.5,amp:.08,a:.3});boom(d,t,60,.9,.3);if(bar%2)boom(d,t+1.2,70,.6,.18);
     for(let i=0;i<2;i++){const fq=bell[(bar*2+i)%bell.length];tone(d,{t:t+i*1.2,type:'sine',f0:fq,dur:1.4,amp:.07});tone(d,{t:t+i*1.2,type:'sine',f0:fq*2.01,dur:.8,amp:.02})}bar++};
    play();const iv=setInterval(play,2400);return ()=>{live=false;clearInterval(iv);try{d.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}}},
+  // loot: pickup chime brighter and richer with rarity; treasure burst = gold crash + rising sparkle
+  pickup:(tier=0)=>{if(!on())return false;const t=au.currentTime+.005,d=out(.55+.08*tier,.25+.05*tier,0),base=[880,988,1175,1319,1568,1760][Math.min(5,tier)];
+   tone(d,{t,type:'triangle',f0:base,dur:.12,amp:.18});tone(d,{t:t+.06,type:'sine',f0:base*1.5,dur:.18+.05*tier,amp:.14});
+   if(tier>=2)tone(d,{t:t+.12,type:'sine',f0:base*2,dur:.3+.08*tier,amp:.1});if(tier>=4){[1,1.25,1.5,2].forEach((m,i)=>tone(d,{t:t+.18+i*.07,type:'sine',f0:base*m,dur:.5,amp:.08}));noise(d,{t,dur:.6,ft:'highpass',f0:6000,amp:.06})}return true},
+  lootBurst:(best=0)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.5,0);boom(d,t,55,1,.6);noise(d,{t,dur:1.4,ft:'highpass',f0:4000,f1:7000,amp:.18,a:.02});
+   for(let i=0;i<14;i++)tone(d,{t:t+.05+i*.045,type:'sine',f0:R(1400,3600),dur:.25,amp:.07});
+   if(best>=4){[523,659,784,1047].forEach((f,i)=>tone(d,{t:t+.35+i*.11,type:'sawtooth',f0:f,dur:.6,amp:.05,lp:2600}))}return true},
   // test hook: render a voice into any context (used by the automated sound checks)
   _voices:()=>({monsters:Object.keys(MV),bosses:Object.keys(BV)})
  };

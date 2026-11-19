@@ -7,7 +7,70 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v4.0.apk` | Android app (package `com.chaoskingdoms.game`, version 4.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v4.1.apk` | Android app (package `com.chaoskingdoms.game`, version 4.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v4.1 · Loot
+
+All loot code is in `source/premium/loot.js`.
+
+**Boss treasure explosion.** The moment the final boss of a level dies:
+- Every tower and barricade vanishes in a gold flash. Terrain, rivers, trees and rocks stay.
+- Any remaining minions and queued monsters disappear, and the screen shakes.
+- The whole treasure bursts out of the boss at once, flying to tiles all over the map in about half a second.
+
+Earlier bosses on multi-boss levels drop nothing.
+
+The tower refund for winning is calculated before the towers vanish, so it is unchanged.
+
+**A strict 5-second collection window.**
+- The countdown ring starts as the loot lands. Seconds 0-4: fully visible. From second 4: the loot fades. At second 5: everything left is gone for good. There is no "collect all" and no compensation.
+- Tap a tile to collect everything on it. Each item flies to its counter, with a floating label and a pickup chime that gets richer with rarity.
+- The timer runs on real time, so game speed doesn't change it. It pauses while the pause menu or shop is open.
+- When the window closes the game shows "Treasure collected: X / Y", and the level then ends normally.
+
+**Treasure size and rarity.**
+- About 22 pieces at Level 8 on Novice, up to 80 at Level 100 (the cap). More bosses, a higher difficulty and a healthier base mean more pieces.
+- Rarity per piece: Common 50% · Uncommon 25% · Rare 14% · Epic 7% · Legendary 3% · Mythic 0.8%. The better tiers grow with level, difficulty and base health; measured: 46 / 23 / 17 / 8.6 / 3.6 / 1.0% at Level 100 on Normal.
+- Glows and effects rise with rarity: from no glow, through green, blue, purple and gold, to pink with particles. Legendary and Mythic pieces also get a light beam and a banner.
+
+**What drops.**
+- Gold, stars, diamond fragments, diamonds (Epic and up), Enhancement Runes (Epic and up), shop consumables and rare items.
+- A Mythic piece is a jackpot: 4 diamonds, 3 runes and 3 rare items.
+- **Replays:** 25% of the pieces, capped at Rare: no diamonds, runes, rare items or Legendary and Mythic drops (0 in 300 tested replays).
+
+**Rare items** (never sold in the shop; they go into the item bar):
+
+| Item | Effect |
+| --- | --- |
+| ⏳ Chrono Crystal | freezes every monster for 8 s and slows bosses for 6 s |
+| 🐉 Dragonfire Scroll | 35% of max health to every monster, 6% to bosses |
+| 🏰 Aegis of Kings | restores every standing base to full health and shields them from leaks for 15 s |
+| ⚒️ Master Forge | every level 1-2 tower goes up a level |
+| 👑 Midas Seal | kill gold x3 for 45 s |
+| 🎺 War Horn of Ages | towers deal +35% damage and fire 60% faster for 25 s |
+
+**Enhancement Runes.** In the Bonus Upgrade screen, "Use a rune" upgrades the selected attribute (Attack, Defense, Build Speed or Crit Rate) once, free, up to the normal maximum of Level 10.
+
+**Diamonds.**
+- 4 diamond fragments forge 1 diamond automatically ("+1 💎 Diamond Forged!"). The fragment count shows next to the diamond balance.
+- A new Diamond Exchange in the Bonus Upgrade screen turns 1 diamond into 10,000 gold. Nothing can be exchanged into diamonds.
+- Diamonds come only from boss treasure and the existing voucher codes.
+
+**Medium monster drops.**
+- Brutes drop something about 11% of the time and elites 25%. Grunts and runners drop nothing.
+- Drops are Common only: a little gold (into battle coins), 1 star or a basic consumable. Never diamonds, fragments, runes or rare items.
+- A drop can land on any tile and lasts 20 s of game time, blinking in its last 5 s.
+
+**Tap priority.** Tapping a tile with loot always collects it first: on towers, bases, water, obstacles and swamp. Tap again for the normal action.
+
+**Saves.** Fragments and runes are saved. Runes are included in progress transfer; fragments, like diamonds, are not.
+
+**Tested**
+- The full sequence on 1-boss and 4-boss levels: towers cleared, the 5.0 s window, fading from second 4, the level ending only afterwards, and the refund.
+- Real taps on towers, water and obstacles. Every reward type and the 4-to-1 forge. All six rare items. Runes, including the cap. The exchange, including with 0 diamonds. Save and transfer.
+- Drop rates over thousands of simulated treasures and 10,000 monster kills. Replay limits.
+- Frame rate during a real explosion: median 17 ms per frame, worst 55 ms.
+- The full existing test suite.
 
 ## What changed in v4.0
 
@@ -515,7 +578,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

@@ -349,7 +349,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -516,6 +516,27 @@ rep("let sg,ag,am=null,", "const CK_SFXQ={build:.3,upgrade:.35,sell:.35,coin:.3,
 #     the information lives in an on-demand, level-specific Tips panel instead (see v3.js).
 rep("toast('Wave 1 arrives in 14s. Build now!');ckTips(i)}", "toast('Wave 1 arrives in 14s. Build now!')}")
 rep('<button class="tab" data-t="s" data-i18n="Shop">Shop</button>', '<button class="tab" data-t="s" data-i18n="Shop">Shop</button><button class="tab ck-tipt" type="button" data-cktips="1" aria-label="Tips" title="Tips">💡</button>')
+
+# 41. v4.1: loot. Final-boss treasure explosion with a 5 s manual collection window, medium monster
+#     drops, rare items (never sold), enhancement runes, diamond fragments (4 -> 1 diamond) and a
+#     1 diamond = 10,000 gold exchange. See loot.js.
+rep("if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over)end(true)", "if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over&&!ckLootBusy())end(true)")
+rep("let q=tileAt(...pos(ev));hov=q;if(!q){L.placing=null;showSel(null);return}", "let q=tileAt(...pos(ev));hov=q;if(!q){L.placing=null;showSel(null);return}if(ckLootTap(q))return;")
+rep("drawFx();dAir();", "drawFx();dAir();ckLootDraw();")
+rep("L.refund=win&&!L.demo?L.tr.reduce(", "L.refund=win&&!L.demo?(L.trSnap||L.tr).reduce(")
+rep("*(L.bf.idol>0?2:1)*(1+(L.buffs&&L.buffs.bounty||0))", "*(L.bf.idol>0?2:1)*(L.bf.midas>0?3:1)*(1+(L.buffs&&L.buffs.bounty||0))")
+rep("IT.map(it=>{let lim=it.stock!=null", "IT.filter(it=>!it.rare).map(it=>{let lim=it.stock!=null")
+rep("function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;", "function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;if(CK_RARE[id])return ckUseRare(id);")
+rep("setT('dia',(S.diamonds||0).toLocaleString());", "setT('dia',(S.diamonds||0).toLocaleString()+((S.frag|0)?' 💠'+S.frag+'/4':''));")
+# saves: fragments and runes (fragments, like diamonds, are not part of progress transfer; runes are)
+rep("fx:S.fx||{},h100:S.h100|0}))", "fx:S.fx||{},h100:S.h100|0,fr:S.frag|0,ru:S.rune|0}))")
+rep("S.h100=Math.max(0,Math.min(5,s.h100|0));", "S.h100=Math.max(0,Math.min(5,s.h100|0));S.frag=Math.max(0,Math.min(3,s.fr|0));S.rune=Math.max(0,s.ru|0);")
+rep("if(S.own&&S.own!==S.name){S.gold=3000;S.diamonds=0;", "if(S.own&&S.own!==S.name){S.gold=3000;S.diamonds=0;S.frag=0;S.rune=0;")
+rep("cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{}}}", "cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},ru:S.rune|0}}")
+rep("S.ss=Math.max(0,+j.ss||0);S.fx=fxClean(j.fx);selectedRealm=0;", "S.ss=Math.max(0,+j.ss||0);S.fx=fxClean(j.fx);S.rune=Math.max(0,+j.ru||0);selectedRealm=0;")
+# attribute screen: runes + diamond exchange
+rep(" <div class=\"cu-note\">${note}</div></div>", " ${ckCuExtra(k)}<div class=\"cu-note\">${note}</div></div>")
+rep(" const b=document.getElementById('cugo');if(b&&!max)b.onclick=()=>cuUpgrade(k);", " const b=document.getElementById('cugo');if(b&&!max)b.onclick=()=>cuUpgrade(k);{const r=document.getElementById('ckrune');if(r)r.onclick=()=>{if(ckUseRune(k))cuOpen(k,true)};const x=document.getElementById('ckxch');if(x)x.onclick=()=>{if(ckExchange())cuOpen(k)}}")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):
