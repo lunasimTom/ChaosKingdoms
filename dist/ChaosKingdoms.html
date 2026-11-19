@@ -1805,7 +1805,7 @@ function ckTipsHtml(){
  gen.push(li('🎒',Z('道具','Items'),Z('在商店购买，存放在底部道具栏。点击使用；滑动道具栏可以查看更多。','Buy in the Shop; they wait in the bar at the bottom. Tap to use, swipe the bar to see more.')));
  gen.push(li('⏩',Z('提前召唤','Call early'),Z('点击“召唤”提前开始下一波，可以获得额外金币。','Tap Call to start the next wave early for bonus coins.')));
  return `<div class="ck-tips"><h3>💡 ${Z('本关提示','Level tips')}</h3>${sec(Z('本关特点','This level'),lvl)}${sec(Z('本关敌人','Enemies on this level'),ene)}${sec(Z('首领战','Boss fight'),boss)}${sec(Z('战斗要点','How to fight'),gen)}</div><button class="bt" id="m1">${Z('继续战斗','Back to battle')}</button>`}
-function ckOpenTips(){if(!L||L.demo||L.over||S.mode!=='play')return;modal(ckTipsHtml())}
+function ckOpenTips(){if(!L||L.demo||L.over||S.mode!=='play')return;if(L.ckv!==L)ckV3Init();modal(ckTipsHtml())}
 document.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-cktips]');if(!b)return;ev.preventDefault();ev.stopPropagation();ckOpenTips()},true);
 
 /* ===== Chaos Kingdoms v3.6 · audio engine =====
