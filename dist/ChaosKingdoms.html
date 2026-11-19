@@ -1757,6 +1757,19 @@ function ckBossPow(i){if(i>=96)return[[9,1.7,2.6],[11,1.8,2.9],[13,1.9,3.2],[16,
  if(i>=63){const k=(i-63)/32;return{hp:1+2.4*k,def:1+.45*k,atk:1+.9*k}}return{hp:1,def:1,atk:1}}
 function ckBossPower(e){if(L.demo||e.bpw)return;const p=ckBossPow(L.i);e.bpw=1;e.hp*=p.hp;e.mx=e.hp;e.bdef=p.def;e.batk=p.atk}
 
+// ---- boss siege (v3.8) ----
+// A boss that reaches a base does not vanish: it stays and pounds the base every 2 s (a share of the
+// base's health that grows with the boss's attack power) until it is killed or the base falls; then it
+// marches on to the next base. Towers keep firing at it, so its Rage Mode still triggers.
+function ckBossSiege(e,dt){e.vv[0]*=.5;e.vv[1]*=.5;e.sgT=(e.sgT==null?.6:e.sgT)-dt;if(e.sgT>0)return;e.sgT=2;
+ if(L.over)return;ckBaseSync();const al=(L.base&&L.base.L===L)?L.base.filter(b=>!b.dead):[];
+ let n=Math.max(1,Math.round((e.d.l||10)*.4*(e.batk||1)));
+ if(al.length){let b=al[0],bd=1e9;for(const q of al){const dd=Math.hypot(q.x-e.x,q.y-e.y);if(dd<bd){bd=dd;b=q}}n=Math.max(1,Math.round(b.max*.07*(e.batk||1)))}
+ L.lk=1;if(!(L.bf.shield>0))ckBaseHit({t:'siege',x:e.x,y:e.y},n);
+ const p=eS(e);L.shake=Math.max(L.shake||0,.55);vRing(p.x,p.y,tw*1.5,'#ff5b3a',.5,5);burst(p.x,p.y+tw*.3,'#ffb08a',10,120);try{CKS.bossAttack(e)}catch(_){}
+ if(!e.sgMsg){e.sgMsg=1;toast(lvZ('⚠ 首领正在攻击你的基地！快击败它！','⚠ The boss is attacking your base! Bring it down!'))}
+ if(L.lives<=0&&!L.over)end(false)}
+
 /* ===== Chaos Kingdoms v3.6 · audio engine =====
    Every sound is synthesized with Web Audio at play time (no extra files), through the game's own
    effects channel (sg) and volume (sfxV), so the Master / Effects sliders and the sound toggle work.
@@ -2012,7 +2025,7 @@ function ckEnding(onDone){
   gx.globalCompositeOperation='lighter';for(const e of emb){e.y-=e.v*dt;e.x+=Math.sin(t/1400+e.p)*.0006;if(e.y<-.02){e.y=1.02;e.x=Math.random()}gx.globalAlpha=.5*(.5+.5*Math.sin(t/500+e.p));gx.fillStyle=acc;gx.beginPath();gx.arc(e.x*w,e.y*h,e.r,0,7);gx.fill()}gx.globalCompositeOperation='source-over';gx.globalAlpha=1;requestAnimationFrame(tick)};requestAnimationFrame(tick);
  try{if(typeof mb!=='undefined'&&mb&&au)mb.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}
  try{stopMusic=CKS.endingMusic()}catch(_){}
- const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1200);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.6*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
+ const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1200);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.85*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
  CK_END={finish};ov.querySelector('.skip').onclick=finish;
  const at=(ms,fn)=>timers.push(setTimeout(()=>{if(live)fn()},ms));
  const setAcc=c=>{acc=c;ov.style.setProperty('--acc',c)};
@@ -2115,7 +2128,7 @@ function killTower(t){if(!L.tr.includes(t))return;L.tr=L.tr.filter(x=>x!==t);cel
 /* Open-field enemy navigation: continuous waypoint arrival, stuck recovery and destructible tower targeting. */
 function eMove(e,dt,sp){
  const C=L.cols,R=L.rows;
- if(e.fly||(e.t==='boss'&&!L.demo)){let g=L.goals.reduce((a,b)=>!a||Math.hypot(b[0]-e.x,b[1]-e.y)<Math.hypot(a[0]-e.x,a[1]-e.y)?b:a,null);if(!g)return;let dx=g[0]-e.x,dy=g[1]-e.y,dl=Math.hypot(dx,dy)||1;steer(e,dx/dl,dy/dl,sp,dt);e.pr=-dl;if(dl<.3)leak(e);return}
+ if(e.fly||(e.t==='boss'&&!L.demo)){let g=L.goals.reduce((a,b)=>!a||Math.hypot(b[0]-e.x,b[1]-e.y)<Math.hypot(a[0]-e.x,a[1]-e.y)?b:a,null);if(!g)return;let dx=g[0]-e.x,dy=g[1]-e.y,dl=Math.hypot(dx,dy)||1;if(e.t==='boss'&&!L.demo&&dl<.75){e.pr=-dl;faceTo(e,dx,dy,dt);ckBossSiege(e,dt);return}steer(e,dx/dl,dy/dl,sp,dt);e.pr=-dl;if(dl<.3)leak(e);return}
  let cx=Math.max(0,Math.min(C-1,Math.round(e.x))),cy=Math.max(0,Math.min(R-1,Math.round(e.y))),nav=e._nav||(e._nav={prev:null,recent:[],px:e.x,py:e.y,stuck:0,repath:0,lastDist:1e9,vis:{},best:1e9,bt:0,sc:0});
  e.pr=-(L.df[cy*C+cx]+Math.hypot(e.x-cx,e.y-cy));
  // Progress watchdog: if an enemy barely moves for 0.9s, discard its stale waypoint and rebuild the flow field.
@@ -3602,13 +3615,13 @@ $('play').onclick=()=>{S.name=$('nm').value.trim()||'Commander';{let k0=normaliz
 $('back').onclick=()=>{show('title');$('chip').hidden=!cheat()};
 const pauseM=()=>{modal(`<div class="pause-title"><span class="pause-emblem">✦</span><h2 class="f">${TL('Paused')}</h2><p>${L.reg.n}　·　${TL('Level {0}',L.i+1)}</p></div><div class="pause-settings">${sl()}${tg()}</div><button class="bt" id="m1">▶ ${TL('Resume')}</button><button class="bt pay" id="picklevel">✦ ${TL('Select level')}</button><div class="pause-secondary"><button class="bt g" id="m3">↻ ${TL('Restart level')}</button><button class="bt g musbtn">${mon?TL('♪ Music: on'):TL('♪ Music: off')}</button></div><div class="row2"><button class="bt g rotbtn">⟳ ${TL('Screen: ')}${TL('Auto')}</button><button class="bt g langbtn">🌐 ${LANG==='zh'?'中文':'EN'}</button></div><button class="bt r" id="m2">⌂ ${TL('Quit to map')}</button>`);if(au)au.suspend().catch(()=>{});$('m1').onclick=()=>{closeM();resumeGameAudio()};$('m2').onclick=()=>{closeM();resumeGameAudio();toMap()};$('m3').onclick=()=>{closeM();resumeGameAudio();start(L.i)};$('picklevel').onclick=pauseLevelPicker;reM=pauseM};$('menu').onclick=pauseM;
 /* ---------- arcade action score (NES-style pulse, triangle bass, noise drums) ---------- */
-let sg,ag,am=null,an='',musV=1,sfxV=.8,ambV=.5,masV=1,au,mg,mt,mon=false,mb,dl,nb,mk='',mst=0,nxt=0,mOff=0,PW={};
+const CK_SFXQ={build:.3,upgrade:.35,sell:.35,coin:.3,bank:.35,perfect:.5,wave:.55,arrow:.6,cannon:.7,ice:.6,zap:.6,toxin:.6,leak:.6};let sg,ag,am=null,an='',musV=1,sfxV=.8,ambV=.5,masV=1,au,mg,mt,mon=false,mb,dl,nb,mk='',mst=0,nxt=0,mOff=0,PW={};
 const SB={},AMB={menu:'wind',r0:'wind',r1:'drone',r2:'wind',r3:'drone',r4:'rain',r5:'rain',r6:'drone',r7:'drone',boss:'drone'};
 function sfxLoad(){Object.entries(SFXD).forEach(([k,v])=>{let b=atob(v),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);au.decodeAudioData(u.buffer,x=>SB[k]=x,()=>{})})}
-function sfx(k,v=1){if(!mon||!au||!SB[k])return false;let s=au.createBufferSource(),g=au.createGain();s.buffer=SB[k];s.playbackRate.value=.88+Math.random()*.24;g.gain.value=v*sfxV*(.8+Math.random()*.2);s.connect(g);ckPanOut(g);s.start();return true}
+function sfx(k,v=1){if(!mon||!au||!SB[k])return false;let s=au.createBufferSource(),g=au.createGain();s.buffer=SB[k];s.playbackRate.value=.88+Math.random()*.24;g.gain.value=v*sfxV*(.8+Math.random()*.2)*(CK_SFXQ[k]||1);s.connect(g);ckPanOut(g);s.start();return true}
 function ambSet(n){if(!au||!n||!SB[n]||an===n)return;an=n;if(am){try{am.stop()}catch(e){}}am=au.createBufferSource();am.buffer=SB[n];am.loop=true;am.connect(ag);am.start()}
-document.addEventListener('input',e=>{let i=e.target.id,v=e.target.value/100;if(i==='vm'){musV=v;if(mb&&mon)mb.gain.setTargetAtTime(.6*v,au.currentTime,.05)}else if(i==='vs')sfxV=v;else if(i==='va'){ambV=v;if(ag)ag.gain.value=.25*v}else if(i==='vx'){masV=v;if(mg)mg.gain.value=.7*v}});
-function beep(f,d=.15,ty='triangle',v=.1){if(!mon||!au)return;let o=au.createOscillator(),g=au.createGain(),t=au.currentTime;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start();o.stop(t+d)}
+document.addEventListener('input',e=>{let i=e.target.id,v=e.target.value/100;if(i==='vm'){musV=v;if(mb&&mon)mb.gain.setTargetAtTime(.85*v,au.currentTime,.05)}else if(i==='vs')sfxV=v;else if(i==='va'){ambV=v;if(ag)ag.gain.value=.25*v}else if(i==='vx'){masV=v;if(mg)mg.gain.value=.7*v}});
+function beep(f,d=.15,ty='triangle',v=.1){if(!mon||!au)return;let o=au.createOscillator(),g=au.createGain(),t=au.currentTime;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(sg||mg);o.start();o.stop(t+d)}
 
 /* ---------- soundtrack: each level has its own ~60s song (intro, verse, chorus, breakdown, reprise) rendered once offline into one buffer ---------- */
 const SCL={min:[0,2,3,5,7,8,10],phr:[0,1,3,5,7,8,10],dor:[0,2,3,5,7,9,10],har:[0,2,3,5,7,8,11],mix:[0,2,4,5,7,9,10]};
@@ -3692,7 +3705,7 @@ async function ckSong(key){
  // ---- direct sample synthesis (fast on phones): every instrument writes into stereo float buffers ----
  const N=Math.ceil(sr*(dur+.05)),OL=new Float32Array(N),OR=new Float32Array(N),RV=new Float32Array(N);
  const TAU=Math.PI*2,NZ=new Float32Array(sr);for(let i=0;i<sr;i++)NZ[i]=Math.random()*2-1;
- const B={pad:[.5,.6,0],lead:[.55,.45,.08],brass:[.5,.4,-.1],choir:[.4,.75,0],harp:[.32,.5,.25],bass:[.7,.08,0],drum:[.75,.22,0],hat:[.18,.1,.3],cym:[.22,.5,-.2]};
+ const B={pad:[.45,.6,0],lead:[.52,.45,.08],brass:[.5,.4,-.1],choir:[.36,.75,0],harp:[.2,.5,.25],bass:[1.05,.06,0],sub:[.9,0,0],str:[.6,.32,-.18],cello:[.6,.4,.15],drum:[1,.2,0],tom:[.8,.25,.2],hat:[.14,.1,.3],cym:[.22,.5,-.2]};
  const hz=m=>440*Math.pow(2,(m-69)/12),deg=d=>root+12*Math.floor(d/7)+mode[((d%7)+7)%7];
  // RBJ biquad coefficients
  const bq=(type,f,q)=>{const w=TAU*Math.min(f,sr*.45)/sr,cs=Math.cos(w),al=Math.sin(w)/(2*q);let b0,b1,b2;if(type==='lp'){b0=(1-cs)/2;b1=1-cs;b2=b0}else if(type==='hp'){b0=(1+cs)/2;b1=-(1+cs);b2=b0}else{b0=al;b1=0;b2=-al}const a0=1+al;return[b0/a0,b1/a0,b2/a0,-2*cs/a0,(1-al)/a0]};
@@ -3719,6 +3732,15 @@ async function ckSong(key){
  const hat=(t,amp)=>nzv(B.hat,t,.05,'hp',7500,.7,amp,.012);
  const swell=(t,len,amp)=>{const i0=Math.floor(t*sr),n=Math.floor(len*sr),c=bq('hp',5000,.7);let x1=0,x2=0,y1=0,y2=0,j=Math.floor(Math.random()*sr);for(let k=0;k<n;k++){const v0=NZ[(j+k)%sr];const y=c[0]*v0+c[1]*x1+c[2]*x2-c[3]*y1-c[4]*y2;x2=x1;x1=v0;y2=y1;y1=y;put(B.cym,i0+k,y*amp*Math.pow(k/n,2.2))}};
  const crash=(t,amp)=>nzv(B.cym,t,2.2,'hp',3700,.5,amp*1.3,.55);
+ // spiccato strings: short bowed notes, two detuned voices with a bright edge
+ const spic=(t,m,amp)=>{voice(B.str,t,beat*.22,hz(m),{amp,det:-7,a:.006,d:.07,s:.35,rel:.07,flt:['lp',2600,.8]});voice(B.str,t,beat*.22,hz(m),{amp:amp*.8,det:8,a:.006,d:.07,s:.35,rel:.07,flt:['lp',2300,.8]})};
+ // low strings (celli and basses) sustained an octave below the chord
+ const cello=(t,len,ms,amp)=>{for(const m of ms){voice(B.cello,t,len,hz(m),{amp,det:-5,a:.2,d:.3,s:.85,rel:.4,vib:.004,vr:5,flt:['lp',900,.7]});voice(B.cello,t,len,hz(m),{amp:amp*.8,det:6,a:.25,d:.3,s:.85,rel:.4,flt:['lp',800,.7]})}};
+ // sub bass: pure low sine that follows the root, felt more than heard
+ const sub=(t,len,m,amp)=>voice(B.sub,t,len,hz(m),{amp,wave:'sine',a:.02,d:.2,s:.9,rel:.1});
+ // big war drum with a pitched body and sub thump
+ const war=(t,amp)=>{const i0=Math.floor(t*sr),n=Math.floor(.9*sr);let ph=0;for(let k=0;k<n;k++){const tt=k/sr,f=38+70*Math.exp(-tt/.07);ph+=f/sr;put(B.drum,i0+k,Math.sin(TAU*ph)*amp*Math.exp(-tt/.28))}nzv(B.drum,t,.15,'lp',300,.7,amp*.6,.04)};
+ const tom=(t,f,amp)=>{const i0=Math.floor(t*sr),n=Math.floor(.4*sr);let ph=0;for(let k=0;k<n;k++){const tt=k/sr,ff=f*(1+.6*Math.exp(-tt/.04));ph+=ff/sr;put(B.tom,i0+k,Math.sin(TAU*ph)*amp*Math.exp(-tt/.13))}};
  const roll=(t,len,amp)=>{for(let x=0;x<len;x+=beat/4)taiko(t+x,amp*(.4+.6*x/len))};
  // ---- harmony ----
  const chordAt=b=>{const sec=b<4?0:b<12?0:b<20?1:b<28?0:0;const p=progs[sec];const c=b>=28?(b===31?4:p[(b-28)%4]):p[b%4];return c};
@@ -3733,22 +3755,31 @@ async function ckSong(key){
  const snap=(d,bar,at)=>{if(at%4!==0)return d;const c=chordAt(bar),tones=[c,c+2,c+4,c+7,c-7+2,c-7+4];let best=d,bd=99;for(const t of tones)for(const o of [-7,0,7]){const v=t+o;if(Math.abs(v-d)<bd){bd=Math.abs(v-d);best=v}}return best};
  const playMel=(b0,variant,fn)=>{for(const n of melody(variant)){const bar=b0+n.bar;if(bar>=BARS)continue;const d=snap(n.d,bar,n.at),t=bar*bar_+n.at*beat/2;fn(t,n.len*beat/2,d)}};
  const bar_=bar;
- // ---- arrangement ----
+ // ---- arrangement: built on bass, strings and drums ----
  for(let b=0;b<BARS;b++){const t=b*bar,c=chordAt(b),tr=triad(c,-1);
-  const intro=b<4,A=b>=4&&b<12,Bs=b>=12&&b<20,C=b>=20&&b<28,O=b>=28;
-  // pads (always), choir in climax and boss B
-  pad(t,bar,tr,intro||O?.16:.2);if(C||(boss&&Bs))choir(t,bar,[deg(c)+12,deg(c+2)+12,deg(c+4)],C?.06:.04);
-  // bass
-  const br=deg(c)-24;if(intro){bass(t,bar*.95,br,.22)}else if(boss){for(let k=0;k<16;k++)bass(t+k*beat/4,beat/4*.9,k%8===6?br+12:br,.2)}else{for(let k=0;k<8;k++)bass(t+k*beat/2,beat/2*.9,k%4===3?br+7:k%2?br+12:br,A?.17:.21)}
-  // harp arpeggios
-  if(A||O||Bs){const ar=[...tr.map(m=>m+12),tr[0]+24];for(let k=0;k<(Bs?16:8);k++){const step=Bs?beat/4:beat/2;harp(t+k*step,ar[(k*(rnd()<.2?2:1))%ar.length],Bs?.08:.1)}}
-  // drums
-  if(intro){taiko(t,.35);if(b===3)roll(t+bar*.5,bar*.5,.35),swell(t+bar*.25,bar*.75,.12)}
-  else{for(let k=0;k<4;k++){if(k===0||(k===2&&(C||boss)))taiko(t+k*beat,C?.55:.42);if((k===1||k===3)&&(Bs||C||boss))snare(t+k*beat,C?.32:.22)}
-   if(!O)for(let k=0;k<8;k++)hat(t+k*beat/2,k%2?.08:.14);if(C&&b%2===1)taiko(t+3.5*beat,.3)}
-  if(b===4||b===20)crash(t,.25);if(b===11||b===19){roll(t+bar*.5,bar*.5,.4);swell(t+bar*.4,bar*.6,.16)}
+  const intro=b<4,A=b>=4&&b<12,Bs=b>=12&&b<20,C=b>=20&&b<28,O=b>=28,full=Bs||C||boss&&!intro;
+  // harmony bed: pads, low strings, choir in the climax
+  pad(t,bar,tr,intro||O?.13:.15);cello(t,bar,[deg(c)-12,deg(c+4)-12],intro?.1:C?.17:.14);
+  if(C||(boss&&Bs))choir(t,bar,[deg(c)+12,deg(c+2)+12,deg(c+4)],C?.06:.04);
+  // bass + sub: driving eighths (sixteenths in the climax and on boss levels), octave jumps
+  const br=deg(c)-24;sub(t,bar*.98,br-12,intro?.13:.19);
+  if(intro){bass(t,bar*.95,br,.24)}
+  else{const n=(C||boss)?16:8,st=bar/n;for(let k=0;k<n;k++){const acc=k%(n/4)===0;bass(t+k*st,st*.85,(k%n)===n-2?br+7:(k%4===2&&!boss)?br+12:br,acc?.28:.2)}}
+  // strings ostinato: root-fifth-octave spiccato, every section after the intro
+  if(!intro){const pat=[0,2,4,2,7,4,2,4],ns=(C||boss)?16:8,st=bar/ns;for(let k=0;k<ns;k++){const d=c+pat[k%8];spic(t+k*st,deg(d)-(k%8===4?0:12),(k%4===0?.13:.09)*(O?.7:1))}}
+  // harp shimmer only in the gentler sections
+  if(A||O){const ar=[...tr.map(m=>m+12),tr[0]+24];for(let k=0;k<8;k++)harp(t+k*beat/2,ar[k%ar.length],.07)}
+  // drums: war drum + taiko groove, snares, toms, cymbals
+  if(intro){war(t,.5);if(b>=2)war(t+2*beat,.4);if(b===3){roll(t+bar*.5,bar*.5,.45);swell(t+bar*.25,bar*.75,.12)}}
+  else{
+   war(t,C?.75:.6);taiko(t+1.5*beat,.35);war(t+2*beat,full?.6:.45);taiko(t+3*beat,.3);if(full)taiko(t+3.5*beat,.32);
+   if(A){snare(t+3*beat,.18)}else{snare(t+beat,C?.34:.26);snare(t+3*beat,C?.34:.26);if(C)snare(t+3.75*beat,.16)}
+   if(!O)for(let k=0;k<8;k++)hat(t+k*beat/2,k%2?.06:.11);
+   if(b%4===3){const tf=[180,140,110,85];for(let k=0;k<4;k++)tom(t+(3+k/4)*beat,tf[k],.5)}
+   if(boss&&b%2===1)for(let k=0;k<4;k++)taiko(t+(2+k/2)*beat,.28)}
+  if(b===4||b===12||b===20||b===28)crash(t,.26);if(b===11||b===19){roll(t+bar*.5,bar*.5,.5);swell(t+bar*.4,bar*.6,.16)}
   if(b===27)swell(t,bar,.12);
-  // brass stabs in the climax
+  // brass hits on the downbeats of the climax
   if(C){brass(t,beat*.9,tr[0]+12,.12);brass(t+beat*2.5,beat*.4,tr[2]+12,.09)}}
  // theme A on the lead, development B (answer phrase an octave below), climax on brass + choir doubling, fragment in the resolution
  playMel(4,false,(t,l,d)=>lead(t,l,deg(d)+12,.18,R[4]));
@@ -3847,8 +3878,8 @@ async function mPlay(k){let tok=++mTok;mk=k;mStop();ambSet(AMBK(k));let b=MC[k];
 let _sil;function iosAudioFix(){try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}try{if(!_sil){let n=800,b=new Uint8Array(44+n*2),v=new DataView(b.buffer),w=(o,t)=>{for(let i=0;i<t.length;i++)b[o+i]=t.charCodeAt(i)};w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,16000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);let bs='';for(let i=0;i<b.length;i++)bs+=String.fromCharCode(b[i]);_sil=new Audio('data:audio/wav;base64,'+btoa(bs));_sil.loop=true;_sil.setAttribute('playsinline','')}_sil.play().catch(()=>{})}catch(e){}}
 ['touchend','pointerdown','click'].forEach(ev=>document.addEventListener(ev,()=>{if(au&&mon&&au.state!=='running')au.resume().catch(()=>{});if(_sil&&_sil.paused&&mon)_sil.play().catch(()=>{})},{passive:true}));
 document.addEventListener('visibilitychange',()=>{if(_sil){if(document.hidden)_sil.pause();else if(mon)_sil.play().catch(()=>{})}});
-function music(on){if(on){iosAudioFix();if(!au){au=new(window.AudioContext||window.webkitAudioContext)();mg=au.createGain();mg.gain.value=.7*masV;let cp=au.createDynamicsCompressor();mg.connect(cp);cp.connect(au.destination);mb=au.createGain();mb.connect(mg);sg=au.createGain();sg.connect(mg);ag=au.createGain();ag.gain.value=.25*ambV;ag.connect(mg);sfxLoad()}
- mon=true;mOff=0;mb.gain.cancelScheduledValues(0);mb.gain.setTargetAtTime(.6*musV,au.currentTime,.05);au.resume();mk='';clearInterval(mt);mt=setInterval(()=>{if(mon&&au&&want()!==mk)mPlay(want())},500);mPlay(want())}
+function music(on){if(on){iosAudioFix();if(!au){au=new(window.AudioContext||window.webkitAudioContext)();mg=au.createGain();mg.gain.value=.7*masV;let cp=au.createDynamicsCompressor();mg.connect(cp);cp.connect(au.destination);mb=au.createGain();mb.connect(mg);sg=au.createGain();sg.gain.value=.55;sg.connect(mg);ag=au.createGain();ag.gain.value=.25*ambV;ag.connect(mg);sfxLoad()}
+ mon=true;mOff=0;mb.gain.cancelScheduledValues(0);mb.gain.setTargetAtTime(.85*musV,au.currentTime,.05);au.resume();mk='';clearInterval(mt);mt=setInterval(()=>{if(mon&&au&&want()!==mk)mPlay(want())},500);mPlay(want())}
  else{mon=false;mOff=1;mTok++;clearInterval(mt);mStop();if(am){try{am.stop()}catch(e){}am=null;an=''}if(mb)mb.gain.setTargetAtTime(0,au.currentTime,.05)}
  document.querySelectorAll('.musbtn').forEach(b=>b.textContent=on?TL('♪ Music: on'):TL('♪ Music: off'))}
 document.addEventListener('click',e=>{if(e.target.closest('.musbtn'))music(!mon)});
@@ -3910,7 +3941,7 @@ function superFx(s){vFlash('#ffd34a',.4);L.shake=.5;[0,1,2].forEach(i=>vRing(s.x
 
 /* ---------- v12: synthesized sound for reinforcements ---------- */
 let _nz=null;
-function snd(k,v=1){if(!mon||!au)return;let t=au.currentTime,d=sg||mg||au.destination,V=v*sfxV,
+function snd(k,v=1){if(!mon||!au)return;let t=au.currentTime,d=sg||mg||au.destination,V=v*sfxV*.7,
  G=(a,tt,e)=>{let g=au.createGain();g.gain.setValueAtTime(a,tt);g.gain.exponentialRampToValueAtTime(.0008,tt+e);g.connect(d);return g},
  nz=()=>{if(!_nz){_nz=au.createBuffer(1,au.sampleRate,au.sampleRate);let a=_nz.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}let s=au.createBufferSource();s.buffer=_nz;s.loop=true;return s},
  osc=(ty,f0,f1,tt,e,g)=>{let o=au.createOscillator();o.type=ty;o.frequency.setValueAtTime(f0,tt);o.frequency.exponentialRampToValueAtTime(f1,tt+e);o.connect(g);o.start(tt);o.stop(tt+e+.05)};
@@ -5196,7 +5227,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.7 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v3.8 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

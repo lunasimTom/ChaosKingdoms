@@ -233,3 +233,16 @@ function ckRage(e,dt){
 function ckBossPow(i){if(i>=96)return[[9,1.7,2.6],[11,1.8,2.9],[13,1.9,3.2],[16,2.1,3.6]][i-96].reduce((o,v,k)=>(o[['hp','def','atk'][k]]=v,o),{});
  if(i>=63){const k=(i-63)/32;return{hp:1+2.4*k,def:1+.45*k,atk:1+.9*k}}return{hp:1,def:1,atk:1}}
 function ckBossPower(e){if(L.demo||e.bpw)return;const p=ckBossPow(L.i);e.bpw=1;e.hp*=p.hp;e.mx=e.hp;e.bdef=p.def;e.batk=p.atk}
+
+// ---- boss siege (v3.8) ----
+// A boss that reaches a base does not vanish: it stays and pounds the base every 2 s (a share of the
+// base's health that grows with the boss's attack power) until it is killed or the base falls; then it
+// marches on to the next base. Towers keep firing at it, so its Rage Mode still triggers.
+function ckBossSiege(e,dt){e.vv[0]*=.5;e.vv[1]*=.5;e.sgT=(e.sgT==null?.6:e.sgT)-dt;if(e.sgT>0)return;e.sgT=2;
+ if(L.over)return;ckBaseSync();const al=(L.base&&L.base.L===L)?L.base.filter(b=>!b.dead):[];
+ let n=Math.max(1,Math.round((e.d.l||10)*.4*(e.batk||1)));
+ if(al.length){let b=al[0],bd=1e9;for(const q of al){const dd=Math.hypot(q.x-e.x,q.y-e.y);if(dd<bd){bd=dd;b=q}}n=Math.max(1,Math.round(b.max*.07*(e.batk||1)))}
+ L.lk=1;if(!(L.bf.shield>0))ckBaseHit({t:'siege',x:e.x,y:e.y},n);
+ const p=eS(e);L.shake=Math.max(L.shake||0,.55);vRing(p.x,p.y,tw*1.5,'#ff5b3a',.5,5);burst(p.x,p.y+tw*.3,'#ffb08a',10,120);try{CKS.bossAttack(e)}catch(_){}
+ if(!e.sgMsg){e.sgMsg=1;toast(lvZ('⚠ 首领正在攻击你的基地！快击败它！','⚠ The boss is attacking your base! Bring it down!'))}
+ if(L.lives<=0&&!L.over)end(false)}

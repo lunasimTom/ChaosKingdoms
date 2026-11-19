@@ -126,7 +126,7 @@ function ckEnding(onDone){
   gx.globalCompositeOperation='lighter';for(const e of emb){e.y-=e.v*dt;e.x+=Math.sin(t/1400+e.p)*.0006;if(e.y<-.02){e.y=1.02;e.x=Math.random()}gx.globalAlpha=.5*(.5+.5*Math.sin(t/500+e.p));gx.fillStyle=acc;gx.beginPath();gx.arc(e.x*w,e.y*h,e.r,0,7);gx.fill()}gx.globalCompositeOperation='source-over';gx.globalAlpha=1;requestAnimationFrame(tick)};requestAnimationFrame(tick);
  try{if(typeof mb!=='undefined'&&mb&&au)mb.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}
  try{stopMusic=CKS.endingMusic()}catch(_){}
- const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1200);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.6*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
+ const finish=()=>{if(!live)return;live=false;timers.forEach(clearTimeout);stopMusic();ov.classList.remove('on');setTimeout(()=>ov.remove(),1200);CK_END=null;try{if(typeof mb!=='undefined'&&mb&&au&&mon)mb.gain.setTargetAtTime(.85*musV,au.currentTime,.6)}catch(_){}if(onDone)onDone()};
  CK_END={finish};ov.querySelector('.skip').onclick=finish;
  const at=(ms,fn)=>timers.push(setTimeout(()=>{if(live)fn()},ms));
  const setAcc=c=>{acc=c;ov.style.setProperty('--acc',c)};

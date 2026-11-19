@@ -7,7 +7,36 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v3.7.apk` | Android app (package `com.chaoskingdoms.game`, version 3.7, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v3.8.apk` | Android app (package `com.chaoskingdoms.game`, version 3.8, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v3.8
+
+**Fix: bosses vanished when they touched a base.** Since bosses were made to ignore buildings (v3.5), they used the flying monsters' movement, including its "reached the base" step. That step removes the monster and charges the lives at once. So a boss disappeared on contact, and it usually got there before its health fell to 20%, so Rage Mode never started.
+
+Now a boss that reaches a base **besieges** it:
+- It stays at the base and pounds it every 2 seconds, with a shockwave, screen shake and its own attack roar.
+- Each hit deals 7% of that base's health, multiplied by the boss's attack power (about 25% per hit at Level 100).
+- It keeps going until you kill it or the base falls; then it marches on to the next base.
+- Your towers keep firing the whole time, so its Rage Mode still triggers at 20% HP.
+
+**Quieter sound effects; the music leads.**
+- The effects channel now plays at 55% and the music at 85% (before: 100% and 60%).
+- The busiest sounds are turned down further: building and upgrading to about 30-35%, coins 30%, tower shots 60-70%. Item sounds are 70% of their old level.
+- The volume sliders still work as before.
+
+**Heavier, more powerful music.** The arrangement is now built on bass, strings and drums:
+- A sub-bass under every bar.
+- Driving eighth-note bass lines, which switch to sixteenths in the climax and on boss levels.
+- A spiccato string ostinato (root, fifth and octave) through every section after the intro, plus sustained celli and basses.
+- War drums with a deep body, taiko grooves, backbeat snares, tom fills every four bars, and extra taiko runs on boss levels.
+
+In measurements, the share of energy below 150 Hz went from about 50% to 75%, and rhythmic punch (onset strength) rose by 20-70%. The melody bus was raised slightly, so the themes stay clear.
+
+**Tested**
+- Bosses reaching a base on Levels 8, 48 and 100: each stayed and besieged the base, which lost lives every 2 s until it fell.
+- With towers around the base on Level 48, the boss entered Rage Mode for the full 8 s, then died.
+- All 16 boss fights played to the end (sprite check every frame) with Rage on every level from 40.
+- Boss summons, the 42-state interface walkthrough, the item-bar touch test, gameplay and the sound engine in real fights all pass. Music renders in about 3 s per track with no clipping.
 
 ## What changed in v3.7
 
@@ -433,7 +462,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.7.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v3.8.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

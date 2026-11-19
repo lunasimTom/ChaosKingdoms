@@ -22,7 +22,7 @@ async function ckSong(key){
  // ---- direct sample synthesis (fast on phones): every instrument writes into stereo float buffers ----
  const N=Math.ceil(sr*(dur+.05)),OL=new Float32Array(N),OR=new Float32Array(N),RV=new Float32Array(N);
  const TAU=Math.PI*2,NZ=new Float32Array(sr);for(let i=0;i<sr;i++)NZ[i]=Math.random()*2-1;
- const B={pad:[.5,.6,0],lead:[.55,.45,.08],brass:[.5,.4,-.1],choir:[.4,.75,0],harp:[.32,.5,.25],bass:[.7,.08,0],drum:[.75,.22,0],hat:[.18,.1,.3],cym:[.22,.5,-.2]};
+ const B={pad:[.45,.6,0],lead:[.52,.45,.08],brass:[.5,.4,-.1],choir:[.36,.75,0],harp:[.2,.5,.25],bass:[1.05,.06,0],sub:[.9,0,0],str:[.6,.32,-.18],cello:[.6,.4,.15],drum:[1,.2,0],tom:[.8,.25,.2],hat:[.14,.1,.3],cym:[.22,.5,-.2]};
  const hz=m=>440*Math.pow(2,(m-69)/12),deg=d=>root+12*Math.floor(d/7)+mode[((d%7)+7)%7];
  // RBJ biquad coefficients
  const bq=(type,f,q)=>{const w=TAU*Math.min(f,sr*.45)/sr,cs=Math.cos(w),al=Math.sin(w)/(2*q);let b0,b1,b2;if(type==='lp'){b0=(1-cs)/2;b1=1-cs;b2=b0}else if(type==='hp'){b0=(1+cs)/2;b1=-(1+cs);b2=b0}else{b0=al;b1=0;b2=-al}const a0=1+al;return[b0/a0,b1/a0,b2/a0,-2*cs/a0,(1-al)/a0]};
@@ -49,6 +49,15 @@ async function ckSong(key){
  const hat=(t,amp)=>nzv(B.hat,t,.05,'hp',7500,.7,amp,.012);
  const swell=(t,len,amp)=>{const i0=Math.floor(t*sr),n=Math.floor(len*sr),c=bq('hp',5000,.7);let x1=0,x2=0,y1=0,y2=0,j=Math.floor(Math.random()*sr);for(let k=0;k<n;k++){const v0=NZ[(j+k)%sr];const y=c[0]*v0+c[1]*x1+c[2]*x2-c[3]*y1-c[4]*y2;x2=x1;x1=v0;y2=y1;y1=y;put(B.cym,i0+k,y*amp*Math.pow(k/n,2.2))}};
  const crash=(t,amp)=>nzv(B.cym,t,2.2,'hp',3700,.5,amp*1.3,.55);
+ // spiccato strings: short bowed notes, two detuned voices with a bright edge
+ const spic=(t,m,amp)=>{voice(B.str,t,beat*.22,hz(m),{amp,det:-7,a:.006,d:.07,s:.35,rel:.07,flt:['lp',2600,.8]});voice(B.str,t,beat*.22,hz(m),{amp:amp*.8,det:8,a:.006,d:.07,s:.35,rel:.07,flt:['lp',2300,.8]})};
+ // low strings (celli and basses) sustained an octave below the chord
+ const cello=(t,len,ms,amp)=>{for(const m of ms){voice(B.cello,t,len,hz(m),{amp,det:-5,a:.2,d:.3,s:.85,rel:.4,vib:.004,vr:5,flt:['lp',900,.7]});voice(B.cello,t,len,hz(m),{amp:amp*.8,det:6,a:.25,d:.3,s:.85,rel:.4,flt:['lp',800,.7]})}};
+ // sub bass: pure low sine that follows the root, felt more than heard
+ const sub=(t,len,m,amp)=>voice(B.sub,t,len,hz(m),{amp,wave:'sine',a:.02,d:.2,s:.9,rel:.1});
+ // big war drum with a pitched body and sub thump
+ const war=(t,amp)=>{const i0=Math.floor(t*sr),n=Math.floor(.9*sr);let ph=0;for(let k=0;k<n;k++){const tt=k/sr,f=38+70*Math.exp(-tt/.07);ph+=f/sr;put(B.drum,i0+k,Math.sin(TAU*ph)*amp*Math.exp(-tt/.28))}nzv(B.drum,t,.15,'lp',300,.7,amp*.6,.04)};
+ const tom=(t,f,amp)=>{const i0=Math.floor(t*sr),n=Math.floor(.4*sr);let ph=0;for(let k=0;k<n;k++){const tt=k/sr,ff=f*(1+.6*Math.exp(-tt/.04));ph+=ff/sr;put(B.tom,i0+k,Math.sin(TAU*ph)*amp*Math.exp(-tt/.13))}};
  const roll=(t,len,amp)=>{for(let x=0;x<len;x+=beat/4)taiko(t+x,amp*(.4+.6*x/len))};
  // ---- harmony ----
  const chordAt=b=>{const sec=b<4?0:b<12?0:b<20?1:b<28?0:0;const p=progs[sec];const c=b>=28?(b===31?4:p[(b-28)%4]):p[b%4];return c};
@@ -63,22 +72,31 @@ async function ckSong(key){
  const snap=(d,bar,at)=>{if(at%4!==0)return d;const c=chordAt(bar),tones=[c,c+2,c+4,c+7,c-7+2,c-7+4];let best=d,bd=99;for(const t of tones)for(const o of [-7,0,7]){const v=t+o;if(Math.abs(v-d)<bd){bd=Math.abs(v-d);best=v}}return best};
  const playMel=(b0,variant,fn)=>{for(const n of melody(variant)){const bar=b0+n.bar;if(bar>=BARS)continue;const d=snap(n.d,bar,n.at),t=bar*bar_+n.at*beat/2;fn(t,n.len*beat/2,d)}};
  const bar_=bar;
- // ---- arrangement ----
+ // ---- arrangement: built on bass, strings and drums ----
  for(let b=0;b<BARS;b++){const t=b*bar,c=chordAt(b),tr=triad(c,-1);
-  const intro=b<4,A=b>=4&&b<12,Bs=b>=12&&b<20,C=b>=20&&b<28,O=b>=28;
-  // pads (always), choir in climax and boss B
-  pad(t,bar,tr,intro||O?.16:.2);if(C||(boss&&Bs))choir(t,bar,[deg(c)+12,deg(c+2)+12,deg(c+4)],C?.06:.04);
-  // bass
-  const br=deg(c)-24;if(intro){bass(t,bar*.95,br,.22)}else if(boss){for(let k=0;k<16;k++)bass(t+k*beat/4,beat/4*.9,k%8===6?br+12:br,.2)}else{for(let k=0;k<8;k++)bass(t+k*beat/2,beat/2*.9,k%4===3?br+7:k%2?br+12:br,A?.17:.21)}
-  // harp arpeggios
-  if(A||O||Bs){const ar=[...tr.map(m=>m+12),tr[0]+24];for(let k=0;k<(Bs?16:8);k++){const step=Bs?beat/4:beat/2;harp(t+k*step,ar[(k*(rnd()<.2?2:1))%ar.length],Bs?.08:.1)}}
-  // drums
-  if(intro){taiko(t,.35);if(b===3)roll(t+bar*.5,bar*.5,.35),swell(t+bar*.25,bar*.75,.12)}
-  else{for(let k=0;k<4;k++){if(k===0||(k===2&&(C||boss)))taiko(t+k*beat,C?.55:.42);if((k===1||k===3)&&(Bs||C||boss))snare(t+k*beat,C?.32:.22)}
-   if(!O)for(let k=0;k<8;k++)hat(t+k*beat/2,k%2?.08:.14);if(C&&b%2===1)taiko(t+3.5*beat,.3)}
-  if(b===4||b===20)crash(t,.25);if(b===11||b===19){roll(t+bar*.5,bar*.5,.4);swell(t+bar*.4,bar*.6,.16)}
+  const intro=b<4,A=b>=4&&b<12,Bs=b>=12&&b<20,C=b>=20&&b<28,O=b>=28,full=Bs||C||boss&&!intro;
+  // harmony bed: pads, low strings, choir in the climax
+  pad(t,bar,tr,intro||O?.13:.15);cello(t,bar,[deg(c)-12,deg(c+4)-12],intro?.1:C?.17:.14);
+  if(C||(boss&&Bs))choir(t,bar,[deg(c)+12,deg(c+2)+12,deg(c+4)],C?.06:.04);
+  // bass + sub: driving eighths (sixteenths in the climax and on boss levels), octave jumps
+  const br=deg(c)-24;sub(t,bar*.98,br-12,intro?.13:.19);
+  if(intro){bass(t,bar*.95,br,.24)}
+  else{const n=(C||boss)?16:8,st=bar/n;for(let k=0;k<n;k++){const acc=k%(n/4)===0;bass(t+k*st,st*.85,(k%n)===n-2?br+7:(k%4===2&&!boss)?br+12:br,acc?.28:.2)}}
+  // strings ostinato: root-fifth-octave spiccato, every section after the intro
+  if(!intro){const pat=[0,2,4,2,7,4,2,4],ns=(C||boss)?16:8,st=bar/ns;for(let k=0;k<ns;k++){const d=c+pat[k%8];spic(t+k*st,deg(d)-(k%8===4?0:12),(k%4===0?.13:.09)*(O?.7:1))}}
+  // harp shimmer only in the gentler sections
+  if(A||O){const ar=[...tr.map(m=>m+12),tr[0]+24];for(let k=0;k<8;k++)harp(t+k*beat/2,ar[k%ar.length],.07)}
+  // drums: war drum + taiko groove, snares, toms, cymbals
+  if(intro){war(t,.5);if(b>=2)war(t+2*beat,.4);if(b===3){roll(t+bar*.5,bar*.5,.45);swell(t+bar*.25,bar*.75,.12)}}
+  else{
+   war(t,C?.75:.6);taiko(t+1.5*beat,.35);war(t+2*beat,full?.6:.45);taiko(t+3*beat,.3);if(full)taiko(t+3.5*beat,.32);
+   if(A){snare(t+3*beat,.18)}else{snare(t+beat,C?.34:.26);snare(t+3*beat,C?.34:.26);if(C)snare(t+3.75*beat,.16)}
+   if(!O)for(let k=0;k<8;k++)hat(t+k*beat/2,k%2?.06:.11);
+   if(b%4===3){const tf=[180,140,110,85];for(let k=0;k<4;k++)tom(t+(3+k/4)*beat,tf[k],.5)}
+   if(boss&&b%2===1)for(let k=0;k<4;k++)taiko(t+(2+k/2)*beat,.28)}
+  if(b===4||b===12||b===20||b===28)crash(t,.26);if(b===11||b===19){roll(t+bar*.5,bar*.5,.5);swell(t+bar*.4,bar*.6,.16)}
   if(b===27)swell(t,bar,.12);
-  // brass stabs in the climax
+  // brass hits on the downbeats of the climax
   if(C){brass(t,beat*.9,tr[0]+12,.12);brass(t+beat*2.5,beat*.4,tr[2]+12,.09)}}
  // theme A on the lead, development B (answer phrase an octave below), climax on brass + choir doubling, fragment in the resolution
  playMel(4,false,(t,l,d)=>lead(t,l,deg(d)+12,.18,R[4]));

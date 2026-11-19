@@ -498,6 +498,19 @@ rep("if(e.t==='boss'&&!L.demo&&L.i>=32){if(!e.m50&&e.hp<e.mx*.5)e.hp=e.mx*.5;els
 # soundtrack: the new composer, with the original one kept as a fallback
 rep("async function song(key){", open(os.path.join(SRC,'music.js'),encoding='utf8').read()+"\nfunction song(key){return ckSong(key).catch(e=>{console.warn('ckSong',e);return songV2(key)})}\nasync function songV2(key){")
 
+# 39. v3.8: bosses besiege a base instead of vanishing on contact (that skipped Rage Mode too);
+#     quieter UI/gameplay effects so the music leads.
+rep("let dx=g[0]-e.x,dy=g[1]-e.y,dl=Math.hypot(dx,dy)||1;steer(e,dx/dl,dy/dl,sp,dt);e.pr=-dl;if(dl<.3)leak(e);return}",
+    "let dx=g[0]-e.x,dy=g[1]-e.y,dl=Math.hypot(dx,dy)||1;if(e.t==='boss'&&!L.demo&&dl<.75){e.pr=-dl;faceTo(e,dx,dy,dt);ckBossSiege(e,dt);return}steer(e,dx/dl,dy/dl,sp,dt);e.pr=-dl;if(dl<.3)leak(e);return}")
+# mix: effects bus at 55%, music up; UI blips quieter still; beeps go through the effects bus
+rep("sg=au.createGain();sg.connect(mg);", "sg=au.createGain();sg.gain.value=.55;sg.connect(mg);")
+rep("mb.gain.setTargetAtTime(.6*musV,au.currentTime,.05);au.resume();", "mb.gain.setTargetAtTime(.85*musV,au.currentTime,.05);au.resume();")
+rep("if(i==='vm'){musV=v;if(mb&&mon)mb.gain.setTargetAtTime(.6*v,au.currentTime,.05)}", "if(i==='vm'){musV=v;if(mb&&mon)mb.gain.setTargetAtTime(.85*v,au.currentTime,.05)}")
+rep("g.gain.value=v*sfxV*(.8+Math.random()*.2);", "g.gain.value=v*sfxV*(.8+Math.random()*.2)*(CK_SFXQ[k]||1);")
+rep("o.connect(g);g.connect(mg);o.start();o.stop(t+d)}", "o.connect(g);g.connect(sg||mg);o.start();o.stop(t+d)}")
+rep("let t=au.currentTime,d=sg||mg||au.destination,V=v*sfxV", "let t=au.currentTime,d=sg||mg||au.destination,V=v*sfxV*.7")
+rep("let sg,ag,am=null,", "const CK_SFXQ={build:.3,upgrade:.35,sell:.35,coin:.3,bank:.35,perfect:.5,wave:.55,arrow:.6,cannon:.7,ice:.6,zap:.6,toxin:.6,leak:.6};let sg,ag,am=null,")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
