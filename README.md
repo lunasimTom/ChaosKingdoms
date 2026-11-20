@@ -7,7 +7,70 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v4.4.apk` | Android app (package `com.chaoskingdoms.game`, version 4.4, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.0.apk` | Android app (package `com.chaoskingdoms.game`, version 5.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in V5
+
+New code is in `source/premium/v5.js`. The font is rebuilt with `tools/make_font.py`.
+
+**One font for English and Chinese.** Every piece of text, including the battlefield numbers drawn on the canvas, now uses Noto Sans SC (SIL OFL), embedded as `CKSans`.
+- It replaces Cinzel, Nunito and Fredoka.
+- To keep the file small, it includes only the 1,300 characters the game uses, in three weights (medium, bold, black). That's 685 KB of font data, and it works offline.
+
+**New artwork.**
+- The loading screen uses the new key art. In portrait it fills the screen. In landscape the full art is shown centred over a blurred copy of itself, so the logo is never cropped.
+- Victory and Defeat use the new framed banners, which pop in.
+- The home screen no longer shows the logo picture.
+
+**Home screen.**
+- A new 🛒 Shop (Chests first, then Treasures) replaces the separate chest entry.
+- Shop and Inventory sit side by side, and "Enter Redeem Code" is now "Redeem Code".
+- The new buttons now switch language correctly at startup.
+
+**Commander Record.** Tapping Coins, Diamonds or Stars opens the Treasure page.
+
+**Unified Button Style.** The gold Close button is now the standard for the Inventory tabs, Use, Sell, the forge and the home-shop tabs. The selected tab shows as pressed in.
+
+**Battle HUD.**
+- **Level badge:** the top-left corner shows a compact level badge with just the number. On boss levels it turns gold-red with a small crown, which stays inside its box.
+- **Map name:** the level and map name ("👑 BOSS · Lv 8 · Forest Kingdom") moves into the free strip under the gold divider.
+- **Countdown:** in Chinese it now fits in full.
+- **Pause button:** it is the same size as the speed button.
+- **Bottom panel:** it reads Build | Shop | Inventory. The 💡 tips button floats in the free corner below the map.
+- **Item bar:** it shows only the items, without the "ITEMS" label.
+- **In-battle shop tabs:** Items | Chests | Treasures.
+
+**Settings screen.**
+- The gear button opens Settings: volume sliders, music, auto next wave, damage numbers, a new haptics on/off switch, screen orientation, language and the version number.
+- The Pause button opens the pause menu, which now holds only actions: Resume, Settings, Inventory, Restart, Select level, Save, Redeem Code, Quit and Main menu.
+- The space bar still toggles pause directly.
+
+**Monster AI.** Monsters now decide what to attack every 0.4 s:
+- **Near the base:** in the last 25% of their route, or within 3 tiles of the base, they commit to the base.
+- **Elsewhere:** they attack the most threatening tower they can see. That is the tower shooting them, strong towers, towers whose range covers them, damaged towers, and barricades in the way; closer counts more.
+- **By type:**
+  - Grunts notice towers up to 2.5 tiles away.
+  - Brutes are tower-breakers and notice towers up to 3.5 tiles away.
+  - Runners raid the base and only fight what blocks them.
+  - Flyers and bosses keep their own behaviour.
+- **Awareness:** it starts at 85% on level 1 and reaches 100% by level 20.
+- **Leash:** a chase ends if it drags on past 6 s or the monster loses sight of the tower.
+- **Balance:** unchanged, as agreed, so the game is harder. In a test with towers placed 2 tiles from the route, 8 of 12 monsters attacked them on level 3 (4 in v4.4). Runners never did.
+
+**No more hopping.** Monsters used to snap to each tile centre and stop, which looked like a small hop. They now flow from tile to tile at a steady speed: 0 near-stops per run, against 7-16 before.
+
+**Tile pop.** Tapping a tile lifts it slightly (+6%, a few pixels up, with a shadow and a soft gold rim). It then springs back with a small overshoot over about 0.36 s. A tower standing on the tile lifts with it.
+
+**Visual pass.**
+- **Shared look:** one gold/navy palette, a framed popup style with an inner glow and a gold ornament under titles, and the same frame on every panel.
+- **Motion:** popups open with a soft scale-up over a blurred backdrop, screens fade in, and every button has the same press animation.
+- **Icons:** gold line icons replace the emoji on menu buttons, drawn as vector graphics in one consistent style.
+- **Top bar:** a frosted-glass top bar with pill-shaped stat groups.
+- **Toasts:** framed gold banners with a star mark.
+- **Damage numbers:** they pop in, with strong or gold hits larger and glowing.
+- **Checks:** every screen was reviewed in English and Chinese, portrait and landscape.
+
+**Saves.** Saves from v4.4 and earlier, and their transfer codes, load unchanged. The haptics setting is saved as a new optional field.
 
 ## What changed in v4.4 · Commander 50
 
@@ -784,7 +847,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.4.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

@@ -32,6 +32,7 @@ const ckImg=(k,cls)=>CKA[k]?`<img class="ck-aimg ${cls||''}" src="${CKA[k]}" alt
 // replace the game's own coin / diamond / star / trophy / medal / attribute / item graphics with the new artwork
 function ckAssetsReg(){try{
  for(const k of ['i_river','i_legion','i_air','i_bomb','i_heli'])if(CKA[k]){SPRD[k]=CKA[k];const im=new Image();im.src=CKA[k];SP[k]=im}
+ if(CKA.win){SPRD.victory=CKA.win;SPRD.defeat=CKA.lose;try{SP.victory=CKA_IMG.win;SP.defeat=CKA_IMG.lose}catch(_){}}   // v5 banners
  if(CKA.gold){SPRD.u_coin=CKA.gold;SP.u_coin=CKA_IMG.gold;document.querySelectorAll('img[data-s="u_coin"]').forEach(e=>e.src=CKA.gold)}
 }catch(e){console.warn('ckAssetsReg',e)}}
 setTimeout(ckAssetsReg,0);
@@ -130,7 +131,7 @@ function ckGrant(l){const p=pp(l.x,l.y);ckDropLog(l);
  else if(l.kind==='chest'){ckChInit();S.chests[l.ct]=(S.chests[l.ct]|0)+1;label='🎁 '+ckChName(l.ct);to='inv';toast('🎁 '+ckChName(l.ct)+lvZ('！在 商店 › 宝箱 中打开','! Open it in Shop › Chests'));ckVibe([30,40,60])}
  else if(CK_RARE[l.kind]){L.inv[l.kind]=(L.inv[l.kind]||0)+l.amt;const R=CK_RARE[l.kind];label=R.ic+' '+ckLZ(R.n)+(l.amt>1?' ×'+l.amt:'');to='inv';ckRareCard(R,l.tier)}
  txt(p.x,p.y-tw*.5,label,col);ckFly(l,p,to);try{invR()}catch(_){}}
-function ckVibe(ms){try{if(window.CKAndroid&&CKAndroid.vibrate){CKAndroid.vibrate(Array.isArray(ms)?ms.reduce((a,b)=>a+b,0):ms);return}if(navigator.vibrate)navigator.vibrate(ms)}catch(_){}}
+function ckVibe(ms){if(typeof S!=='undefined'&&S.hap===false)return;try{if(window.CKAndroid&&CKAndroid.vibrate){CKAndroid.vibrate(Array.isArray(ms)?ms.reduce((a,b)=>a+b,0):ms);return}if(navigator.vibrate)navigator.vibrate(ms)}catch(_){}}
 // per-level record of what was collected (boss treasure vs monster drops), shown on the result screen
 function ckDropLog(l){if(l.kind==='jackpot')return;const D=L.drops=L.drops||{boss:{},mon:{}},g=l.boss?D.boss:D.mon,k=l.kind==='item'?'item:'+l.id:l.kind==='chest'?'chest:'+l.ct:l.kind;g[k]=(g[k]||0)+(l.amt||1)}
 function ckDropName(k){if(k.startsWith('chest:'))return ckChName(+k.slice(6));if(k.startsWith('item:')){const it=IT.find(x=>x.id===k.slice(5));return it?it.n:k.slice(5)}if(CK_RARE[k])return ckLZ(CK_RARE[k].n);return lvZ(...({gold:['金币','Gold'],star:['星星','Stars'],frag:['钻石碎片','Diamond Shards'],dia:['钻石','Diamonds'],rune:['强化符','Enhancement Runes']}[k]||[k,k]))}

@@ -16,7 +16,7 @@ def _cka():
         if not f.endswith('.png') or f.startswith('source-'): continue
         im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
         out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    assert len(out) == 79, sorted(out)
+    assert len(out) == 81, sorted(out)
     return 'const CKA=' + __import__('json').dumps(out) + ';'
 CKA_JS = _cka()
 
@@ -361,7 +361,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -616,7 +616,7 @@ rep("S.prog=ckStar5(s.p||{},s.s5);", "S.prog=ckStar5(s.p||{},s.s5);S.chests=Arra
 rep(",fx:S.fx||{},ru:S.rune|0,s5:1}}", ",fx:S.fx||{},ru:S.rune|0,s5:1,md:S.medals|0,ai:S.autoIt||{}}}")
 rep("S.prog=ckStar5(o(j.p),j.s5);", "S.prog=ckStar5(o(j.p),j.s5);S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);")
 rep("S.rune=0;S.bonusStars=0;", "S.rune=0;S.bonusStars=0;S.chests=[0,0,0,0,0,0];S.medals=0;")
-rep('data-shop-page="treasure">✧ ${zh?\'宝藏\':\'Treasures\'}</button></div>', 'data-shop-page="treasure">✧ ${zh?\'宝藏\':\'Treasures\'}</button><button class="shop-tab ${shopPage===\'chests\'?\'on\':\'\'}" data-shop-page="chests">🎁 ${zh?\'宝箱\':\'Chests\'}</button></div>')
+rep('<button class="shop-tab ${shopPage===\'treasure\'?\'on\':\'\'}" data-shop-page="treasure">✧ ${zh?\'宝藏\':\'Treasures\'}</button></div>', '<button class="shop-tab ${shopPage===\'chests\'?\'on\':\'\'}" data-shop-page="chests">🎁 ${zh?\'宝箱\':\'Chests\'}</button><button class="shop-tab ${shopPage===\'treasure\'?\'on\':\'\'}" data-shop-page="treasure">✧ ${zh?\'宝藏\':\'Treasures\'}</button></div>')
 rep("const body=shopPage==='treasure'?renderTreasure():", "const body=shopPage==='chests'?ckChestPage(true):shopPage==='treasure'?renderTreasure():")
 rep("<small>${shopPage==='items'?TL(", "<small>${shopPage==='chests'?ckLZ(['宝箱 · 钻石购买或首领掉落，无法出售','Chests · buy with diamonds or win them from bosses · cannot be sold']):shopPage==='items'?TL(")
 rep('</button><small>${lk?\'<a class="vlink" data-prof="shop"', '</button>${ckAutoBtn(it.id)}<small>${lk?\'<a class="vlink" data-prof="shop"')
@@ -645,12 +645,12 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'4.4',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.0',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
 rep("<button class=\"bt pay\" id=\"picklevel\">✦ ${TL('Select level')}</button>", "<button class=\"bt pay\" id=\"picklevel\">✦ ${TL('Select level')}</button><button class=\"bt g ck-invp\" data-ckinv=\"pause\">🎒 ${lvZ('背包','Inventory')}</button>")
-rep("e.innerHTML='<span class=\"ivl\">'+TL('ITEMS')+'</span>'", "e.innerHTML='<span class=\"ivl\" data-ckinv=\"hud\" role=\"button\" tabindex=\"0\">'+TL('ITEMS')+'<i class=\"ck-bag\">🎒</i></span>'")
+rep("e.innerHTML='<span class=\"ivl\">'+TL('ITEMS')+'</span>'", "e.innerHTML=''")
 rep("const after=rankAt(S.xp),newA=", "const after=rankAt(S.xp);try{ckLvCheck()}catch(_){}const newA=")
 
 rep("window.ckBadge=function(lv){lv=Math.max(1,Math.min(10,lv|0));return '<img class=\"ckbadge\" alt=\"Lv.'+lv+'\" draggable=\"false\" src=\"'+B[lv-1]+'\">'};", "window.ckBadge=function(lv){lv=Math.max(1,Math.min(50,lv|0));return '<img class=\"ckbadge\" alt=\"Lv.'+lv+'\" draggable=\"false\" src=\"'+((typeof CKA==='object'&&CKA['lv'+lv])||B[Math.min(9,lv-1)])+'\">'};")
@@ -661,6 +661,34 @@ rep("n>=1e5?Math.floor(n/1e3)+'K':d}", "n>=1e5?Math.floor(n/1e3)+'K':n>=1e4?(Mat
 
 rep("${R.reduce((a,r)=>a+(r.secret?0:(r.count||8)*3),0)}</b><small>${TL('Stars collected')}", "${R.reduce((a,r)=>a+(r.secret?0:(r.count||8)*5),0)}</b><small>${TL('Stars collected')}")
 
+# 46. V5: compact level badge + map label under the divider, floating tips button, Inventory tab,
+# "Redeem Code" wording.
+rep("$('ln').textContent=TL('Lv {0}',L.i+1)+(L.boss?' 👑':'');", "$('ln').textContent=String(L.i+1);$('ln').classList.toggle('ck-boss',!!L.boss);try{ckMapLabel()}catch(_){}")
+rep("function hud(){if(S.mode!=='play')return;", "function hud(){if(S.mode!=='play')return;try{ckPlaceFloat()}catch(_){}")
+rep("function applyLang(){", "function applyLang(){try{ckMapLabel()}catch(_){}")
+rep("b.setAttribute('data-i18n','🎟 Enter Redeem Code');b.textContent='🎟 Enter Redeem Code';", "b.setAttribute('data-i18n','🎟 Redeem Code');b.textContent='🎟 Redeem Code';")
+rep("ZH['🎟 Enter Redeem Code']='🎟 输入兑换码'", "ZH['🎟 Redeem Code']='🎟 兑换码'")
+rep("Z('输入兑换码','Enter Redeem Code')", "Z('兑换码','Redeem Code')", 2)
+
+# 47. V5 monster AI (threat targeting, base commit, leash) and smooth movement (no snap at tile centres).
+rep("e.x=tx;e.y=ty;e.vv[0]=0;e.vv[1]=0;e.tc=null;nav.px=e.x;nav.py=e.y;nav.lastDist=1e9;return}}}", "e.tc=null;nav.lastDist=1e9}}}")
+rep("if(!e.chase){e.cdA=(e.cdA||0)-dt;if(e.cdA<=0){e.cdA=.35;let t=pickTw(e,AGG[e.t]||1.4);if(t){e.chase=t;e.chaseT=0}}}", "if(ckCommit(e)){e.chase=null}else if(!e.chase){e.cdA=(e.cdA||0)-dt;if(e.cdA<=0){e.cdA=.4;let t=ckPickTarget(e);if(t){e.chase=t;e.chaseT=0}}}")
+rep("if(e.chaseT>6||d>(AGG[e.t]||1.4)*2.2||!lineOK(e.x,e.y,t.x,t.y)){e.chase=null;e.cdA=2.5}", "if(e.chaseT>6||d>ckAware(e)*1.8+.6||!lineOK(e.x,e.y,t.x,t.y)){e.chase=null;e.cdA=2.5}")
+rep("function fire(t,e){fire0(t,e);vMuzzle(t,e)}", "function fire(t,e){if(e){e._sh=t;e._shT=TM}fire0(t,e);vMuzzle(t,e)}")
+
+# 48. V5: Settings screen on the gear, pause menu with actions only (opened by Pause), haptics switch, tile pop.
+rep("<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>", "")
+rep("<button class=\"bt g musbtn\">${mon?TL('♪ Music: on'):TL('♪ Music: off')}</button></div><div class=\"row2\"><button class=\"bt g rotbtn\">⟳ ${TL('Screen: ')}${TL('Auto')}</button><button class=\"bt g langbtn\">🌐 ${LANG==='zh'?'中文':'EN'}</button></div>", "<button class=\"bt g\" data-cksettings=\"pause\">⚙ ${lvZ('设置','Settings')}</button></div>")
+rep("$('menu').onclick=pauseM;", "$('menu').onclick=()=>{if(S.mode==='play')ckSettingsOpen('hud')};")
+rep("$('pz').onclick=togP;", "$('pz').onclick=()=>{if(S.mode==='play'&&!L.over)pauseM();else togP()};")
+rep("let q=tileAt(...pos(ev));hov=q;", "let q=tileAt(...pos(ev));hov=q;try{ckTilePop(q)}catch(_){}")
+rep(" c.restore();drawOver()}\nfunction tileAt(", " c.restore();try{ckPopDraw()}catch(_){}drawOver()}\nfunction tileAt(")
+rep(",lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))", ",lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0,hp:S.hap===false?0:1}))")
+rep("S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;", "S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;S.hap=s.hp!==0;")
+
+# 49. V5 damage numbers: pop in, bigger + glowing for strong/gold hits, rounded outline.
+rep("c.font=`900 ${Math.max(12,tw*.26)}px Nunito`;c.textAlign='center';L.tx.forEach(t=>{c.globalAlpha=Math.min(1,t.l*2);c.lineWidth=3;c.strokeStyle='#170f2e';c.strokeText(t.s,t.x,t.y);c.fillStyle=t.c;c.fillText(t.s,t.x,t.y)});", "c.textAlign='center';c.lineJoin='round';L.tx.forEach(t=>{const age=(t.l0||(t.l0=t.l))-t.l,pop=age<.12?1+.4*(1-age/.12):1,big=/^#?(ff[c-e]|ffd|fe)/i.test(t.c||'')||/[!★]/.test(String(t.s));const fs=Math.max(12,tw*.26)*(big?1.22:1)*pop;c.font=`900 ${fs}px Nunito`;c.globalAlpha=Math.min(1,t.l*2);c.lineWidth=Math.max(3,fs*.2);c.strokeStyle='#120a24';c.strokeText(t.s,t.x,t.y);if(big){c.shadowColor=t.c;c.shadowBlur=10}c.fillStyle=t.c;c.fillText(t.s,t.x,t.y);c.shadowBlur=0});")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
@@ -668,9 +696,9 @@ F = os.path.join(HERE, 'fonts')
 faces = [('Cinzel', 'cinzel-latin-{}-normal.woff2', [700, 900]),
          ('Nunito', 'nunito-latin-{}-normal.woff2', [700, 800, 900]),
          ('Fredoka', 'fredoka-latin-{}-normal.woff2', [500, 600, 700])]
-font_css = ''.join(
-    f"@font-face{{font-family:'{fam}';font-style:normal;font-weight:{w};font-display:swap;src:url(data:font/woff2;base64,{b64(os.path.join(F, pat.format(w)))}) format('woff2')}}\n"
-    for fam, pat, ws in faces for w in ws)
+# v5: one family for English and Chinese: Noto Sans SC (OFL), subset to the characters the game uses
+# (tools/make_font.py regenerates it), embedded as 'CKSans'. Every older family name is mapped to it.
+font_css = open(os.path.join(F, 'cksans-noto-sans-sc-subset.css'), encoding='utf8').read()
 critical = open(os.path.join(SRC, 'critical.css'), encoding='utf8').read()
 head = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">'
@@ -683,10 +711,10 @@ s = head + s
 def _splash():
     import io
     from PIL import Image
-    im = Image.open(os.path.join(SRC, 'source-castle.png')).convert('RGB'); im.thumbnail((960, 1100), Image.LANCZOS)
+    im = Image.open(os.path.join(SRC, 'source-keyart.png')).convert('RGB'); im.thumbnail((900, 1600), Image.LANCZOS)
     buf = io.BytesIO(); im.save(buf, 'WEBP', quality=74, method=6)
     castle = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    logo = re.search(r'"logo":"(data:[^"]+)"', orig).group(1)
+    logo = ''
     return open(os.path.join(SRC, 'splash.html'), encoding='utf8').read().replace('%%CK_CASTLE%%', castle).replace('%%CK_LOGO%%', logo)
 s = s.replace('<!--CK_SPLASH-->', _splash())
 aaa_css = open(os.path.join(SRC, 'aaa.css'), encoding='utf8').read()
@@ -694,5 +722,10 @@ aaa_js = open(os.path.join(SRC, 'aaa.js'), encoding='utf8').read()
 fix_js = open(os.path.join(SRC, 'fixes.js'), encoding='utf8').read()
 assert s.rstrip().endswith('</body></html>')
 s = s.rstrip()[:-len('</body></html>')] + f'<style id="ck-aaa">\n{aaa_css}</style>\n<script id="ck-fixes">\n{fix_js}</script>\n<script id="ck-aaa-js">\n{aaa_js}</script>\n</body></html>\n'
+_fc = s.index('<style id="ck-fonts">'); _fe = s.index('</style>', _fc)
+_body = s[:_fc] + '\x00FONTS\x00' + s[_fe:]
+for _pat in (r"\bCinzel\b", r"\bNunito\b", r"\bFredoka\b", r'"Noto Sans SC"', r"'Noto Sans SC'", r"\bsystem-ui\b"):
+    _body = re.sub(_pat, 'CKSans', _body)
+s = _body.replace('\x00FONTS\x00', s[_fc:_fe])
 open(out_path, 'w', encoding='utf8').write(s)
 print('wrote', out_path, len(s))

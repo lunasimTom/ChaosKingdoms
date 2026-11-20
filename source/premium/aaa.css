@@ -409,3 +409,82 @@ html body.pt #hud .top #lives,html body.pt #hud .top #coin,html body.pt #hud .to
 html body #hud .top #wv{font-size:12px!important}
 html body:not(.pt) #hud .top #wvs{flex:0 0 66px!important;width:66px!important;min-width:66px!important}html body:not(.pt) #app #hud .top > .lv.lv{flex:0 0 56px!important;width:56px!important;min-width:56px!important;max-width:56px!important}html body:not(.pt) #hud .top #cd{flex:0 0 46px!important;width:46px!important;min-width:46px!important;max-width:46px!important}
 .sb .ck-auto{padding:0 3px!important;gap:0!important;border-radius:999px}.sb .ck-auto b{display:none}.sb .ck-auto .trk{width:32px}.sb .ck-auto.on .knob{left:15px}
+/* ================= V5 ================= */
+/* home screen: the logo picture is removed (the loading key art carries the logo) */
+#title #logo{display:none!important}
+/* new Victory / Defeat banners: framed artwork, keep its proportions */
+#mbox img.bn{width:min(86%,360px)!important;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;margin:0 auto 8px!important;display:block;filter:drop-shadow(0 10px 18px #000a) drop-shadow(0 0 22px #ffcf6a33);-webkit-mask-image:none!important;mask-image:none!important;animation:ckBnIn .55s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes ckBnIn{0%{opacity:0;transform:scale(.6) translateY(-12px)}100%{opacity:1;transform:none}}
+/* ---- Unified Button Style (the gold Close button), shared by inventory tabs / Use / Sell / forge / home-shop tabs ---- */
+:root{--ub-bg:linear-gradient(180deg,#e9d38a 0%,#cfa13c 46%,#b0801f 54%,#9c6c16 100%);--ub-bd:#7d4a0c;--ub-sh:0 4px 0 #7d4a0c,0 7px 9px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.75),inset 0 -3px 0 rgba(150,70,0,.35);--ub-fg:#4a2a06}
+.ck-ub,.ck-ivt,.ck-ivu,.ck-ivs,#mbox .ck-forge .ck-fgo{background:var(--ub-bg)!important;border:2px solid var(--ub-bd)!important;border-radius:12px!important;box-shadow:var(--ub-sh)!important;color:var(--ub-fg)!important;font:900 13px/1 CKSans,sans-serif!important;letter-spacing:.03em;text-shadow:0 1px 0 rgba(255,255,255,.55)!important;cursor:pointer;transition:transform .06s,box-shadow .06s,filter .15s}
+.ck-ub:active,.ck-ivt:active,.ck-ivu:active,.ck-ivs:active,#mbox .ck-forge .ck-fgo:active{transform:translateY(3px);box-shadow:0 1px 0 #7d4a0c,0 2px 4px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.5)!important}
+.ck-ivt{height:34px}.ck-ivu,.ck-ivs{height:30px!important;padding:0 12px!important;border-radius:10px!important}
+/* selected tab: same style, shown pressed in with a warm inner glow */
+.ck-ivt.on,.ck-ub.on{transform:translateY(3px);filter:brightness(1.12) saturate(1.1);box-shadow:0 1px 0 #7d4a0c,inset 0 0 0 2px #fff3c4,inset 0 0 12px rgba(255,236,170,.9)!important}
+.ck-ivs.arm{background:linear-gradient(180deg,#f08a9c,#c8395a 55%,#8c2948)!important;border-color:#5e1328!important;color:#fff!important;text-shadow:0 1px 0 #0006!important}
+.ck-ivs img.ic,.ck-ivu img.ic{width:15px;height:15px}
+/* home shop */
+.ck-hshop h2{margin:0 0 6px}.ck-hstabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 8px}.ck-hst{height:36px}
+.ck-hsbody{max-height:min(60vh,540px);overflow:auto;padding:2px}.ck-hstr .ckx-res,.ck-hstr .ckx-fx{width:100%}
+/* commander record: coins / diamonds / stars open the Treasure page */
+.vh .res>div:nth-child(-n+3){cursor:pointer;transition:transform .1s}.vh .res>div:nth-child(-n+3):active{transform:scale(.95)}
+/* top-left: compact level badge (number only), crown kept inside the box on boss levels */
+html body #app #hud .top > .lv.lv{flex:0 0 32px!important;width:32px!important;min-width:32px!important;max-width:32px!important;position:relative;display:grid!important;place-items:center;height:30px;border-radius:9px;border:1.5px solid #c99a3e;background:linear-gradient(180deg,#2c3552,#151a2c);box-shadow:inset 0 1px 0 #ffffff22,0 2px 0 #090c18;overflow:hidden}
+html body #app #hud .top > .lv.lv #lr{display:none!important}
+html body #app #hud .top > .lv.lv #ln{font:900 14px/1 CKSans,sans-serif!important;color:#ffe08a!important;letter-spacing:0!important;margin-top:6px;text-align:center}
+html body #app #hud .top > .lv.lv::before{content:'LV';position:absolute;top:2px;left:0;right:0;text-align:center;font:900 7px/1 CKSans,sans-serif;letter-spacing:.12em;color:#9fb0d6}
+html body #app #hud .top > .lv.lv:has(#ln.ck-boss){border-color:#ffcf6a;background:linear-gradient(180deg,#8a2a2a,#3d0f18)}
+html body #app #hud .top > .lv.lv:has(#ln.ck-boss)::before{content:'👑';font-size:8px;top:1px;letter-spacing:0}
+html body #hud .top #cd{flex:0 0 50px!important;width:50px!important;min-width:50px!important;max-width:50px!important}
+html body:not(.pt) #hud .top #cd{flex:0 0 56px!important;width:56px!important;min-width:56px!important;max-width:56px!important}
+html body:not(.pt) #app #hud .top > .lv.lv{flex:0 0 34px!important;width:34px!important;min-width:34px!important;max-width:34px!important}
+/* level + map name in the free strip under the gold divider */
+#ckmapn{position:absolute;left:10px;z-index:6;pointer-events:none;font:800 11px/1 CKSans,sans-serif;letter-spacing:.04em;color:#e9dcb4;text-shadow:0 1px 2px #000,0 0 6px #000a;white-space:nowrap;max-width:62%;overflow:hidden;text-overflow:ellipsis}
+#ckmapn span{color:#ffe08a}#ckmapn .bo{color:#ff9a7a;font-weight:900;letter-spacing:.08em}
+body:not(.mode-play) #ckmapn{}
+/* Pause the same size as the speed button */
+html body #hud .top #pz{flex:0 0 32px!important;width:32px!important;min-width:32px!important}
+/* bottom panel: Build | Shop | Inventory; tips button floats in the free corner below the map */
+#rail .tabs .ck-invtab{flex:1 1 0}
+.ck-tipfloat{position:absolute!important;right:10px;z-index:7;width:32px!important;height:32px!important;min-height:0!important;padding:0!important;border-radius:50%!important;display:grid!important;place-items:center;font-size:16px!important;border:1.5px solid #c99a3e!important;background:radial-gradient(circle at 35% 30%,#3a4466,#151a2c)!important;box-shadow:0 2px 0 #090c18,0 0 10px #ffd36a44!important;margin:0!important}
+/* Settings screen */
+.ck-set{text-align:left}.ck-set h2{text-align:center;margin:0 0 8px}
+.ck-set-sec{margin:0 0 10px;padding:10px 11px 8px;border:1px solid #637ba2;border-radius:14px;background:linear-gradient(145deg,#0d1b31cc,#263c5d99);box-shadow:inset 0 1px #ffffff18}
+.ck-set-sec h4{margin:0 0 8px;font:900 12px/1 CKSans,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#f3d48a}
+.ck-set .ck-setbtn{width:100%!important;margin:4px 0 0!important}.ck-setrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ck-setrow .ck-setbtn{margin:0!important}
+.ck-hapl{display:flex;gap:8px;align-items:center;margin:2px 0 4px}
+.ck-set .ck-ver{text-align:center;font:800 11px/1.3 CKSans,sans-serif;letter-spacing:.06em;color:#9fb0d6;margin:4px 0 2px}
+/* ================= V5 · AAA visual pass ================= */
+:root{--ck-gold:#f3c04d;--ck-gold-hi:#ffe08a;--ck-navy:#0b1426;--ck-navy-2:#16243f;--ck-ink:#e9e4d2;--ck-mut:#9fb0d6;--ck-red:#e0526d;--ck-green:#4fd38a;--ck-r:16px;--ck-frame:0 0 0 1px #00000099,0 0 0 2px #e9b95a99,inset 0 1px 0 #fff2c41f,inset 0 0 26px #f3c04d14,0 24px 60px #000c}
+/* icons */
+.ckico-w{display:inline-flex;margin-right:.38em;vertical-align:-.16em}.ckico{width:1.08em;height:1.08em;flex:none;filter:drop-shadow(0 1px 0 #ffffff55)}
+.bt .ckico,.tab .ckico,.shop-tab .ckico{stroke-width:2.3}
+/* popups: frame + entrance + blurred backdrop */
+#modal{backdrop-filter:blur(5px) saturate(1.1);-webkit-backdrop-filter:blur(5px) saturate(1.1);transition:opacity .22s ease}
+#modal:not(.on){opacity:0}
+#modal.on #mbox{animation:ckPopIn .32s cubic-bezier(.2,1.35,.4,1) both}
+#mbox{border-radius:var(--ck-r)!important;border:1px solid #e9b95a!important;box-shadow:var(--ck-frame)!important;background:radial-gradient(120% 60% at 50% 0,#22385fcc 0,transparent 60%),linear-gradient(160deg,#1a2c48,#0a1221)!important}
+#mbox h2.f{position:relative;padding-bottom:8px;margin-bottom:8px!important}
+#mbox h2.f::after{content:'';position:absolute;left:22%;right:22%;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#f3c04d,#fff1c4,#f3c04d,transparent);opacity:.75}
+@keyframes ckPopIn{0%{opacity:0;transform:translateY(14px) scale(.94)}100%{opacity:1;transform:none}}
+/* screen changes: soft fade + slight zoom */
+.screen.on{animation:ckScrIn .34s cubic-bezier(.2,.8,.25,1) both}
+#modal.screen.on{animation:none}
+@keyframes ckScrIn{0%{opacity:0;transform:scale(1.015)}100%{opacity:1;transform:none}}
+/* one press feel for every button */
+.bt{transition:transform .07s ease,filter .15s ease,box-shadow .07s ease!important}
+.bt:active:not(:disabled){transform:translateY(3px) scale(.985)!important;filter:brightness(1.06)}
+.bt:disabled{filter:grayscale(.75) brightness(.72)!important;cursor:not-allowed}
+/* HUD top bar: frosted glass with a gold hairline */
+#hud .top{background:linear-gradient(180deg,rgba(24,38,64,.88),rgba(9,15,28,.86))!important;backdrop-filter:blur(8px) saturate(1.2);-webkit-backdrop-filter:blur(8px) saturate(1.2);border-bottom:1px solid #e9b95a88!important;box-shadow:0 1px 0 #f3c04d33,0 8px 22px #000a!important}
+#hud .top #lvw,#hud .top #cnw{padding:2px 6px!important;border-radius:999px;background:linear-gradient(180deg,#0a1222cc,#16223acc);box-shadow:inset 0 1px 2px #000a,0 0 0 1px #e9b95a33}
+#hud .top #lvw{padding:2px 5px!important}
+/* toasts: framed gold banner, slides in */
+#toast{border-radius:12px!important;border:1px solid #e9b95a!important;background:linear-gradient(180deg,#1d2f4fee,#0a1324f2)!important;box-shadow:0 0 0 1px #000a,inset 0 1px 0 #fff2c42a,0 10px 24px #000b,0 0 18px #f3c04d26!important;padding:7px 16px 7px 34px!important;font-weight:900!important;letter-spacing:.02em;color:#fff4d8!important}
+#toast::before{content:'';position:absolute;left:11px;top:50%;width:14px;height:14px;margin-top:-7px;background:radial-gradient(circle at 35% 35%,#fff4c4,#f3c04d 55%,#a8751a);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 4px #ffd36a)}
+/* panels inside menus share one frame */
+.ck-set-sec,.ck-forge,.ck-ivr,.ck-chrow,.rw,.pause-settings{box-shadow:0 0 0 1px #00000066,inset 0 1px 0 #ffffff14,0 6px 14px #0006!important}
+/* item bar: items only, centred row */
+#inv{gap:6px!important;padding-left:6px!important}
+@media (prefers-reduced-motion:reduce){#modal.on #mbox,.screen.on{animation:none!important}}
