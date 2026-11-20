@@ -74,7 +74,8 @@ function ckTreasure(){const i=L.i,replay=!!(S.prog&&S.prog[i]),dm=[.7,.85,1,1.2,
  let n=Math.min(80,Math.round((26+i*.3)*dm*perf*(1+.15*(nb-1))));if(replay)n=Math.max(5,Math.round(n*.25));
  // better tiers grow with level, difficulty and how well the base was defended
  const up=(.8+i/250)*([.8,.9,1,1.15,1.3][S.dif]||1)*perf,w=CKT_W.map((x,t)=>t>=2?x*up:x);
- const out=[];for(let k=0;k<n;k++){let t=ckRoll(w);if(replay&&t>2)t=2;out.push(Object.assign({tier:t},ckPiece(t,true,replay)))}return{list:out,replay}}
+ const out=[];for(let k=0;k<n;k++){let t=ckRoll(w);if(replay&&t>2)t=2;out.push(Object.assign({tier:t},ckPiece(t,true,replay)))}
+ const ct=typeof ckChDrop==='function'?ckChDrop(i,replay):-1;if(ct>=0)out.push({tier:ct,kind:'chest',ct,amt:1});return{list:out,replay}}
 // ---- state ----
 function ckLootReset(){L.loot=[];L.lw=null}
 function ckLootBusy(){return !!(L&&(L.rpPend||(L.lw&&!L.lw.done)))}
@@ -85,7 +86,7 @@ function ckSpotAny(taken){let x=0,y=0;for(let k=0;k<14;k++){x=-.42+Math.random()
 function ckIsFinalBoss(e){return !L.demo&&L.boss&&L.wave>=L.waves&&!L.q.some(t=>String(t).split('|')[0]==='boss')&&!L.en.some(o=>o!==e&&o.t==='boss'&&o.hp>0)}
 function ckLootOnDeath(e){if(L.demo||L.over)return;L.loot=L.loot||[];
  if(e.t==='boss'){if(ckIsFinalBoss(e))ckFinalBlow(e);return}
- if((e.t==='brute'||e.el)&&Math.random()<(e.el?.25:.12)){const p=ckPiece(0,false,false),[x,y]=ckSpotAny(),sp=eS(e);L.loot.push(Object.assign({x,y,tier:0,born:TM,life:20,fx:sp.x,fy:sp.y,ft0:performance.now(),fdur:420,boss:0},p))}}
+ if(e.t==='brute'||e.el){const sh=Math.random()<.06,p0=sh?null:(Math.random()<(e.el?.25:.12));if(!sh&&!p0)return;const p=sh?{kind:'frag',amt:1}:ckPiece(0,false,false),[x,y]=ckSpotAny(),sp=eS(e);L.loot.push(Object.assign({x,y,tier:0,born:TM,life:20,fx:sp.x,fy:sp.y,ft0:performance.now(),fdur:420,boss:0},p))}}
 function ckLootBurst(e){
  const sp=eS(e),T=ckTreasure();L.loot=(L.loot||[]).filter(l=>!l.boss);L.rpPend=false;
  L.q=[];L.scs=[];L.sc=null;for(const o of L.en)if(o!==e&&o.hp>0)o.hp=-1;
@@ -124,13 +125,14 @@ function ckGrant(l){const p=pp(l.x,l.y);ckDropLog(l);
  else if(l.kind==='dia'){S.diamonds=(S.diamonds||0)+l.amt;label='+'+l.amt+' 💎'}
  else if(l.kind==='rune'){S.rune=(S.rune|0)+l.amt;label='+'+l.amt+' 📜 '+lvZ('强化符','Rune');to='star'}
  else if(l.kind==='item'){L.inv[l.id]=(L.inv[l.id]||0)+l.amt;const it=IT.find(x=>x.id===l.id);label='+'+l.amt+' '+(it?it.n:l.id);to='inv'}
+ else if(l.kind==='chest'){ckChInit();S.chests[l.ct]=(S.chests[l.ct]|0)+1;label='🎁 '+ckChName(l.ct);to='inv';toast('🎁 '+ckChName(l.ct)+lvZ('！在 商店 › 宝箱 中打开','! Open it in Shop › Chests'));ckVibe([30,40,60])}
  else if(CK_RARE[l.kind]){L.inv[l.kind]=(L.inv[l.kind]||0)+l.amt;const R=CK_RARE[l.kind];label=R.ic+' '+ckLZ(R.n)+(l.amt>1?' ×'+l.amt:'');to='inv';ckRareCard(R,l.tier)}
  txt(p.x,p.y-tw*.5,label,col);ckFly(l,p,to);try{invR()}catch(_){}}
 function ckVibe(ms){try{if(window.CKAndroid&&CKAndroid.vibrate){CKAndroid.vibrate(Array.isArray(ms)?ms.reduce((a,b)=>a+b,0):ms);return}if(navigator.vibrate)navigator.vibrate(ms)}catch(_){}}
 // per-level record of what was collected (boss treasure vs monster drops), shown on the result screen
-function ckDropLog(l){if(l.kind==='jackpot')return;const D=L.drops=L.drops||{boss:{},mon:{}},g=l.boss?D.boss:D.mon,k=l.kind==='item'?'item:'+l.id:l.kind;g[k]=(g[k]||0)+(l.amt||1)}
-function ckDropName(k){if(k.startsWith('item:')){const it=IT.find(x=>x.id===k.slice(5));return it?it.n:k.slice(5)}if(CK_RARE[k])return ckLZ(CK_RARE[k].n);return lvZ(...({gold:['金币','Gold'],star:['星星','Stars'],frag:['钻石碎片','Diamond Shards'],dia:['钻石','Diamonds'],rune:['强化符','Enhancement Runes']}[k]||[k,k]))}
-function ckDropIcon(k){if(k.startsWith('item:')){const it=IT.find(x=>x.id===k.slice(5));return it&&SPRD[it.sp]?`<img class="ck-aimg" src="${SPRD[it.sp]}" alt="">`:''}return ckImg(k==='gold'?'gold':k)}
+function ckDropLog(l){if(l.kind==='jackpot')return;const D=L.drops=L.drops||{boss:{},mon:{}},g=l.boss?D.boss:D.mon,k=l.kind==='item'?'item:'+l.id:l.kind==='chest'?'chest:'+l.ct:l.kind;g[k]=(g[k]||0)+(l.amt||1)}
+function ckDropName(k){if(k.startsWith('chest:'))return ckChName(+k.slice(6));if(k.startsWith('item:')){const it=IT.find(x=>x.id===k.slice(5));return it?it.n:k.slice(5)}if(CK_RARE[k])return ckLZ(CK_RARE[k].n);return lvZ(...({gold:['金币','Gold'],star:['星星','Stars'],frag:['钻石碎片','Diamond Shards'],dia:['钻石','Diamonds'],rune:['强化符','Enhancement Runes']}[k]||[k,k]))}
+function ckDropIcon(k){if(k.startsWith('chest:'))return ckChImg(+k.slice(6));if(k.startsWith('item:')){const it=IT.find(x=>x.id===k.slice(5));return it&&SPRD[it.sp]?`<img class="ck-aimg" src="${SPRD[it.sp]}" alt="">`:''}return ckImg(k==='gold'?'gold':k)}
 function ckDropsHtml(){const D=L&&L.drops;const row=(g)=>Object.keys(g).sort((a,b)=>(b==='dia')-(a==='dia')||(b==='rune')-(a==='rune')).map(k=>`<li>${ckDropIcon(k)}<span>${ckDropName(k)}</span><b>×${g[k].toLocaleString()}</b></li>`).join('');
  const bo=D?row(D.boss):'',mo=D?row(D.mon):'';
  return `<div class="ck-drops"><h4>${lvZ('本关拾取','Loot collected')}</h4>${bo?`<small>${lvZ('首领宝藏','Boss treasure')}</small><ul>${bo}</ul>`:''}${mo?`<small>${lvZ('怪物掉落','Monster drops')}</small><ul>${mo}</ul>`:''}${!bo&&!mo?`<p>${lvZ('本关没有拾取任何掉落物。','No drops were collected this level.')}</p>`:''}</div>`}
@@ -155,7 +157,7 @@ function ckSparkle(x,y,r,a){c.save();c.translate(x,y);c.rotate(Math.PI/4);c.glob
 function ckLootDraw(){if(!L||!L.loot||!L.loot.length)return;const now=performance.now();let drop=[];const lo=window.CK_Q===0;
  for(const l of L.loot){const a=ckLootAlpha(l);if(a<=0){if(!l.boss)drop.push(l);continue}
   const tp=pp(l.x,l.y),ft=Math.min(1,(now-l.ft0)/l.fdur),e=1-Math.pow(1-ft,3);let x=l.fx+(tp.x-l.fx)*e,y=l.fy+(tp.y-l.fy)*e-Math.sin(ft*Math.PI)*tw*1.7;
-  const ph=(l.x*1.7+l.y*2.3)%6.28,bob=ft>=1?Math.sin(TM*3+ph)*tw*.06:0,T=CKT[l.tier],sz=tw*(.74+.05*l.tier)*(ft<1?.65+.35*e:1);y-=bob;
+  const ph=(l.x*1.7+l.y*2.3)%6.28,bob=ft>=1?Math.sin(TM*3+ph)*tw*.06:0,T=CKT[l.tier],sz=tw*(.74+.05*l.tier)*(l.kind==='chest'?1.35:1)*(ft<1?.65+.35*e:1);y-=bob;
   c.save();c.globalAlpha=a;
   if(ft>=1){c.fillStyle='#0007';c.beginPath();c.ellipse(tp.x,tp.y+sz*.42,sz*.4,sz*.12,0,0,7);c.fill()}
   // golden glow (all drops), rarity halo inside it
@@ -163,7 +165,7 @@ function ckLootDraw(){if(!L||!L.loot||!L.loot.length)return;const now=performanc
   if(l.tier>=1){const r=sz*.62,g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,T.c+'aa');g.addColorStop(1,T.c+'00');c.globalAlpha=a*T.glow;c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill()}
   if(l.tier>=4&&ft>=1&&!lo){const bw=sz*.55,g=c.createLinearGradient(0,y-tw*3.2,0,y);g.addColorStop(0,T.c+'00');g.addColorStop(1,T.c+'99');c.globalAlpha=a;c.fillStyle=g;c.fillRect(x-bw/2,y-tw*3.2,bw,tw*3.2)}
   c.globalCompositeOperation='source-over';c.globalAlpha=a;
-  const ak=l.kind==='jackpot'?'dia':l.kind==='item'?null:l.kind;let im=ak?CKA_IMG[ak]:null;if(!im&&l.kind==='item'){const it=IT.find(q=>q.id===l.id);im=it&&SP[it.sp]}
+  const ak=l.kind==='jackpot'?'dia':l.kind==='item'?null:l.kind==='chest'?'ch_'+CK_CH[l.ct].k:l.kind;let im=ak?CKA_IMG[ak]:null;if(!im&&l.kind==='item'){const it=IT.find(q=>q.id===l.id);im=it&&SP[it.sp]}
   if(im&&im.width){const s2=sz/Math.max(im.width,im.height);c.drawImage(im,x-im.width*s2/2,y-im.height*s2/2,im.width*s2,im.height*s2)}else c.drawImage(ckLootIcon(l.kind,T.c),x-sz/2,y-sz/2,sz,sz);
   // twinkling sparkles around every drop
   if(!lo){for(let k=0;k<3;k++){const t=TM*1.6+ph+k*2.09,tw2=Math.max(0,Math.sin(t*2.3+k));if(tw2>.05)ckSparkle(x+Math.cos(t)*sz*.52,y+Math.sin(t*1.3)*sz*.46,sz*(.09+.07*tw2),a*tw2)}}

@@ -7,7 +7,67 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v4.2.1.apk` | Android app (package `com.chaoskingdoms.game`, version 4.2.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v4.3.apk` | Android app (package `com.chaoskingdoms.game`, version 4.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v4.3 · Treasure Chests
+
+Chest and auto-use code is in `source/premium/chest.js`.
+
+**Treasure chests.** There are six tiers, bought with diamonds or won from final bosses:
+
+| Chest | Price | Reward types |
+| --- | --- | --- |
+| Green | 5 💎 | 3 |
+| Blue | 10 💎 | 3-4 |
+| Red | 20 💎 | 4 |
+| Purple | 35 💎 | 4-5 |
+| Gold | 60 💎 | 5 |
+| Black | 100 💎 | 5-6 |
+
+- Where to find them: the new **Chests** tab in the shop, or the **🎁 Treasure Chests** button on the title screen. Chests can be opened any time and can never be sold.
+- What's inside: every chest mixes several reward types, each with several units. Possible rewards are diamonds, gold, stars, medals, Enhancement Runes, rare items and diamond shards. Better chests hold more types and more of the rare and special items.
+- Value: each chest's contents are worth a total measured in diamonds. Exactly 85% of chests are worth more than their price (1.05-1.6×, with occasional 2-3× jackpots) and 15% a little less (0.62-0.95×). A 20,000-roll test per tier came out at 84.8-85.2%.
+- Values used for that comparison:
+
+  | Reward | Worth 1 💎 |
+  | --- | --- |
+  | Gold | 10,000 |
+  | Stars | 10 |
+  | Medals | 5 |
+  | Diamond shards | 4 |
+
+  An Enhancement Rune is worth 5 💎 and a rare item 4 💎.
+- Diamonds are kept to about 9% of a chest's value, so buying chests is never a way to farm diamonds.
+- Opening one: the chest shakes, then a burst of light breaks out of it, with spinning rays, a white flash and about 170 sparks and glints flying in every direction. The rewards then fly in one card at a time, each with its own chime, and the total value is shown against the price.
+
+**Medals.** A new reward. Medals are counted, and each one instantly gives 50 commander XP.
+
+**Boss chest drops.** The final boss can drop a chest, which bursts out with the rest of the treasure and must be picked up like any other loot.
+
+| Level | Chance (normal difficulty) |
+| --- | --- |
+| 1 | about 5% |
+| 50 | about 19% |
+| 100 | about 33% |
+
+Higher levels also give better chests. Difficulty scales the chance by ×0.8 to ×1.2. Replays drop chests a quarter as often, and never above Red.
+
+**Automatic item activation.** Every item that doesn't need a target has an **AUTO** switch in its shop box. When it's on, the item fires by itself as soon as its cooldown ends, as long as you have one in stock and monsters are on the field.
+- The Healing Potion waits until it wouldn't be wasted.
+- The Attack Helicopter waits until the previous one has left.
+- River, Airstrike and Bomber Squadron need you to pick a spot, so they have no AUTO switch.
+- Auto items show a green "A" badge in the item bar. The switches are saved.
+
+**Diamond shards.** Medium monsters (brutes and elites) now drop a diamond shard about 6% of the time (measured 5.9%).
+
+**Safer bottom panel.** In portrait, the bottom panel is now 18 px taller in browsers (8 px in the Android app), so the item row sits about 22-25 px above the screen edge instead of 9 px. That keeps taps away from the phone's swipe-to-switch-apps gesture. The battlefield shrinks a little to make room, so nothing overlaps. Landscape is unchanged, because there is no spare room there.
+
+**New loading screen.** It uses the floating-castle artwork:
+- A slow zoom, light rays and rising golden motes.
+- The Chaos Kingdoms logo floating at the top.
+- A framed gold progress bar with a shine.
+
+**Star balance fix.** The 5-star rating in v4.2.1 raised the number of level stars, which also raised the stars you can spend on Bonus Upgrades. Level stars now count 0.6 each toward upgrades, so spendable stars are the same as before the change. Stars from loot and chests still count fully.
 
 ## What changed in v4.2.1 · Polish
 
@@ -656,7 +716,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.2.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.3.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

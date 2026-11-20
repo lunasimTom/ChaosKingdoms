@@ -1,18 +1,24 @@
 html,body{background:#050912!important;color:#fff3d6}
-#ck-splash{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 50% 42%,#1d2a55 0%,#0b1128 48%,#03050c 100%);transition:opacity .7s ease,visibility .7s;font-family:'Cinzel',Georgia,serif;animation:cksFailsafe .6s ease 7s forwards}
+#ck-splash{position:fixed;inset:0;z-index:2147483000;overflow:hidden;background:#0b1a3a;transition:opacity .7s ease,visibility .7s;font-family:'Nunito',system-ui,sans-serif;animation:cksFailsafe .6s ease 7s forwards}
 #ck-splash.out{opacity:0;visibility:hidden;pointer-events:none}
-#ck-splash .cks-glow{position:absolute;width:140vmax;height:140vmax;left:50%;top:42%;transform:translate(-50%,-50%);background:radial-gradient(circle,#f3c04d22 0,#f3c04d0a 18%,transparent 42%);animation:cksBreath 3.2s ease-in-out infinite}
-#ck-splash .cks-rays{position:absolute;width:160vmax;height:160vmax;left:50%;top:42%;margin:-80vmax 0 0 -80vmax;background:repeating-conic-gradient(from 0deg,#ffd77a0b 0deg 4deg,transparent 4deg 18deg);-webkit-mask-image:radial-gradient(circle,#000 0,transparent 55%);mask-image:radial-gradient(circle,#000 0,transparent 55%);animation:cksSpin 40s linear infinite}
-#ck-splash .cks-core{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;animation:cksRise 1s cubic-bezier(.2,.9,.25,1) both}
-#ck-splash .cks-crest{width:112px;height:112px;filter:drop-shadow(0 0 22px #f3c04d55) drop-shadow(0 12px 18px #000c);animation:cksFloat 3.6s ease-in-out infinite}
-#ck-splash .cks-title{margin-top:10px;font-weight:900;font-size:34px;letter-spacing:.14em;line-height:1;text-align:center;color:#ffd977;background:linear-gradient(180deg,#fff8d8 0%,#ffd468 45%,#c7801f 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 0 #3a1f05) drop-shadow(0 8px 16px #000)}
-#ck-splash .cks-title span{display:block;font-size:26px;letter-spacing:.2em;margin-top:4px}
-#ck-splash .cks-sub{font:800 11px/1 'Nunito',system-ui,sans-serif;letter-spacing:.55em;color:#b9c5ea;margin:6px 0 22px;padding-left:.55em}
-#ck-splash .cks-bar{width:220px;height:8px;border-radius:99px;background:#0b1024;border:1px solid #f3c04d66;box-shadow:inset 0 2px 4px #000,0 0 18px #f3c04d22;overflow:hidden}
-#ck-splash .cks-bar i{display:block;height:100%;width:8%;border-radius:inherit;background:linear-gradient(90deg,#9a5a12,#ffd468 70%,#fff6cf);box-shadow:0 0 12px #ffd468;transition:width .35s ease}
-#ck-splash .cks-tip{margin-top:12px;font:700 11px/1.2 'Nunito',system-ui,sans-serif;letter-spacing:.12em;color:#8f9cc8;text-transform:uppercase}
+#ck-splash .cks-art{position:absolute;inset:-4%;background-size:cover;background-position:50% 40%;animation:cksZoom 9s ease-out both;filter:saturate(1.08)}
+#ck-splash .cks-shade{position:absolute;inset:0;background:linear-gradient(180deg,#071230d9 0%,#07123066 26%,#0000 46%,#0000 58%,#050912b3 80%,#050912f2 100%),radial-gradient(ellipse 90% 70% at 50% 45%,#0000 55%,#050912aa 100%)}
+#ck-splash .cks-rays{position:absolute;left:50%;top:30%;width:170vmax;height:170vmax;margin:-85vmax 0 0 -85vmax;background:repeating-conic-gradient(from 0deg,#fff2c40d 0deg 7deg,#0000 7deg 18deg);mask-image:radial-gradient(circle,#000 0,#0000 58%);-webkit-mask-image:radial-gradient(circle,#000 0,#0000 58%);animation:cksSpin 40s linear infinite}
+#ck-splash .cks-motes i{position:absolute;bottom:-12px;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,#fff7d6,#ffc54a 45%,#ffc54a00 70%);animation:cksMote 6s linear infinite;opacity:0}
+#ck-splash .cks-motes i:nth-child(1){left:8%;animation-delay:.2s}#ck-splash .cks-motes i:nth-child(2){left:19%;animation-delay:2.4s;transform:scale(.7)}#ck-splash .cks-motes i:nth-child(3){left:31%;animation-delay:1.1s}#ck-splash .cks-motes i:nth-child(4){left:43%;animation-delay:3.6s;transform:scale(1.3)}#ck-splash .cks-motes i:nth-child(5){left:55%;animation-delay:.7s}#ck-splash .cks-motes i:nth-child(6){left:64%;animation-delay:4.4s;transform:scale(.8)}#ck-splash .cks-motes i:nth-child(7){left:73%;animation-delay:1.8s}#ck-splash .cks-motes i:nth-child(8){left:82%;animation-delay:3s;transform:scale(1.2)}#ck-splash .cks-motes i:nth-child(9){left:91%;animation-delay:5s}#ck-splash .cks-motes i:nth-child(10){left:48%;animation-delay:5.6s;transform:scale(.6)}
+#ck-splash .cks-core{position:absolute;left:0;right:0;top:max(6vh,24px);display:flex;justify-content:center;animation:cksRise 1.1s cubic-bezier(.2,.9,.25,1) both}
+#ck-splash .cks-logo{width:min(84vw,480px);height:auto;display:block;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,#0000 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,#0000 100%);filter:drop-shadow(0 10px 22px #000a) drop-shadow(0 0 30px #ffd4683a);animation:cksFloat 4s ease-in-out 1.1s infinite}
+#ck-splash .cks-foot{position:absolute;left:0;right:0;bottom:calc(max(7vh,40px) + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:12px;animation:cksRise 1.1s .25s cubic-bezier(.2,.9,.25,1) both}
+#ck-splash .cks-bar{position:relative;width:min(72vw,320px);height:12px;border-radius:99px;padding:2px;background:linear-gradient(180deg,#2a1a06,#120b03);border:2px solid #e9b95a;box-shadow:0 0 0 1px #5a3a0a,0 0 22px #ffcf6840,inset 0 2px 4px #000;overflow:hidden}
+#ck-splash .cks-bar i{display:block;height:100%;width:8%;border-radius:inherit;background:linear-gradient(180deg,#fff3b8,#ffcf4a 45%,#d9890f);box-shadow:0 0 12px #ffd468;transition:width 1s cubic-bezier(.3,.8,.3,1)}
+#ck-splash .cks-bar b{position:absolute;top:0;bottom:0;width:40%;left:-40%;background:linear-gradient(90deg,#fff0,#fffc,#fff0);animation:cksShine 1.6s ease-in-out infinite;mix-blend-mode:overlay}
+#ck-splash .cks-tip{font:800 12px/1.2 'Nunito',system-ui,sans-serif;letter-spacing:.2em;color:#f6e3b0;text-transform:uppercase;text-shadow:0 2px 6px #000}
+@keyframes cksZoom{from{transform:scale(1.12)}to{transform:scale(1)}}
 @keyframes cksSpin{to{transform:rotate(360deg)}}
+@keyframes cksRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes cksFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes cksShine{0%{left:-40%}100%{left:110%}}
+@keyframes cksMote{0%{opacity:0;transform:translateY(0)}12%{opacity:.9}100%{opacity:0;transform:translateY(-70vh) translateX(24px)}}
+@media (orientation:landscape) and (max-height:520px){#ck-splash .cks-logo{width:min(46vw,360px)}#ck-splash .cks-core{top:3vh}#ck-splash .cks-foot{bottom:calc(5vh + env(safe-area-inset-bottom,0px))}}
 @keyframes cksBreath{50%{opacity:.6;transform:translate(-50%,-50%) scale(1.06)}}
-@keyframes cksFloat{50%{transform:translateY(-6px)}}
-@keyframes cksRise{from{opacity:0;transform:translateY(18px) scale(.96)}}
 @keyframes cksFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}

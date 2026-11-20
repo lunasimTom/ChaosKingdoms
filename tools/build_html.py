@@ -16,7 +16,7 @@ def _cka():
         if not f.endswith('.png') or f.startswith('source-'): continue
         im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
         out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    assert len(out) == 23, sorted(out)
+    assert len(out) == 29, sorted(out)
     return 'const CKA=' + __import__('json').dumps(out) + ';'
 CKA_JS = _cka()
 
@@ -361,7 +361,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -607,6 +607,24 @@ rep("function killTower(t){if(!L.tr.includes(t))return;", "function killTower(t)
 rep("${ri===12?'👑':!unlocked?", "${ri===12?ckImg('crown','ck-crown'):!unlocked?")
 rep("${ri===12?'👑':icons[ri]}</span><b class=\"rd-name\">", "</span><b class=\"rd-name\">")
 
+# 44. v4.3: treasure chests (chest.js), medals, auto-use items. New saved fields: ch (chests per tier),
+# md (medals), ai (auto-use switches). Level stars now count 0.6 each toward Bonus Upgrades, so the
+# 5-star scale (v4.2.1) does not inflate the stars available to spend.
+rep("ckV3Tick(dt);L.bf.ovc=", "ckV3Tick(dt);ckAutoTick(dt);L.bf.ovc=")
+rep(",fr:S.frag|0,ru:S.rune|0,s5:1}))", ",fr:S.frag|0,ru:S.rune|0,s5:1,ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))")
+rep("S.prog=ckStar5(s.p||{},s.s5);", "S.prog=ckStar5(s.p||{},s.s5);S.chests=Array.isArray(s.ch)?s.ch:[];S.medals=Math.max(0,s.md|0);S.autoIt=(s.ai&&typeof s.ai==='object')?s.ai:{};")
+rep(",fx:S.fx||{},ru:S.rune|0,s5:1}}", ",fx:S.fx||{},ru:S.rune|0,s5:1,md:S.medals|0,ai:S.autoIt||{}}}")
+rep("S.prog=ckStar5(o(j.p),j.s5);", "S.prog=ckStar5(o(j.p),j.s5);S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);")
+rep("S.rune=0;S.bonusStars=0;", "S.rune=0;S.bonusStars=0;S.chests=[0,0,0,0,0,0];S.medals=0;")
+rep('data-shop-page="treasure">✧ ${zh?\'宝藏\':\'Treasures\'}</button></div>', 'data-shop-page="treasure">✧ ${zh?\'宝藏\':\'Treasures\'}</button><button class="shop-tab ${shopPage===\'chests\'?\'on\':\'\'}" data-shop-page="chests">🎁 ${zh?\'宝箱\':\'Chests\'}</button></div>')
+rep("const body=shopPage==='treasure'?renderTreasure():", "const body=shopPage==='chests'?ckChestPage(true):shopPage==='treasure'?renderTreasure():")
+rep("<small>${shopPage==='items'?TL(", "<small>${shopPage==='chests'?ckLZ(['宝箱 · 钻石购买或首领掉落，无法出售','Chests · buy with diamonds or win them from bosses · cannot be sold']):shopPage==='items'?TL(")
+rep('</button><small>${lk?\'<a class="vlink" data-prof="shop"', '</button>${ckAutoBtn(it.id)}<small>${lk?\'<a class="vlink" data-prof="shop"')
+rep('<span class="cdt"></span><u>${L.inv[it.id]}</u></button>', '<span class="cdt"></span><u>${L.inv[it.id]}</u>${S.autoIt&&S.autoIt[it.id]&&ckAutoOk(it.id)?\'<i class="ck-ab">A</i>\':\'\'}</button>')
+rep("const starsTotal=()=>Object.values(S.prog||{}).reduce((a,v)=>a+(+v||0),0);", "const starsTotal=()=>Math.floor(Object.values(S.prog||{}).reduce((a,v)=>a+(+v||0),0)*3/5);")
+
+rep("Math.floor((H-48-156)/14));ox=Math.round((W-9*tw)/2);oy=48+Math.max(0,Math.round((H-48-156-14*tw)/2))", "Math.floor((H-48-156-CK_RAILX)/14));ox=Math.round((W-9*tw)/2);oy=48+Math.max(0,Math.round((H-48-156-CK_RAILX-14*tw)/2))")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
@@ -626,7 +644,15 @@ head = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<title>Chaos Kingdoms</title>\n'
         f'<style id="ck-fonts">{font_css}</style>\n<style id="ck-critical">{critical}</style>\n')
 s = head + s
-s = s.replace('<!--CK_SPLASH-->', open(os.path.join(SRC, 'splash.html'), encoding='utf8').read())
+def _splash():
+    import io
+    from PIL import Image
+    im = Image.open(os.path.join(SRC, 'source-castle.png')).convert('RGB'); im.thumbnail((960, 1100), Image.LANCZOS)
+    buf = io.BytesIO(); im.save(buf, 'WEBP', quality=74, method=6)
+    castle = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
+    logo = re.search(r'"logo":"(data:[^"]+)"', orig).group(1)
+    return open(os.path.join(SRC, 'splash.html'), encoding='utf8').read().replace('%%CK_CASTLE%%', castle).replace('%%CK_LOGO%%', logo)
+s = s.replace('<!--CK_SPLASH-->', _splash())
 aaa_css = open(os.path.join(SRC, 'aaa.css'), encoding='utf8').read()
 aaa_js = open(os.path.join(SRC, 'aaa.js'), encoding='utf8').read()
 fix_js = open(os.path.join(SRC, 'fixes.js'), encoding='utf8').read()

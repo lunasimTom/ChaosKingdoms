@@ -267,3 +267,48 @@ img.ck-cu-ico{width:1.5em;height:1.5em}
 #regs .realm-pin .pin-icon img.ck-crown,.realm-pin .pin-icon img.ck-crown{width:44px!important;height:44px!important;max-width:none!important;object-fit:contain;display:block;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;filter:drop-shadow(0 0 7px #ffcf68aa) drop-shadow(0 3px 4px #0009)}
 /* realm detail: map art only, a little bigger */
 .realm-detail-head .rd-icon.rd-art{width:42px!important;height:42px!important;font-size:0!important;flex:0 0 42px!important}
+/* v4.3: bottom panel lifted away from the screen edge (system gestures). More room in mobile browsers. */
+html.ck-web body.pt #rail{height:170px!important;padding-bottom:24px!important}
+html.ck-app body.pt #rail{height:160px!important;padding-bottom:14px!important}
+/* v4.3: auto-use switch in the shop and badge in the item bar */
+.sb .ck-auto{flex:0 0 auto;height:27px;min-width:46px;padding:0 6px;border-radius:7px;border:1.5px solid #6b7894;background:linear-gradient(180deg,#2b3550,#1a2034);color:#aeb9d6;font:900 9px/1 Nunito,sans-serif;letter-spacing:.06em;cursor:pointer;white-space:nowrap}
+.sb .ck-auto.on{border-color:#7cffb0;background:linear-gradient(180deg,#2d8f5a,#14522f);color:#eafff1;box-shadow:0 0 8px #4dff9a55}
+#inv .iv{position:relative}#inv .iv .ck-ab{position:absolute;top:-3px;left:-3px;width:13px;height:13px;border-radius:50%;background:#2bd673;color:#04210f;font:900 8px/13px Nunito,sans-serif;font-style:normal;text-align:center;box-shadow:0 0 0 1.5px #0b1224;pointer-events:none}
+/* v4.3: treasure chests */
+.ck-chhead{display:flex;justify-content:center;gap:18px;margin:2px 0 4px;font-size:13px;color:#e8dcb6}.ck-chhead b{color:#fff1c7}.ck-chhead img.ic,.ck-chbtns img.ic{width:15px;height:15px;vertical-align:-3px}
+.ck-chnote{margin:2px 4px 8px!important;font-size:11px!important;line-height:1.35;color:#aab5d2!important;text-align:center}
+.ck-chlist{display:flex;flex-direction:column;gap:7px}
+.ck-chrow{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:8px;padding:6px 8px;border-radius:12px;border:1px solid color-mix(in srgb,var(--cc) 55%,#0000);background:linear-gradient(100deg,color-mix(in srgb,var(--cc) 22%,#151b30),#121729 70%);text-align:left}
+.ck-chart img.ck-chimg{width:62px;height:auto;display:block;filter:drop-shadow(0 4px 6px #000a) drop-shadow(0 0 8px color-mix(in srgb,var(--cc) 50%,#0000))}
+.ck-chinfo b{display:block;color:#fff1c7;font-size:14px}.ck-chinfo small{display:block;font-size:10.5px;color:#b8c2dc;line-height:1.3}.ck-chinfo .own{color:#ffd36a;font-weight:800}
+.ck-chbtns{display:flex;flex-direction:column;gap:5px;min-width:78px}.ck-chbtns .bt{height:28px;padding:0 8px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:4px;margin:0!important;width:100%}
+.ck-chbtns .bt:disabled{filter:grayscale(.8) brightness(.7);opacity:.75}
+.ck-chmodal h2{margin:0 0 6px}.ck-chmodal #ck-chm{max-height:min(62vh,560px);overflow:auto;padding:2px}
+#ck-chfx{position:fixed;inset:0;z-index:2147482000;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--cc) 30%,#0a0d1c) 0,#05070fee 60%);animation:ckcfIn .25s ease both;overflow:hidden}
+#ck-chfx.out{animation:ckcfOut .3s ease forwards}
+#ck-chfx canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+#ck-chfx .rays{position:absolute;left:50%;top:42%;width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--cc) 50%,#fff5) 0deg 4deg,#0000 4deg 15deg);-webkit-mask-image:radial-gradient(circle,#000 0,#0000 55%);mask-image:radial-gradient(circle,#000 0,#0000 55%);opacity:0;transform:scale(.3);transition:opacity .4s,transform .7s cubic-bezier(.2,1.4,.4,1);animation:cksSpin 14s linear infinite;z-index:1}
+#ck-chfx .glow{position:absolute;left:50%;top:42%;width:60vmin;height:60vmin;margin:-30vmin 0 0 -30vmin;border-radius:50%;background:radial-gradient(circle,#fffbe8 0,color-mix(in srgb,var(--cc) 80%,#fff) 22%,color-mix(in srgb,var(--cc) 40%,#0000) 48%,#0000 70%);opacity:.15;transform:scale(.5);transition:opacity .35s,transform .6s;z-index:2}
+#ck-chfx .chest{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:4;animation:ckcfShake .9s ease-in-out both}
+#ck-chfx .chest img{width:min(46vw,230px);height:auto;display:block;filter:drop-shadow(0 12px 18px #000c) drop-shadow(0 0 16px color-mix(in srgb,var(--cc) 70%,#0000))}
+#ck-chfx .flash{position:absolute;inset:0;background:#fffbe8;opacity:0;pointer-events:none;z-index:5}
+#ck-chfx.open .rays{opacity:1;transform:scale(1)}#ck-chfx.open .glow{opacity:1;transform:scale(1.25);animation:ckcfPulse 1.8s ease-in-out .6s infinite}
+#ck-chfx.open .flash{animation:ckcfFlash .7s ease-out both}
+#ck-chfx.open .chest{animation:ckcfPop .7s cubic-bezier(.2,1.6,.4,1) both;top:24%}
+#ck-chfx .chest{transition:top .7s cubic-bezier(.2,.9,.3,1)}
+#ck-chfx .res{position:absolute;left:0;right:0;top:40%;bottom:0;z-index:6;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 14px calc(18px + env(safe-area-inset-bottom,0px));opacity:0;pointer-events:none;overflow:auto}
+#ck-chfx.open .res{opacity:1;pointer-events:auto;transition:opacity .4s .3s}
+#ck-chfx .res h3{margin:0;font:900 20px Cinzel,Georgia,serif;letter-spacing:.06em;color:#fff1c7;text-shadow:0 0 14px var(--cc),0 2px 4px #000}
+#ck-chfx .cards{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:560px}
+#ck-chfx .card{width:96px;padding:8px 6px 7px;border-radius:12px;background:linear-gradient(170deg,#2a2148,#120e24);border:1.5px solid color-mix(in srgb,var(--cc) 70%,#ffd36a);box-shadow:0 0 14px color-mix(in srgb,var(--cc) 40%,#0000),inset 0 1px 0 #fff3;text-align:center;opacity:0;animation:ckcfCard .5s cubic-bezier(.2,1.5,.4,1) both}
+#ck-chfx .card img.ck-cimg{width:46px;height:46px;object-fit:contain;display:block;margin:0 auto 4px;filter:drop-shadow(0 0 6px #ffd36a88)}
+#ck-chfx .card b{display:block;font:900 17px Nunito,sans-serif;color:#fff}#ck-chfx .card small{display:block;font-size:10px;line-height:1.25;color:#d5cdee}
+#ck-chfx .tot{font-size:12px;color:#d9cfae}#ck-chfx .tot b{color:#fff1c7}#ck-chfx .tot .up{color:#8dffbb}#ck-chfx .tot .dn{color:#ffb0a0}
+#ck-chfx .ok{min-width:160px;height:42px;font-size:15px}
+@keyframes ckcfIn{from{opacity:0}}@keyframes ckcfOut{to{opacity:0}}
+@keyframes ckcfShake{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}25%{transform:translate(-50%,-50%) scale(1);opacity:1}40%{transform:translate(-52%,-50%) rotate(-5deg)}50%{transform:translate(-48%,-50%) rotate(5deg)}60%{transform:translate(-52%,-51%) rotate(-6deg) scale(1.04)}70%{transform:translate(-48%,-50%) rotate(6deg) scale(1.06)}80%{transform:translate(-51%,-52%) rotate(-3deg) scale(1.1)}100%{transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes ckcfPop{0%{transform:translate(-50%,-50%) scale(1.25)}100%{transform:translate(-50%,-50%) scale(.8)}}
+@keyframes ckcfFlash{0%{opacity:.95}100%{opacity:0}}
+@keyframes ckcfPulse{50%{transform:scale(1.4);opacity:.75}}
+@keyframes ckcfCard{0%{opacity:0;transform:translateY(24px) scale(.6)}100%{opacity:1;transform:none}}
+#shop .shl.ck-chshop{flex-direction:column!important;flex-wrap:nowrap!important}#shop .shl.ck-chshop>*{width:100%!important;max-width:none!important;align-self:stretch!important;box-sizing:border-box}#shop .ck-chshop .ck-chrow{width:100%;box-sizing:border-box}
