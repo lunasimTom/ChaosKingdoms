@@ -7,7 +7,40 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v4.2.apk` | Android app (package `com.chaoskingdoms.game`, version 4.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v4.2.1.apk` | Android app (package `com.chaoskingdoms.game`, version 4.2.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v4.2.1 · Polish
+
+**HD kill replay.** The final-boss replay is now recorded at the game's own render resolution, so it is exactly as sharp as live play (before, it was recorded 280 px wide and looked blurry). It keeps the last 2.4 seconds at 10 frames per second. The zoom on the boss is gentler (×1.24), so it stays crisp. Capturing a frame takes under 1 ms, and frame times are the same as with the old low-resolution recording. If a device can't hold full-size frames, the recorder drops to half size by itself.
+
+**5-star victory rating.** Levels are now rated 1-5 stars, drawn with the new star artwork. The rating comes from a score out of 100:
+- Lives kept: 60 points.
+- Clean waves (no monster got through): 25 points.
+- Towers kept (not destroyed by monsters): 15 points.
+
+| Stars | Score |
+| --- | --- |
+| 5 | 95 or more (flawless) |
+| 4 | 80 or more |
+| 3 | 62 or more |
+| 2 | 42 or more |
+| 1 | any win |
+
+The Victory screen shows the breakdown: lives, clean waves, towers lost and score. The star gold bonus is now +25%, +50%, +85% or +120% for 2-5 stars. Level buttons show 5 small stars, and realm totals count out of 40.
+
+Existing saves are converted once: 1 star stays 1, 2 stars become 3, 3 stars become 5. Progress-transfer codes from older versions are converted the same way. The hidden map that needed "3 stars on all 6 main-map bosses" now needs 5 stars, the same requirement.
+
+**Pickup sound.** It's now a crisper "ka-ching": a bright click, a bell that rings out for about half a second (longer than a UI click), and a quick rising sparkle. It is about 50% louder.
+
+**Shop.**
+- The Boss Treasure rows use exactly the same layout, fonts and buttons as the regular shop items, so everything lines up.
+- The heading uses the shop's font.
+- Items that can't be bought have a grey copy of the Buy button reading "Boss drop only".
+- Diamonds have a gold "Redeem" button that opens the Treasures page, where diamond packs are redeemed with codes (diamonds are not sold for gold).
+
+**World map.**
+- The Fourfold Throne uses the new crown artwork, with no gold circle around it.
+- The map picture in the realm panel no longer has an emoji over it and is a little larger.
 
 ## What changed in v4.2 · Treasure & Challenge
 
@@ -623,7 +656,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.2.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.2.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

@@ -16,7 +16,7 @@ def _cka():
         if not f.endswith('.png') or f.startswith('source-'): continue
         im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
         out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    assert len(out) == 22, sorted(out)
+    assert len(out) == 23, sorted(out)
     return 'const CKA=' + __import__('json').dumps(out) + ';'
 CKA_JS = _cka()
 
@@ -580,6 +580,32 @@ rep("'Tower refund (50%)')+' ('+L.tr.length+')',L.refund]);", "'Tower refund (50
 rep("${rewardPanel(st,pg)}${ckCrownHtml()}", "${rewardPanel(st,pg)}${ckCrownHtml()}${ckDropsHtml()}")
 rep("${rep()}<button class=\"bt r\" id=\"m1\">${TL('Retry level')}</button>", "${ckDropsHtml()}${rep()}<button class=\"bt r\" id=\"m1\">${TL('Retry level')}</button>")
 rep("if(Math.random()>=Math.min(.12,.035+L.i*.0009))return;", "if(Math.random()>=Math.min(.12,.035+L.i*.0009)*(!L.boss&&L.i>=59?1.5:1))return;")
+
+# 43. v4.2 polish: 5-star victory rating (lives, clean waves, towers kept) with the new star art,
+# old 1-3 star saves migrated (1→1, 2→3, 3→5), tower losses counted, the Fourfold Throne uses the
+# crown artwork without its gold circle, the realm detail thumbnail loses its emoji overlay.
+rep("let st=L.lives>=L.mxl*.9?3:L.lives>=L.mxl*.5?2:1;", "let st=win?ckRate():1;")
+rep("L.gStar=win?Math.round(L.gBase*[0,.5,1.2][st-1]):0;", "L.gStar=win?Math.round(L.gBase*[0,.25,.5,.85,1.2][st-1]):0;")
+rep("'+st+'★ +'+([0,50,120][st-1])+'%)'", "'+st+'★ +'+([0,25,50,85,120][st-1])+'%)'")
+rep("const stars=[0,1,2].map(i=>`<b class=\"${i<st?'on':''}\" style=\"animation-delay:${i*.35}s\">${i<st?'★':'☆'}</b>`).join('');", "const stars=ckStarsRow(st);")
+rep('<div class="rw-st">${stars}</div>', '<div class="rw-st">${stars}</div>${ckRateHtml()}')
+rep("[0,1,2].forEach(i=>{if(i<(L.st||0))setTimeout(()=>live()&&sfx('upgrade',.5),i*350+150)})", "[0,1,2,3,4].forEach(i=>{if(i<(L.st||0))setTimeout(()=>live()&&sfx('upgrade',.45),i*260+150)})")
+rep("const gained=45+L.i*3+st*12+S.dif*10;", "const gained=45+L.i*3+Math.round(st*7.2)+S.dif*10;")
+rep("S.prog[k*8+7]>=3", "S.prog[k*8+7]>=5")
+rep("Earn 3 stars on all 6 main-map bosses", "Earn 5 stars on all 6 main-map bosses", 2)
+rep("全部获得3星", "全部获得5星")
+rep("(r.count||8)*3}", "(r.count||8)*5}")
+rep("(R[ri].count||8)*3}", "(R[ri].count||8)*5}")
+rep("{0}/24 ★", "{0}/40 ★", 2)
+rep("st?'★'.repeat(st):TL('Ready')", "st?ckStarMini(st):TL('Ready')")
+rep("st?'★'.repeat(st):TL('Enter')", "st?ckStarMini(st):TL('Enter')")
+rep(",fr:S.frag|0,ru:S.rune|0}))", ",fr:S.frag|0,ru:S.rune|0,s5:1}))")
+rep("S.prog=s.p||{};", "S.prog=ckStar5(s.p||{},s.s5);")
+rep("S.prog=o(j.p);", "S.prog=ckStar5(o(j.p),j.s5);")
+rep(",fx:S.fx||{},ru:S.rune|0}}", ",fx:S.fx||{},ru:S.rune|0,s5:1}}")
+rep("function killTower(t){if(!L.tr.includes(t))return;", "function killTower(t){if(!L.tr.includes(t))return;L.tlost=(L.tlost|0)+1;")
+rep("${ri===12?'👑':!unlocked?", "${ri===12?ckImg('crown','ck-crown'):!unlocked?")
+rep("${ri===12?'👑':icons[ri]}</span><b class=\"rd-name\">", "</span><b class=\"rd-name\">")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

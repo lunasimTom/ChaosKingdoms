@@ -237,10 +237,11 @@ img.ck-cu-ico{width:1.5em;height:1.5em}
 .ck-drops li{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 4px;border-radius:99px;background:#0006;border:1px solid #ffffff1c;font-size:12px}
 .ck-drops li img{width:22px;height:22px}.ck-drops li b{color:#fff1bf}.ck-drops p{margin:2px 0;font-size:12px;color:#a9b1d4}
 .ck-shop-rare{margin-top:10px;padding-top:8px;border-top:1px solid #ffd36a55}
-.ck-shop-rare h4{display:flex;align-items:center;gap:6px;margin:0 0 6px;font:900 13px Cinzel,Georgia,serif;letter-spacing:.1em;color:#f3c04d}.ck-shop-rare h4 img{width:24px;height:24px}
-.ck-shop-rare .si.rare{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;padding:6px 8px;margin-bottom:6px;border-radius:10px;background:linear-gradient(170deg,#2a1d4a,#140e26);border:1px solid #ffd36a66}
-.ck-shop-rare .sicon img{width:48px;height:48px;filter:drop-shadow(0 0 6px #ffd36a88)}.ck-shop-rare .sinfo b{display:block;color:#fff1bf}.ck-shop-rare .sinfo small{display:block;font-size:11px;color:#c9cfe8;line-height:1.3}.ck-shop-rare .sinfo .own{color:#ffd36a}
-.ck-shop-rare button[disabled]{opacity:.65;filter:grayscale(.4);font-size:11px;white-space:nowrap}
+.ck-shop-rare h4.ck-srh{display:flex;align-items:center;justify-content:center;gap:7px;margin:2px 0 8px;font-family:"Noto Sans SC",Nunito,sans-serif;font-weight:900;font-size:15px;letter-spacing:.04em;color:#ffe6a4;text-transform:none}
+.ck-shop-rare h4.ck-srh img{width:22px;height:22px;object-fit:contain}
+.ck-shop-rare .si.ck-rare .sw img{object-fit:contain;filter:drop-shadow(0 0 5px #ffd36a77)}
+.sb .bt.pay.ck-off,.sb .bt.pay.ck-off:disabled{background:linear-gradient(180deg,#c4c8d0 0%,#9da2ad 52%,#7c818c 100%)!important;color:#2b2e35!important;border-color:#5d626c!important;box-shadow:0 2px 0 #4a4e57,0 4px 0 #090916!important;text-shadow:none!important;opacity:1!important;filter:none!important;cursor:not-allowed}
+.sb .bt.pay.ck-dbuy img.ic{width:14px;height:14px}
 #ck-replay{position:fixed;z-index:10030;overflow:hidden;background:#000;animation:ckFadeIn .25s ease both}#ck-replay.out{animation:ckRpOut .3s ease both}
 #ck-replay canvas{width:100%;height:100%;display:block}
 #ck-replay .lb{position:absolute;left:0;right:0;height:9%;background:#000}#ck-replay .lb.t{top:0}#ck-replay .lb.b{bottom:0}
@@ -249,3 +250,20 @@ img.ck-cu-ico{width:1.5em;height:1.5em}
 #ck-replay .skip{position:absolute;right:12px;top:calc(9% + 8px);border:1px solid #f3c04d88;background:#0b1024cc;color:#f3c04d;border-radius:99px;padding:6px 14px;font:800 12px Nunito,sans-serif;cursor:pointer}
 #ck-replay .bar{position:absolute;left:12%;right:12%;bottom:calc(9% + 10px);height:3px;background:#ffffff22;border-radius:3px}#ck-replay .bar b{display:block;height:100%;width:0;background:#ff5a4a;border-radius:3px}
 @keyframes ckRpOut{to{opacity:0}}@keyframes ckRec{50%{opacity:.2}}
+
+/* v4.2 polish: 5-star rating with the star artwork */
+.rw-st{gap:4px!important}
+.rw-st b{display:inline-grid;place-items:center;opacity:1!important}
+.rw-st img.ck-star{width:clamp(30px,9vw,42px);height:auto;display:block}
+.rw-st b:not(.on) img{filter:grayscale(1) brightness(.42);opacity:.75}
+.rw-st b.on img{filter:drop-shadow(0 0 8px #ffb62e)}
+.rmode .rw-st img.ck-star{width:30px}
+.ck-rate{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:6px 0 2px;font-size:11px;color:#d9c79a}
+.ck-rate b{color:#fff1c7}
+.ck-smini{display:inline-block;white-space:nowrap;font-size:7.5px;letter-spacing:-.5px;color:#ffd45a;text-shadow:0 0 3px #ffb62e88}
+.ck-smini u{text-decoration:none;color:#ffffff38;text-shadow:none}
+/* Fourfold Throne: crown artwork, no gold circle */
+#regs .world-scene .realm-pin.final-throne-pin .pin-icon{background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;width:44px!important;height:44px!important;filter:none!important;margin-right:4px}
+#regs .realm-pin .pin-icon img.ck-crown,.realm-pin .pin-icon img.ck-crown{width:44px!important;height:44px!important;max-width:none!important;object-fit:contain;display:block;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;filter:drop-shadow(0 0 7px #ffcf68aa) drop-shadow(0 3px 4px #0009)}
+/* realm detail: map art only, a little bigger */
+.realm-detail-head .rd-icon.rd-art{width:42px!important;height:42px!important;font-size:0!important;flex:0 0 42px!important}

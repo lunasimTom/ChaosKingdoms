@@ -172,29 +172,32 @@ function ckLootDraw(){if(!L||!L.loot||!L.loot.length)return;const now=performanc
   c.restore()}
  if(drop.length)L.loot=L.loot.filter(l=>!drop.includes(l))}
 // ---- final-blow replay ----
-// During the last wave of a boss level a small rolling recording of the battlefield is kept (3 s at 10
-// frames/s, 280 px wide, about 15-20 MB). When the final boss falls the last moments replay in slow
-// motion with a gentle zoom on the boss; then the treasure bursts out.
-const CKR_FPS=10,CKR_SEC=3,CKR_W=280,CKREC={frames:[],last:0,post:0,run:false};
+// During the last wave of a boss level a rolling recording of the battlefield is kept at the game's own
+// render resolution (HD: the replay is exactly as sharp as live play): 2.4 s at 10 frames/s, the frame
+// canvases are reused so nothing is allocated while recording. If a device cannot hold full-size frames
+// the recorder drops to half size automatically. When the final boss falls the last moments replay in
+// slow motion with a gentle zoom on the boss; then the treasure bursts out.
+const CKR_FPS=10,CKR_SEC=2.4,CKR_MAX=1600,CKREC={frames:[],last:0,post:0,run:false,sc:1};
 function ckRecTick(now){requestAnimationFrame(ckRecTick);
  if(typeof L==='undefined'||!L||L.demo||!L.boss||L.over||S.mode!=='play'){if(CKREC.frames.length&&!L?.rpPend)CKREC.frames.length=0;return}
  const live=L.wave>=L.waves&&(L.en.some(e=>e.t==='boss'&&e.hp>0)||now<CKREC.post);if(!live){if(CKREC.frames.length&&!L.rpPend)CKREC.frames.length=0;return}
  if(L.paused||mOpen||document.hidden||now-CKREC.last<1000/CKR_FPS)return;CKREC.last=now;
- const cv=document.getElementById('cv');if(!cv||!cv.width)return;const h=Math.round(CKR_W*cv.height/cv.width);
- const f=CKREC.frames.length>=CKR_FPS*CKR_SEC?CKREC.frames.shift():document.createElement('canvas');if(f.width!==CKR_W||f.height!==h){f.width=CKR_W;f.height=h}
- try{f.getContext('2d').drawImage(cv,0,0,CKR_W,h);CKREC.frames.push(f)}catch(_){}}
+ const cv=document.getElementById('cv');if(!cv||!cv.width)return;
+ const sc=Math.min(1,CKR_MAX/Math.max(cv.width,cv.height))*CKREC.sc,w=Math.round(cv.width*sc),h=Math.round(cv.height*sc);
+ const f=CKREC.frames.length>=Math.round(CKR_FPS*CKR_SEC)?CKREC.frames.shift():document.createElement('canvas');if(f.width!==w||f.height!==h){f.width=w;f.height=h}
+ try{const g=f.getContext('2d');if(!g)throw 0;g.drawImage(cv,0,0,w,h);CKREC.frames.push(f)}catch(_){if(CKREC.sc>.5){CKREC.sc=.5;CKREC.frames.length=0}}}
 setTimeout(()=>requestAnimationFrame(ckRecTick),0);
 function ckFinalBlow(e){L.rpPend=true;L.q=[];L.scs=[];L.sc=null;for(const o of L.en)if(o!==e&&o.hp>0)o.hp=-1;
  CKREC.post=performance.now()+450;ckVibe([40,60,90]);setTimeout(()=>{try{ckReplay(e)}catch(err){console.warn('replay',err);ckLootBurst(e)}},480)}
-function ckReplay(e){const fr=CKREC.frames.slice(-28);if(fr.length<6||L.over){ckLootBurst(e);return}
+function ckReplay(e){const fr=CKREC.frames.slice(-24);if(fr.length<6||L.over){ckLootBurst(e);return}
  const cv=document.getElementById('cv'),r=cv.getBoundingClientRect(),wasP=L.paused;L.paused=1;
  const ov=document.createElement('div');ov.id='ck-replay';ov.style.cssText=`left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px`;
  ov.innerHTML=`<canvas></canvas><div class="lb t"></div><div class="lb b"></div><div class="tag"><i></i>${lvZ('回放 · 致命一击','REPLAY · FINAL BLOW')}</div><button type="button" class="skip">${lvZ('跳过 ›','Skip ›')}</button><div class="bar"><b></b></div>`;document.body.appendChild(ov);
- const k=ov.querySelector('canvas'),g=k.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1);k.width=Math.round(r.width*dpr);k.height=Math.round(r.height*dpr);
- const sp=eS(e),fx=sp.x/W*k.width,fy=sp.y/H*k.height,N=fr.length,DUR=N*175;let t0=performance.now(),done=false;
+ const k=ov.querySelector('canvas'),g=k.getContext('2d');k.width=Math.max(fr[0].width,cv.width);k.height=Math.round(k.width*fr[0].height/fr[0].width);
+ const sp=eS(e),fx=sp.x/W*k.width,fy=sp.y/H*k.height,N=fr.length,DUR=N*180;let t0=performance.now(),done=false;
  const end=()=>{if(done)return;done=true;ov.classList.add('out');setTimeout(()=>ov.remove(),320);L.paused=wasP;CKREC.frames.length=0;ckLootBurst(e)};
  ov.querySelector('.skip').onclick=ev=>{ev.stopPropagation();end()};try{CKS.bossRage&&CKS.lootBurst&&CKS.pickup(2)}catch(_){}
- const step=now=>{if(done)return;try{const p=Math.max(0,Math.min(1,(now-t0)/DUR)),i=Math.max(0,Math.min(N-1,Math.floor(p*N))),z=1+.38*p*p,cx=fx,cy=fy;
+ const step=now=>{if(done)return;try{const p=Math.max(0,Math.min(1,(now-t0)/DUR)),i=Math.max(0,Math.min(N-1,Math.floor(p*N))),z=1+.24*p*p,cx=fx,cy=fy;
   g.setTransform(1,0,0,1,0,0);g.fillStyle='#000';g.fillRect(0,0,k.width,k.height);g.setTransform(z,0,0,z,cx-cx*z,cy-cy*z);g.imageSmoothingQuality='high';g.drawImage(fr[i],0,0,k.width,k.height);
   g.setTransform(1,0,0,1,0,0);const v=g.createRadialGradient(k.width/2,k.height/2,k.width*.3,k.width/2,k.height/2,k.width*.85);v.addColorStop(0,'#0000');v.addColorStop(1,'#000a');g.fillStyle=v;g.fillRect(0,0,k.width,k.height);
   if(p>.9){g.fillStyle=`rgba(255,240,200,${(p-.9)*6})`;g.fillRect(0,0,k.width,k.height)}
@@ -202,10 +205,25 @@ function ckReplay(e){const fr=CKREC.frames.slice(-28);if(fr.length<6||L.over){ck
  // fail-safe: never let the replay hold the game for more than its length + 2 s
  setTimeout(end,DUR+2000)}
 // ---- shop: boss treasure (shown, never for sale) ----
-function ckShopRareHtml(){const zh=LANG==='zh',rows=[['dia',ckLZ(['钻石','Diamond']),zh?'首领宝藏掉落；可在加成强化界面兑换为 10,000 金币。':'Dropped by bosses; exchange 1 for 10,000 gold in Bonus Upgrade.'],['frag',ckLZ(['钻石碎片','Diamond Shards']),zh?'集齐 4 个自动锻造成 1 颗钻石。':'4 shards forge 1 diamond automatically.'],['rune',ckLZ(['强化符','Enhancement Rune']),zh?'免费强化一项属性一次。':'Upgrades one attribute once, for free.']]
+function ckShopRareHtml(){const zh=LANG==='zh',rows=[['dia',ckLZ(['钻石','Diamond']),zh?'首领宝藏掉落，也可通过兑换码获得；可在加成强化界面兑换为 10,000 金币。':'Dropped by bosses, or get them with a redeem code. Exchange 1 for 10,000 gold in Bonus Upgrade.'],['frag',ckLZ(['钻石碎片','Diamond Shards']),zh?'集齐 4 个自动锻造成 1 颗钻石。':'4 shards forge 1 diamond automatically.'],['rune',ckLZ(['强化符','Enhancement Rune']),zh?'免费强化一项属性一次。':'Upgrades one attribute once, for free.']]
   .concat(Object.keys(CK_RARE).map(k=>[k,ckLZ(CK_RARE[k].n),ckLZ(CK_RARE[k].d)]));
  const own=k=>k==='dia'?(S.diamonds||0):k==='frag'?(S.frag|0):k==='rune'?(S.rune|0):(L&&L.inv&&L.inv[k]|0);
- return `<div class="ck-shop-rare"><h4>${ckImg('cup')}${zh?'首领宝藏 · 商店不出售':'Boss treasure · not for sale'}</h4>${rows.map(([k,n,d])=>`<div class="si rare"><div class="sicon">${ckImg(k)}</div><div class="sinfo"><b>${n}</b><small>${d}</small><small class="own">${zh?'持有':'Owned'} ×${own(k).toLocaleString()}</small></div><button class="bt" disabled>${zh?'仅首领掉落':'Boss drop only'}</button></div>`).join('')}</div>`}
+ // same row layout and buttons as the regular shop items; diamonds open the redeem-code page,
+ // everything else is shown with a grey (disabled) copy of the Buy button
+ const btn=k=>k==='dia'?`<button class="bt pay ck-dbuy" data-shop-page="treasure">${ckImg('dia','ic')}<span class="buytxt">${zh?'兑换码':'Redeem'}</span></button>`:`<button class="bt pay ck-off" disabled><span class="buytxt">${zh?'仅首领掉落':'Boss drop only'}</span></button>`;
+ return `<div class="ck-shop-rare"><h4 class="ck-srh">${ckImg('cup')}<span>${zh?'首领宝藏':'Boss Treasure'}</span></h4>${rows.map(([k,n,d])=>`<div class="si ck-rare"><div class="sw"><img src="${CKA[k]}" alt=""></div><div class="sd"><b class="f">${n}</b><p>${d}</p></div><div class="sb">${btn(k)}<small>${TL('Owned {0}',own(k).toLocaleString())}</small></div></div>`).join('')}</div>`}
+// ---- 5-star victory rating ----
+// score out of 100: lives kept 60 · clean waves (no leak) 25 · towers kept 15
+// 5★ ≥ 95 (flawless) · 4★ ≥ 80 · 3★ ≥ 62 · 2★ ≥ 42 · 1★ any win
+function ckRate(){const lr=Math.max(0,Math.min(1,L.lives/Math.max(1,L.mxl))),wv=Math.max(1,L.waves||1),cw=Math.max(0,Math.min(wv,(L.perf|0)+(L.lk?0:1))),bt=Math.max(1,L.built|0),tl=L.tlost|0,tk=Math.max(0,1-tl/Math.max(3,bt));
+ const sc=Math.round(lr*60+cw/wv*25+tk*15),st=sc>=95?5:sc>=80?4:sc>=62?3:sc>=42?2:1;L.rate={sc,st,lv:L.lives,mx:L.mxl,cw,wv,tl};return st}
+function ckStarImg(on){return `<img class="ck-star${on?' on':''}" src="${CKA.star}" alt="${on?'★':'☆'}">`}
+function ckStarsRow(st){return [0,1,2,3,4].map(i=>`<b class="${i<st?'on':''}" style="animation-delay:${i*.26}s">${ckStarImg(i<st)}</b>`).join('')}
+function ckRateHtml(){const r=L.rate;if(!r)return '';const zh=LANG==='zh';
+ return `<div class="ck-rate"><span>${zh?'生命':'Lives'} <b>${r.lv}/${r.mx}</b></span><span>${zh?'完美波':'Clean waves'} <b>${r.cw}/${r.wv}</b></span><span>${zh?'损失塔':'Towers lost'} <b>${r.tl}</b></span><span>${zh?'评分':'Score'} <b>${r.sc}</b></span></div>`}
+function ckStarMini(st){return `<span class="ck-smini">${'★'.repeat(st)}<u>${'★'.repeat(Math.max(0,5-st))}</u></span>`}
+// saves made before v4.2 used 1-3 stars: 1 stays 1, 2 becomes 3, 3 (best) becomes 5
+function ckStar5(p,done){if(done||!p||typeof p!=='object')return p||{};const o={};for(const k in p){const v=p[k]|0;o[k]=v>=3?5:v===2?3:v}return o}
 // ---- diamond -> gold exchange and runes, inside the attribute upgrade screen ----
 function ckExchange(){if((S.diamonds||0)<1){toast(lvZ('钻石不足','Not enough diamonds'));return false}S.diamonds-=1;Economy.grantWallet(10000);try{updWl()}catch(_){}save();toast(lvZ('已兑换：1 💎 → 10,000 🪙','Exchanged: 1 💎 → 10,000 🪙'));try{sfx('coin',.6)}catch(_){}return true}
 function ckUseRune(k){if((S.rune|0)<1){toast(lvZ('没有强化符','No Enhancement Runes'));return false}if(cuLv(k)>=CU_MAX){toast(lvZ('该属性已满级','This attribute is already at max level'));return false}
