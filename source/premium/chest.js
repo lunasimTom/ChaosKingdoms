@@ -49,12 +49,12 @@ function ckChRoll(t,forceOver){const P=CK_CH[t].p,R=Math.random,over=forceOver!=
 // ---- grant ----
 function ckChGrant(r){
  if(r.gold){Economy.grantWallet(r.gold);if(typeof L!=='undefined'&&L&&L.g0!=null&&S.mode==='play')L.g0+=r.gold}
- if(r.dia)S.diamonds=(S.diamonds||0)+r.dia;
+ if(r.dia){S.diamonds=(S.diamonds||0)+r.dia;try{ckStat('dia',r.dia)}catch(_){}}
  if(r.star)S.bonusStars=(S.bonusStars||0)+r.star;
  if(r.frag){S.frag=(S.frag|0)+r.frag;ckForge()}
  if(r.rune)S.rune=(S.rune|0)+r.rune;
  if(r.medal){S.medals=(S.medals|0)+r.medal;S.xp=(S.xp||0)+r.medal*CK_MEDAL_XP;try{setTimeout(()=>ckLvCheck(),1600)}catch(_){}}
- if(r.rares){S.inv=S.inv||{};for(const x of r.rares)S.inv[x.k]=(S.inv[x.k]||0)+x.n}
+ if(r.rares){try{ckStat('rares',r.rares.reduce((a,x)=>a+x.n,0))}catch(_){}S.inv=S.inv||{};for(const x of r.rares)S.inv[x.k]=(S.inv[x.k]||0)+x.n}
  try{updWl()}catch(_){}try{if(typeof L!=='undefined'&&L&&L.inv)invR()}catch(_){}try{refreshProfileTeaser()}catch(_){}try{save()}catch(_){}}
 // reward list for display: [art key, name, amount]
 function ckChRows(r){const zh=LANG==='zh',o=[];
@@ -69,7 +69,7 @@ function ckChRows(r){const zh=LANG==='zh',o=[];
 // ---- buy / open ----
 function ckChBuy(t){ckChInit();const P=CK_CH[t].p;if((S.diamonds||0)<P){toast(lvZ('钻石不足：需要 '+P+' 💎','Not enough diamonds: '+P+' 💎 needed'));return false}
  S.diamonds-=P;S.chests[t]++;try{save()}catch(_){}try{sfx('coin',.6)}catch(_){}toast(lvZ('已购买 ','Bought: ')+ckChName(t));ckChRefresh();return true}
-function ckChOpen(t){ckChInit();if(!(S.chests[t]>0))return;S.chests[t]--;const r=ckChRoll(t);ckChGrant(r);ckChFx(t,r);ckChRefresh()}
+function ckChOpen(t){ckChInit();if(!(S.chests[t]>0))return;S.chests[t]--;try{ckStat('chests');setTimeout(()=>ckAchCheck(),3600)}catch(_){}const r=ckChRoll(t);ckChGrant(r);ckChFx(t,r);ckChRefresh()}
 function ckChRefresh(){try{if(typeof tab!=='undefined'&&tab==='s'&&shopPage==='chests')renderShop()}catch(_){}const m=document.getElementById('ck-chm');if(m)m.innerHTML=ckChestPage(false,true);try{ckInvRefresh()}catch(_){}}
 // the chest page: owned chests (open), the diamond store (buy), the medal counter
 function ckChestPage(inShop,inner){ckChInit();const zh=LANG==='zh';

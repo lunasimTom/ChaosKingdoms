@@ -4,12 +4,17 @@ aligned (zipalign-equivalent) unsigned APK writer. No Android SDK required."""
 import struct, sys, zipfile, zlib
 
 PKG = 'com.chaoskingdoms.game'
-VERSION_CODE = 48
-VERSION_NAME = '5.1'
+VERSION_CODE = 49
+VERSION_NAME = '5.5'
 MIN_SDK, TARGET_SDK = 24, 34
 APP_LABEL = 'Chaos Kingdoms'
 ICON_PATH = 'res/drawable-xxxhdpi-v4/ic_launcher.png'
 ID_ICON = 0x7F010000
+ID_FG = 0x7F010001
+ID_BG = 0x7F010002
+ICON_XML = 'res/drawable-anydpi-v26/ic_launcher.xml'
+FG_PATH = 'res/drawable-xxxhdpi-v4/ic_fg.png'
+BG_PATH = 'res/drawable-xxxhdpi-v4/ic_bg.png'
 ID_NAME = 0x7F020000
 
 ANDROID_NS = 'http://schemas.android.com/apk/res/android'
@@ -43,9 +48,49 @@ def string_pool(strings):
     return struct.pack('<HHIIIIII', 0x0001, hdr, hdr + len(body), len(strings), 0, 0, start, 0) + body
 
 
-# ------------------------------------------------------------------ AndroidManifest.xml
+# ------------------------------------------------------------------ binary XML (manifest, adaptive icon)
+def axml(tree, attr_ids):
+    """Encode an element tree (name, [(attr, type, value[, no_ns])], children) as Android binary XML."""
+    attr_names = list(attr_ids)
+    strings = list(attr_names)
+    def sidx(s):
+        if s not in strings:
+            strings.append(s)
+        return strings.index(s)
+    for s in ['android', ANDROID_NS]:
+        sidx(s)
+    body = []
+    def walk(node):
+        name, attrs, kids = node
+        recs = []
+        for a in attrs:
+            an, t, v = a[0], a[1], a[2]
+            ns = 0xFFFFFFFF if (len(a) > 3) else sidx(ANDROID_NS)
+            nidx = sidx(an)
+            if t == T_STR:
+                raw = sidx(v); data = raw
+            else:
+                raw = 0xFFFFFFFF
+                data = (0xFFFFFFFF if v else 0) if t == T_BOOL else v
+            recs.append((attr_ids.get(an, 0xFFFFFFFF), struct.pack('<IIIHBBI', ns, nidx, raw, 8, 0, t, data)))
+        recs.sort(key=lambda r: r[0])  # framework walks attributes in resource-id order
+        nm = sidx(name)
+        el = struct.pack('<IIHHHHHH', 0xFFFFFFFF, nm, 20, 20, len(recs), 0, 0, 0) + b''.join(r[1] for r in recs)
+        body.append(struct.pack('<HHIII', 0x0102, 16, 16 + len(el), 1, 0xFFFFFFFF) + el)
+        for k in kids:
+            walk(k)
+        body.append(struct.pack('<HHIIIII', 0x0103, 16, 24, 1, 0xFFFFFFFF, 0xFFFFFFFF, nm))
+    ns_start = lambda: struct.pack('<HHIIIII', 0x0100, 16, 24, 1, 0xFFFFFFFF, sidx('android'), sidx(ANDROID_NS))
+    ns_end = lambda: struct.pack('<HHIIIII', 0x0101, 16, 24, 1, 0xFFFFFFFF, sidx('android'), sidx(ANDROID_NS))
+    walk(tree)
+    chunks = [ns_start()] + body + [ns_end()]
+    pool = string_pool(strings)
+    rmap = struct.pack('<HHI', 0x0180, 8, 8 + 4 * len(attr_names)) + b''.join(struct.pack('<I', attr_ids[a]) for a in attr_names)
+    payload = pool + rmap + b''.join(chunks)
+    return struct.pack('<HHI', 0x0003, 8, 8 + len(payload)) + payload
+
+
 def manifest():
-    # element tree: (name, [(attr, type, value)], children)
     app_attrs = [('label', T_STR, APP_LABEL), ('icon', T_REF, ID_ICON), ('theme', T_REF, 0x0103000A),
                  ('allowBackup', T_BOOL, True), ('hardwareAccelerated', T_BOOL, True), ('largeHeap', T_BOOL, True)]
     act_attrs = [('name', T_STR, PKG + '.MainActivity'), ('label', T_STR, APP_LABEL), ('exported', T_BOOL, True),
@@ -61,72 +106,51 @@ def manifest():
                      ('intent-filter', [], [
                          ('action', [('name', T_STR, 'android.intent.action.MAIN')], []),
                          ('category', [('name', T_STR, 'android.intent.category.LAUNCHER')], [])])])])])
-    # string pool: attribute names with resource ids first (resource map aligns with them)
-    attr_names = list(ATTR)
-    strings = list(attr_names)
-    def sidx(s):
-        if s not in strings:
-            strings.append(s)
-        return strings.index(s)
-    for s in ['android', ANDROID_NS, 'package']:
-        sidx(s)
-    body = []
-    def walk(node):
-        name, attrs, kids = node
-        recs = []
-        for a in attrs:
-            an, t, v = a[0], a[1], a[2]
-            ns = 0xFFFFFFFF if (len(a) > 3) else sidx(ANDROID_NS)
-            nidx = sidx(an)
-            if t == T_STR:
-                raw = sidx(v); data = raw
-            else:
-                raw = 0xFFFFFFFF
-                data = (0xFFFFFFFF if v else 0) if t == T_BOOL else v
-            recs.append((ATTR.get(an, 0xFFFFFFFF), struct.pack('<IIIHBBI', ns, nidx, raw, 8, 0, t, data)))
-        recs.sort(key=lambda r: r[0])  # framework walks attributes in resource-id order
-        nm = sidx(name)
-        el = struct.pack('<IIHHHHHH', 0xFFFFFFFF, nm, 20, 20, len(recs), 0, 0, 0) + b''.join(r[1] for r in recs)
-        body.append(struct.pack('<HHIII', 0x0102, 16, 16 + len(el), 1, 0xFFFFFFFF) + el)
-        for k in kids:
-            walk(k)
-        body.append(struct.pack('<HHIIIII', 0x0103, 16, 24, 1, 0xFFFFFFFF, 0xFFFFFFFF, nm))
-    ns_start = lambda: struct.pack('<HHIIIII', 0x0100, 16, 24, 1, 0xFFFFFFFF, sidx('android'), sidx(ANDROID_NS))
-    ns_end = lambda: struct.pack('<HHIIIII', 0x0101, 16, 24, 1, 0xFFFFFFFF, sidx('android'), sidx(ANDROID_NS))
-    walk(tree)
-    chunks = [ns_start()] + body + [ns_end()]
-    pool = string_pool(strings)
-    rmap = struct.pack('<HHI', 0x0180, 8, 8 + 4 * len(attr_names)) + b''.join(struct.pack('<I', ATTR[a]) for a in attr_names)
-    payload = pool + rmap + b''.join(chunks)
-    return struct.pack('<HHI', 0x0003, 8, 8 + len(payload)) + payload
+    return axml(tree, ATTR)
+
+
+def adaptive_icon():
+    """res/drawable-anydpi-v26/ic_launcher.xml: <adaptive-icon> with background + foreground layers."""
+    tree = ('adaptive-icon', [], [('background', [('drawable', T_REF, ID_BG)], []),
+                                  ('foreground', [('drawable', T_REF, ID_FG)], [])])
+    return axml(tree, {'drawable': 0x01010199})
 
 
 # ------------------------------------------------------------------ resources.arsc
 def arsc():
-    gpool = string_pool([ICON_PATH, APP_LABEL])
+    NOENT = 0xFFFFFFFF
+    gpool = string_pool([ICON_PATH, ICON_XML, FG_PATH, BG_PATH, APP_LABEL])
     types = string_pool(['drawable', 'string'])
-    keys = string_pool(['ic_launcher', 'app_name'])
+    keys = string_pool(['ic_launcher', 'ic_fg', 'ic_bg', 'app_name'])
 
-    def spec(tid, n):
-        return struct.pack('<HHIBBHI', 0x0202, 16, 16 + 4 * n, tid, 0, 0, n) + b'\0\0\0\0' * n
+    def spec(tid, flags):
+        return struct.pack('<HHIBBHI', 0x0202, 16, 16 + 4 * len(flags), tid, 0, 0, len(flags)) + b''.join(struct.pack('<I', f) for f in flags)
 
-    def ttype(tid, entries, density=0):
-        cfg = bytearray(64); struct.pack_into('<I', cfg, 0, 64); struct.pack_into('<H', cfg, 14, density)
+    def ttype(tid, entries, density=0, sdk=0):
+        """entries: list of (key, vtype, vdata) or None for no entry in this configuration."""
+        cfg = bytearray(64); struct.pack_into('<I', cfg, 0, 64); struct.pack_into('<H', cfg, 14, density); struct.pack_into('<H', cfg, 24, sdk)
         hdr = 20 + 64
         offs, data = b'', b''
-        for key, vtype, vdata in entries:
+        for e in entries:
+            if e is None:
+                offs += struct.pack('<I', NOENT); continue
+            key, vtype, vdata = e
             offs += struct.pack('<I', len(data))
             data += struct.pack('<HHI', 8, 0, key) + struct.pack('<HBBI', 8, 0, vtype, vdata)
         start = hdr + len(offs)
         return struct.pack('<HHIBBHII', 0x0201, hdr, start + len(data), tid, 0, 0, len(entries), start) + bytes(cfg) + offs + data
 
-    type_chunks = spec(1, 1) + ttype(1, [(0, T_STR, 0)], density=640) + spec(2, 1) + ttype(2, [(1, T_STR, 1)])
+    DENSITY_VERSION = 0x0100 | 0x0400
+    type_chunks = (spec(1, [DENSITY_VERSION, 0x0100, 0x0100])
+                   + ttype(1, [(0, T_STR, 0), (1, T_STR, 2), (2, T_STR, 3)], density=640)
+                   + ttype(1, [(0, T_STR, 1), None, None], density=0xFFFE, sdk=26)
+                   + spec(2, [0]) + ttype(2, [(3, T_STR, 4)]))
     name = PKG.encode('utf-16-le').ljust(256, b'\0')
     phdr = 288
     type_off = phdr
     key_off = phdr + len(types)
     pkg_body = types + keys + type_chunks
-    pkg = struct.pack('<HHII', 0x0200, phdr, phdr + len(pkg_body), 0x7F) + name + struct.pack('<IIIII', type_off, 2, key_off, 2, 0) + pkg_body
+    pkg = struct.pack('<HHII', 0x0200, phdr, phdr + len(pkg_body), 0x7F) + name + struct.pack('<IIIII', type_off, 2, key_off, 4, 0) + pkg_body
     payload = gpool + pkg
     return struct.pack('<HHII', 0x0002, 12, 12 + len(payload), 1) + payload
 
@@ -151,11 +175,16 @@ def write_apk(out, entries):
 
 if __name__ == '__main__':
     dex, icon, html, out = sys.argv[1:5]
+    import os
+    idir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'source', 'icon')
     entries = [
         ('AndroidManifest.xml', manifest(), False, 4),
         ('classes.dex', open(dex, 'rb').read(), False, 4),
         ('resources.arsc', arsc(), True, 4),
         (ICON_PATH, open(icon, 'rb').read(), True, 4),
+        (ICON_XML, adaptive_icon(), False, 4),
+        (FG_PATH, open(os.path.join(idir, 'ic_fg.png'), 'rb').read(), True, 4),
+        (BG_PATH, open(os.path.join(idir, 'ic_bg.png'), 'rb').read(), True, 4),
         ('assets/index.html', open(html, 'rb').read(), False, 4),
     ]
     write_apk(out, entries)

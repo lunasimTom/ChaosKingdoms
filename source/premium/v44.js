@@ -4,7 +4,7 @@
    shown) are optional: saves and transfer codes from any older version load unchanged, and older
    versions ignore the new fields. Before anything is converted the raw save is copied once to
    localStorage 'ck25_bak_v44'. */
-const CK_VER='5.1',CK_BUILD=48;
+const CK_VER='5.5',CK_BUILD=49;
 function ckVerTxt(){return lvZ('版本','Version')+' '+CK_VER+' ('+lvZ('构建 ','build ')+CK_BUILD+')'}
 // ---- level-up rewards: gold + stars every level, a chest at milestones ----
 const CK_LV_CHEST={15:0,20:1,25:2,30:3,40:4,50:5};
@@ -55,7 +55,7 @@ function ckSell(key){const[t,id]=key.split(':');const zh=LANG==='zh';
 const CK_FORGE={gold:4000,fail:.15};
 function ckForgeTry(){if((S.frag|0)<4){toast(lvZ('碎片不足（需要 4 个）','Not enough shards (4 needed)'));return}
  if(!Economy.spendWallet(CK_FORGE.gold)){toast(lvZ('金币不足','Not enough gold'));return}if(typeof L!=='undefined'&&L&&L.g0!=null&&S.mode==='play')L.g0=Math.max(0,L.g0-CK_FORGE.gold);
- S.frag-=4;const ok=Math.random()>=CK_FORGE.fail;if(ok)S.diamonds=(S.diamonds||0)+1;try{save();updWl()}catch(_){}ckForgeFx(ok)}
+ S.frag-=4;const ok=Math.random()>=CK_FORGE.fail;if(ok){S.diamonds=(S.diamonds||0)+1;try{ckStat('dia');setTimeout(()=>ckAchCheck(),4500)}catch(_){}}try{save();updWl()}catch(_){}ckForgeFx(ok)}
 function ckForgeFx(ok){const zh=LANG==='zh',old=document.getElementById('ck-fgfx');if(old)old.remove();const ov=document.createElement('div');ov.id='ck-fgfx';
  ov.innerHTML=`<div class="anv"><span class="s s1">${ckImg('frag')}</span><span class="s s2">${ckImg('frag')}</span><span class="s s3">${ckImg('frag')}</span><span class="s s4">${ckImg('frag')}</span><span class="ham">⚒</span><span class="gem">${ckImg('dia')}</span><span class="spark"></span></div><div class="msg"></div>`;document.body.appendChild(ov);
  [450,800,1150].forEach((t,i)=>setTimeout(()=>{try{sfx('upgrade',.35)}catch(_){}ckVibe(12)},t));

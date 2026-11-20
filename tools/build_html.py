@@ -16,9 +16,18 @@ def _cka():
         if not f.endswith('.png') or f.startswith('source-'): continue
         im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
         out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    assert len(out) == 82, sorted(out)
+    assert len(out) == 84, sorted(out)
     return 'const CKA=' + __import__('json').dumps(out) + ';'
 CKA_JS = _cka()
+def _ckm():
+    import io
+    from PIL import Image
+    d = os.path.join(SRC, 'medals'); out = [None]
+    for i in range(1, 41):
+        im = Image.open(os.path.join(d, f'm{i}.png')).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=86, method=6)
+        out.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
+    return 'const CKM=' + __import__('json').dumps(out) + ';'
+CKA_JS = CKA_JS + _ckm()
 
 def rep(old, new, count=1):
     global s
@@ -361,7 +370,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -645,7 +654,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.1',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.5',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
@@ -699,6 +708,27 @@ rep("function mPlay(k){let tok=++mTok;mk=k;mStop();ambSet(AMBK(k));", "function 
 rep("function buildMap(){", "function buildMap(){try{let n=0;while(n<99&&S.prog[n])n++;ckPrefetch('L'+n)}catch(_){}")
 rep("function end(win){L.over=true;", "function end(win){L.over=true;try{setTimeout(()=>ckPrefetch('L'+(win?Math.min(99,L.i+1):L.i)),1500)}catch(_){}")
 
+# 51. v5.5 quick fixes: abandon-level warning glows, no "cannot be undone".
+rep("'Switching levels will permanently discard the unfinished progress in the current level. This cannot be undone.':'切换关卡将永久放弃当前关卡尚未完成的进度，且无法恢复。'", "'Switching levels will permanently discard the unfinished progress in the current level.':'切换关卡将永久放弃当前关卡尚未完成的进度。'")
+rep("const desc=TL('Switching levels will permanently discard the unfinished progress in the current level. This cannot be undone.');", "const desc=TL('Switching levels will permanently discard the unfinished progress in the current level.');")
+rep("modal(`<h2 class=\"f\">${TL('Confirm level change')}</h2><p>${desc}</p>", "modal(`<h2 class=\"f\">${TL('Confirm level change')}</h2><p class=\"ck-warn\">⚠ ${desc}</p>")
+
+rep("ckV3Ground();L.tr.slice().sort((a,b)=>a.y-b.y).forEach(dTw);", "ckV3Ground();try{ckPopGround()}catch(_){}L.tr.slice().sort((a,b)=>a.y-b.y).forEach(t=>{if(!ckPopTw(t))dTw(t)});")
+
+# 52. v5.5 achievements (a55.js), daily reward, statistics, tower range preview while placing.
+rep("function checkAchievements(){progressStats();", "function checkAchievements(){progressStats();try{ckA55Init();ckAchStats()}catch(_){}")
+rep('<div class="achgrid">${ach}</div>', '<div class="ck-pwrap">${ckProfileTabs()}</div>')
+rep("function openProfile(back){", "function openProfile(back){try{ckProfileOpened()}catch(_){}")
+rep("function end(win){L.over=true;try{setTimeout(()=>ckPrefetch(", "function end(win){L.over=true;try{ckAchEnd(win)}catch(_){}try{setTimeout(()=>ckPrefetch(")
+rep("const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);", "const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);try{newA.forEach(ckAExtra);if(newA.length){ckANew(newA);newA.forEach((a,i)=>setTimeout(()=>ckABanner(a),1600+i*2600))}}catch(_){}")
+rep("${ckCrownHtml()}${ckDropsHtml()}", "${ckCrownHtml()}${ckDropsHtml()}${ckNextGoal()}")
+rep("$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'))}", "$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'));try{let e=document.getElementById('ckshow');if(!e){e=document.createElement('div');e.id='ckshow';$('pxp').after(e)}e.innerHTML=ckShowcaseHtml();ckDot()}catch(_){}}")
+rep("L.built++;", "L.built++;try{ckStat('bt_'+selK)}catch(_){}")
+rep("L.inv[id]--;ckIU(id);", "L.inv[id]--;ckIU(id);try{ckStat('items')}catch(_){}", 2)
+rep("c.lineWidth=2;if(selT){c.setLineDash([6,5]);", "c.lineWidth=2;if(selT||bm){c.setLineDash([6,5]);")
+rep(",hp:S.hap===false?0:1}))", ",hp:S.hap===false?0:1,sh:S.show||[],an:S.achNew||[],dl:S.dly||null}))")
+rep("S.hap=s.hp!==0;", "S.hap=s.hp!==0;S.show=Array.isArray(s.sh)?s.sh:[];S.achNew=Array.isArray(s.an)?s.an:[];S.dly=(s.dl&&typeof s.dl==='object')?s.dl:null;")
+
 # ---------------------------------------------------------------- premium layer
 def b64(p):
     return base64.b64encode(open(p, 'rb').read()).decode()
@@ -737,5 +767,28 @@ _body = s[:_fc] + '\x00FONTS\x00' + s[_fe:]
 for _pat in (r"\bCinzel\b", r"\bNunito\b", r"\bFredoka\b", r'"Noto Sans SC"', r"'Noto Sans SC'", r"\bsystem-ui\b"):
     _body = re.sub(_pat, 'CKSans', _body)
 s = _body.replace('\x00FONTS\x00', s[_fc:_fe])
+# v5.5 size pass: PNG data URIs larger than 6 KB become WebP (alpha kept), cached by content hash.
+def _png2webp(m):
+    import io, hashlib
+    from PIL import Image
+    b = m.group(1)
+    if len(b) < 8000: return m.group(0)
+    # the original monster sprites ("e_xxx":"data:image/png...") must stay PNG: a later script keeps a
+    # sprite only when it is already WebP (newer art), so converting these would change which art shows
+    if re.search(r'"e_[a-z_]+":"$', m.string[max(0, m.start() - 40):m.start()]): return m.group(0)
+    key = hashlib.sha1(b.encode()).hexdigest()
+    cache = _png2webp.cache
+    if key not in cache:
+        try:
+            im = Image.open(io.BytesIO(base64.b64decode(b)))
+            im = im.convert('RGBA') if im.mode in ('RGBA', 'LA', 'P') else im.convert('RGB')
+            buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
+            w = buf.getvalue()
+            cache[key] = ('data:image/webp;base64,' + base64.b64encode(w).decode()) if len(w) < len(b) * 3 // 4 else None
+        except Exception:
+            cache[key] = None
+    return cache[key] or m.group(0)
+_png2webp.cache = {}
+s = re.sub(r'data:image/png;base64,([A-Za-z0-9+/=]+)', _png2webp, s)
 open(out_path, 'w', encoding='utf8').write(s)
 print('wrote', out_path, len(s))

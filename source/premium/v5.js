@@ -33,7 +33,7 @@ function ckMapLabel(){if(typeof L==='undefined'||!L||L.demo)return;const hud=doc
  e.innerHTML=(L.boss?`<b class="bo">👑 ${zh?'首领':'BOSS'}</b><i>·</i>`:'')+`<span>${TL(R[L.i/8|0].n)}</span>`;e.classList.toggle('boss',!!L.boss)}
 function ckPlaceFloat(){const rail=document.getElementById('rail'),top=document.querySelector('#hud .top'),tip=document.querySelector('.ck-tipfloat'),m=document.getElementById('ckmapn');
  const sh=document.getElementById('shop'),open=(sh&&!sh.hidden)||mOpen||(typeof tab!=='undefined'&&tab==='s');
- if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';m.style.display=(sh&&!sh.hidden)?'none':''}}
+ if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';try{const ap=document.getElementById('app');ap.style.setProperty('--ck-toast-top',(top.offsetTop+top.offsetHeight+6+m.offsetHeight+6)+'px')}catch(_){}m.style.display=(sh&&!sh.hidden)?'none':''}}
 // ---- V5 monster AI: situational, threat-based targeting ----
 // Awareness grows a little from level 1 (85%) to level 20 (100%). Near the base (last 25% of the
 // route or within 3 tiles) a monster commits to the base. Otherwise it attacks the most threatening
@@ -62,13 +62,17 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#mb
 // ---- tile pop: the tapped tile lifts a little and springs back (towers on it lift too) ----
 let CK_POP=null;
 function ckTilePop(q){if(!q)return;CK_POP={x:q.x,y:q.y,t0:performance.now(),tw:!!q.tw}}
-function ckPopDraw(){const P=CK_POP;if(!P||typeof L==='undefined'||!L)return;const T=360,u=(performance.now()-P.t0)/T;if(u>=1){CK_POP=null;return}
- const h=Math.sin(Math.PI*1.6*u)*Math.exp(-3*u);if(Math.abs(h)<.004)return;const d=cv.width/W,p=pp(P.x,P.y),up=P.tw?tw*.85:0;
- const sx=(p.x-tw/2)*d,sy=(p.y-tw/2-up)*d,sw=tw*d,sh=(tw+up)*d;if(sx<0||sy<0||sx+sw>cv.width||sy+sh>cv.height)return;
- const sc=1+.06*h,lift=Math.max(0,h)*tw*.09,dw=tw*sc,dh=(tw+up)*sc,dx=p.x-dw/2,dy=p.y+tw/2-dh+(tw*sc-tw)/2-lift;
- c.save();if(h>0){c.globalAlpha=.35*h;c.fillStyle='#000';c.beginPath();c.ellipse(p.x,p.y+tw*.46,tw*.5*sc,tw*.13,0,0,7);c.fill()}
- c.globalAlpha=1;c.drawImage(cv,sx,sy,sw,sh,dx,dy,dw,dh);
- if(h>0){c.globalAlpha=.55*h;c.strokeStyle='#ffe9a8';c.lineWidth=Math.max(1,tw*.03);c.strokeRect(dx+1,dy+dh-dw+1,dw-2,dw-2)}c.restore()}
+// drawn inside the frame, right after the ground layer: only the tapped tile's ground is copied
+// (towers, monsters and the tile above are not part of it); a tower on that tile is lifted as it is drawn
+function ckPopH(){const P=CK_POP;if(!P)return 0;const u=(performance.now()-P.t0)/360;if(u>=1){CK_POP=null;return 0}return Math.sin(Math.PI*1.6*u)*Math.exp(-3*u)}
+function ckPopGround(){const P=CK_POP;if(!P||typeof L==='undefined'||!L)return;const h=ckPopH();if(Math.abs(h)<.004)return;const d=cv.width/W,p=pp(P.x,P.y);
+ const sx=Math.round((p.x-tw/2)*d),sy=Math.round((p.y-tw/2)*d),sw=Math.round(tw*d);if(sx<0||sy<0||sx+sw>cv.width||sy+sw>cv.height)return;
+ const sc=1+.06*h,lift=Math.max(0,h)*tw*.09,dw=tw*sc,dx=p.x-dw/2,dy=p.y-dw/2-lift;
+ c.save();if(h>0){c.globalAlpha=.32*h;c.fillStyle='#000';c.fillRect(p.x-tw/2,p.y-tw/2,tw,tw)}c.globalAlpha=1;c.drawImage(cv,sx,sy,sw,sw,dx,dy,dw,dw);
+ if(h>0){c.globalAlpha=.55*h;c.strokeStyle='#ffe9a8';c.lineWidth=Math.max(1,tw*.03);c.strokeRect(dx+1,dy+1,dw-2,dw-2)}c.restore()}
+function ckPopTw(t){const P=CK_POP;if(!P||t.x!==P.x||t.y!==P.y)return false;const h=ckPopH();if(Math.abs(h)<.004)return false;const p=pp(t.x,t.y),sc=1+.06*h,lift=Math.max(0,h)*tw*.09;
+ c.save();c.translate(p.x,p.y+tw/2);c.scale(sc,sc);c.translate(-p.x,-(p.y+tw/2)-lift/sc);try{dTw(t)}finally{c.restore()}return true}
+function ckPopDraw(){}
 // pause menu: a later script rebuilds its buttons; add Settings + Inventory as one row under Resume
 (function(){const mb=document.getElementById('mbox');if(!mb)return;new MutationObserver(()=>{if(!mb.querySelector('.pause-title')||mb.querySelector('.ck-prow'))return;const zh=LANG==='zh';const inv=mb.querySelector('.ck-invp');if(inv)inv.remove();
  const row=document.createElement('div');row.className='pgrid ck-prow';row.innerHTML=`<button class="bt g" data-cksettings="pause">⚙ ${zh?'设置':'Settings'}</button><button class="bt g" data-ckinv="pause">🎒 ${zh?'背包':'Inventory'}</button>`;
@@ -90,6 +94,7 @@ const CK_ICO={
  home:'<path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H4.5A1.5 1.5 0 0 1 3 20z"/>',
  gift:'<path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>',
  spark:'<path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/>',
+ install:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
  swap:'<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>'};
 const CK_EMO=[['⚙️','gear'],['⚙','gear'],['♪','music'],['⟳','rot'],['🌐','globe'],['📜','scroll'],['💾','save'],['🛒','cart'],['🎒','bag'],['🎟️','ticket'],['🎟','ticket'],['▶','play'],['↻','restart'],['✦','star'],['⌂','home'],['🎁','gift'],['✧','spark'],['⇄','swap']];
 function ckIcoSvg(n){return `<svg class="ckico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${CK_ICO[n]}</svg>`}
@@ -108,3 +113,19 @@ function ckHomeLayout(){const card=document.querySelector('#title .tcard');if(!c
  const dif=document.getElementById('dif');(dif||card.lastChild).after(main);main.after(util);
  card.classList.add('ck-home');try{ckIconize(card)}catch(_){}}
 setTimeout(ckHomeLayout,1000);setTimeout(ckHomeLayout,2000);
+// ---- v5.5: app icons for the browser + Install Game ----
+(function(){try{const h=document.head,add=(rel,href,extra)=>{const l=document.createElement('link');l.rel=rel;l.href=href;if(extra)Object.assign(l,extra);h.appendChild(l)};
+ add('icon',CKA.appicon,{type:'image/png'});add('apple-touch-icon',CKA.appicon_sq);
+ if(/^https?:$/.test(location.protocol)){add('manifest','manifest.webmanifest');if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}}catch(_){}})();
+let CK_DIP=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();CK_DIP=e;ckInstallBtn()});
+window.addEventListener('appinstalled',()=>{CK_DIP=null;toast(lvZ('已安装到桌面！','Installed!'));ckInstallBtn()});
+function ckStandalone(){try{return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true}catch(_){return false}}
+function ckInstallBtn(){const card=document.querySelector('#title .tcard.ck-home');if(!card)return;let b=document.getElementById('ckinstall');
+ const hide=!!window.CKAndroid||ckStandalone();if(hide){if(b)b.remove();return}
+ if(!b){b=document.createElement('button');b.id='ckinstall';b.className='bt g ck-install';b.type='button';b.onclick=ckInstall;const u=card.querySelector('.ck-hutil');(u||card.lastChild).after(b)}
+ b.innerHTML=ckIcoSvg('install')+' '+lvZ('安装到桌面','Install Game')}
+async function ckInstall(){if(CK_DIP){const e=CK_DIP;CK_DIP=null;try{e.prompt();const r=await e.userChoice;if(r&&r.outcome==='accepted')return}catch(_){}}
+ const zh=LANG==='zh',ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua)||(/Mac/.test(ua)&&'ontouchend' in document),android=/Android/.test(ua),framed=window.top!==window;
+ const steps=ios?(zh?['用 Safari 打开本游戏页面','点击底部的“分享”按钮 ⬆','选择“添加到主屏幕”']:['Open this game page in Safari','Tap the Share button ⬆','Choose “Add to Home Screen”']):android?(zh?['用 Chrome 打开本游戏页面','点击右上角菜单 ⋮','选择“安装应用”或“添加到主屏幕”']:['Open this game page in Chrome','Tap the ⋮ menu (top right)','Choose “Install app” or “Add to Home screen”']):(zh?['用 Chrome 或 Edge 打开本游戏页面','点击地址栏右侧的“安装”图标，或打开菜单 ⋮','选择“安装 Chaos Kingdoms”']:['Open this game page in Chrome or Edge','Click the Install icon at the right of the address bar, or open the ⋮ menu','Choose “Install Chaos Kingdoms”']);
+ modal(`<div class="ck-inst"><img class="ck-insti" src="${CKA.appicon}" alt=""><h2 class="f">${zh?'安装到桌面':'Install Game'}</h2><p>${zh?'像应用一样从桌面或主屏幕启动，全屏游戏，离线也能玩。':'Launch it from your desktop or home screen like an app, full screen, and play offline.'}</p><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>${framed?`<p class="ck-instn">${zh?'当前页面嵌在预览窗口中，浏览器不允许直接安装。请在新标签页中打开游戏文件或网页后再安装。':'This page is shown inside a preview frame, where browsers do not allow installing. Open the game file or page in its own browser tab first.'}</p>`:''}</div><button class="bt g" id="m1">${zh?'知道了':'Got it'}</button>`,closeM)}
+setTimeout(ckInstallBtn,1300);setTimeout(ckInstallBtn,2600);

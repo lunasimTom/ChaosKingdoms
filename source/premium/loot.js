@@ -125,11 +125,11 @@ function ckGrant(l){const p=pp(l.x,l.y);ckDropLog(l);
  if(l.kind==='gold'){if(l.bat){Economy.grantBattle(l.amt);to='coin'}else{Economy.grantWallet(l.amt);if(L.g0!=null)L.g0+=l.amt;to='coin'}label='+'+l.amt.toLocaleString()+' 🪙'}
  else if(l.kind==='star'){S.bonusStars=(S.bonusStars||0)+l.amt;label='+'+l.amt+' ⭐';to='star'}
  else if(l.kind==='frag'){S.frag=(S.frag|0)+l.amt;label='+'+l.amt+' 💠';ckForge()}
- else if(l.kind==='dia'){S.diamonds=(S.diamonds||0)+l.amt;label='+'+l.amt+' 💎'}
+ else if(l.kind==='dia'){S.diamonds=(S.diamonds||0)+l.amt;try{ckStat('dia',l.amt)}catch(_){}label='+'+l.amt+' 💎'}
  else if(l.kind==='rune'){S.rune=(S.rune|0)+l.amt;label='+'+l.amt+' 📜 '+lvZ('强化符','Rune');to='star'}
  else if(l.kind==='item'){L.inv[l.id]=(L.inv[l.id]||0)+l.amt;const it=IT.find(x=>x.id===l.id);label='+'+l.amt+' '+(it?it.n:l.id);to='inv'}
  else if(l.kind==='chest'){ckChInit();S.chests[l.ct]=(S.chests[l.ct]|0)+1;label='🎁 '+ckChName(l.ct);to='inv';toast('🎁 '+ckChName(l.ct)+lvZ('！在 商店 › 宝箱 中打开','! Open it in Shop › Chests'));ckVibe([30,40,60])}
- else if(CK_RARE[l.kind]){L.inv[l.kind]=(L.inv[l.kind]||0)+l.amt;const R=CK_RARE[l.kind];label=R.ic+' '+ckLZ(R.n)+(l.amt>1?' ×'+l.amt:'');to='inv';ckRareCard(R,l.tier)}
+ else if(CK_RARE[l.kind]){L.inv[l.kind]=(L.inv[l.kind]||0)+l.amt;try{ckStat('rares',l.amt)}catch(_){}const R=CK_RARE[l.kind];label=R.ic+' '+ckLZ(R.n)+(l.amt>1?' ×'+l.amt:'');to='inv';ckRareCard(R,l.tier)}
  txt(p.x,p.y-tw*.5,label,col);ckFly(l,p,to);try{invR()}catch(_){}}
 function ckVibe(ms){if(typeof S!=='undefined'&&S.hap===false)return;try{if(window.CKAndroid&&CKAndroid.vibrate){CKAndroid.vibrate(Array.isArray(ms)?ms.reduce((a,b)=>a+b,0):ms);return}if(navigator.vibrate)navigator.vibrate(ms)}catch(_){}}
 // per-level record of what was collected (boss treasure vs monster drops), shown on the result screen

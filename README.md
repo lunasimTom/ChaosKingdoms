@@ -7,7 +7,63 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.1.apk` | Android app (package `com.chaoskingdoms.game`, version 5.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.5.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.5 · Medals
+
+New code is in `source/premium/a55.js` (achievements, daily reward, statistics).
+
+**40 achievements with medal artwork.** All 40 medals come from the provided sheet.
+- **Kept as they were:** the 8 original achievements keep their ids, names, rank requirements and gold: First Victory, Monster Slayer, Perfect Defender, Boss Hunter, Veteran Commander, Nightmare Conqueror, Master Builder and Master Engineer. Saves recognise them exactly as before.
+- **Added:** 32 new achievements, themed to the art. Examples: Treasure Seeker (chest), Gem Collector (diamonds), Cartographer (map), Arcane Scholar (wizard hat, Commander Lv.10), Phoenix Rising (win with 5 lives or fewer), Pack Hunter (wolf, 10,000 kills), Master Archer (bow, 100 Archer Towers), Lord of the Throne (throne), Against the Clock (hourglass, a win in under 4 minutes), Keymaster (key, 50 levels cleared), Sky Voyager (ship, the Sky Castle boss) and Chaos Conqueror (Commander Lv.50).
+- **Rewards:**
+
+  | Tier | Reward | Points |
+  | --- | --- | --- |
+  | Bronze | 1,000 gold | 10 |
+  | Silver | 3,000 gold + 1 diamond | 25 |
+  | Gold | 8,000 gold + 5 diamonds | 50 |
+
+  Lord of the Throne also gives a Gold Chest, and Chaos Conqueror a Purple Chest.
+- **Old saves:** anything a save already qualifies for unlocks, with its rewards, on the first load. One banner sums them up.
+
+**Medal grid.** Commander Record shows the medals in a 4-column grid.
+- **Locked and unlocked:** locked medals are grey with a progress bar; unlocked medals are full colour with a glow.
+- **New and pinned:** a red dot marks new medals, and a ★ marks pinned ones.
+- **Details:** tapping a medal shows its tier, points, requirement, progress and reward. From there you can pin it to your showcase or save a medal card image.
+
+**Points and titles.** Achievement points unlock a title shown on the home commander card: Squire (50), Knight (150), Champion (300), Warlord (500), Dragonbane (750) and Chaos Breaker (1,000). Up to 3 pinned medals are shown next to it.
+
+**Unlock banner.** A gold banner slides in with the medal, its name and reward, plus a chime and vibration. Gold-tier medals get the full fanfare and a stronger vibration. The Commander Record button shows a red dot until you've seen new medals.
+
+**Next medal.** The Victory screen shows your closest medal, for example "Next medal: Wyrm Slayer · 3 to go".
+
+**Daily reward.** A 7-day cycle: 2,000 gold, 10 stars, 3 shards, 5,000 gold, 1 diamond, 20 stars, then a Green Chest on day 7. Missing a day doesn't reset the cycle.
+
+**Statistics.** A tab in Commander Record shows play time, wins and losses, enemies, bosses, towers built, your favourite tower, levels cleared, stars, chests, diamonds, items used and achievements.
+
+**New icon.**
+- **Android 8 and newer:** the app uses an adaptive icon built from the provided artwork. A sharp foreground sits on an extended, blurred background, so it fills circles, squircles and rounded squares, and the logo stays inside the safe area.
+- **Android 7:** the plain icon is used.
+- **Browser:** the same artwork is used as the browser tab icon and the iPhone home-screen icon.
+
+**Install Game.** The browser version's home screen has an **Install Game** button. It doesn't appear in the Android app or in an installed copy.
+- **Where the browser offers it** (Chrome or Edge on a hosted copy), it opens the install prompt.
+- **Otherwise** it shows step-by-step instructions for desktop, Android and iPhone.
+- **Hosting:** `dist/` now includes `manifest.webmanifest`, `sw.js` and the icons. Host the folder (for example on GitHub Pages) and the game becomes installable and works offline.
+
+**Fixes.**
+- **Boss levels:** the level box no longer repeats the crown; the map name keeps it.
+- **Inventory:** the panel has one fixed height, whatever the tab.
+- **Tapping a tile:** only that tile lifts. The tile above no longer moves.
+- **Level switching:** the warning pulses with a red-gold glow, and "This cannot be undone" is gone in both languages.
+- **Notifications:** they now appear below the map name.
+- **Tower range:** while placing a tower, the range circle of the selected type is shown on the tile under your finger.
+
+**Smaller file.** 11.0 MB → 9.9 MB:
+- The loading art is embedded once instead of twice.
+- Large PNG artwork is converted to WebP at the same quality, except the original monster sprites, whose PNG format decides which art version is shown.
+- The home logo is a smaller image.
 
 ## What changed in v5.1 · Polish
 
@@ -875,7 +931,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
