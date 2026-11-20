@@ -128,7 +128,7 @@ function ckDailyClaim(){const d=S.dly.day%7,r=CK_DAILY[d];if(r.gold)Economy.gran
 // ---- statistics page ----
 function ckStatsHtml(){ckAchStats();const zh=LANG==='zh',st=S.stats,h=(typeof HIST!=='undefined'&&HIST.list)||[],secs=h.reduce((a,r)=>a+(r.secs||0),0),loss=h.filter(r=>r.result==='loss').length;
  const fav=Object.keys(TW).map(k=>[k,st['bt_'+k]||0]).sort((a,b)=>b[1]-a[1])[0],fmtT=s=>{const H=Math.floor(s/3600),M=Math.floor(s%3600/60);return (H?H+(zh?' 小时 ':'h '):'')+M+(zh?' 分钟':'m')};
- const rows=[[zh?'游戏时长':'Play time',fmtT(secs)],[zh?'胜 / 负':'Wins / losses',(st.wins||0)+' / '+loss],[zh?'击败敌人':'Enemies defeated',(st.kills||0).toLocaleString()],[zh?'击败首领':'Bosses defeated',st.bossWins||0],
+ const rows=[[zh?'游戏时长':'Play time',fmtT(secs)],[zh?'胜 / 负':'Wins / losses',(st.wins||0)+' / '+loss],[zh?'击败敌人':'Enemies defeated',(st.kills||0).toLocaleString()],[zh?'击败首领':'Bosses defeated',st.bossWins||0],[zh?'击败小首领':'Mini-bosses defeated',st.mboss||0],
   [zh?'建造防御塔':'Towers built',(st.built||0).toLocaleString()],[zh?'最常用防御塔':'Favourite tower',fav&&fav[1]?TW[fav[0]].n+' ×'+fav[1]:'—'],[zh?'已通关关卡':'Levels cleared',(st.cleared||0)+' / 100'],[zh?'关卡星星':'Level stars',st.stars||0],
   [zh?'打开宝箱':'Chests opened',st.chests||0],[zh?'获得钻石':'Diamonds earned',st.dia||0],[zh?'使用道具':'Items used',st.items||0],[zh?'成就':'Achievements',(S.ach||[]).length+' / '+ACHS.length+' · '+ckPoints()+(zh?' 点':' pts')]];
  return `<div class="ck-stats">${rows.map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')}</div>`}

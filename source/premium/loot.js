@@ -157,21 +157,25 @@ function ckLootUi(on){if(!CKLU){CKLU=document.createElement('div');CKLU.id='ck-l
 // every drop: large artwork with a bright pulsing golden glow and twinkling sparkles; the rarity colour
 // shows as an inner halo, Legendary+ adds a light beam, Mythic adds coloured particles
 function ckSparkle(x,y,r,a){c.save();c.translate(x,y);c.rotate(Math.PI/4);c.globalAlpha=a;c.fillStyle='#fff8d0';c.beginPath();c.moveTo(0,-r);c.lineTo(r*.22,-r*.22);c.lineTo(r,0);c.lineTo(r*.22,r*.22);c.lineTo(0,r);c.lineTo(-r*.22,r*.22);c.lineTo(-r,0);c.lineTo(-r*.22,-r*.22);c.closePath();c.fill();c.restore()}
+// v5.6: glows are pre-rendered once per colour (a treasure hoard draws hundreds of pieces per frame)
+const CKGLOW={};function ckGlowImg(k){if(CKGLOW[k])return CKGLOW[k];const N=128,cv=document.createElement('canvas');cv.width=cv.height=N;const g=cv.getContext('2d'),h=N/2;let gr;
+ if(k==='gold'){gr=g.createRadialGradient(h,h,h*.1,h,h,h);gr.addColorStop(0,'#fff3b0');gr.addColorStop(.35,'#ffd23acc');gr.addColorStop(1,'#ffb00000')}else{gr=g.createRadialGradient(h,h,0,h,h,h);gr.addColorStop(0,k+'aa');gr.addColorStop(1,k+'00')}
+ g.fillStyle=gr;g.fillRect(0,0,N,N);return CKGLOW[k]=cv}
 function ckLootDraw(){if(!L||!L.loot||!L.loot.length)return;const now=performance.now();let drop=[];const lo=window.CK_Q===0;
  for(const l of L.loot){const a=ckLootAlpha(l);if(a<=0){if(!l.boss)drop.push(l);continue}
   const tp=pp(l.x,l.y),ft=Math.min(1,(now-l.ft0)/l.fdur),e=1-Math.pow(1-ft,3);let x=l.fx+(tp.x-l.fx)*e,y=l.fy+(tp.y-l.fy)*e-Math.sin(ft*Math.PI)*tw*1.7;
   const ph=(l.x*1.7+l.y*2.3)%6.28,bob=ft>=1?Math.sin(TM*3+ph)*tw*.06:0,T=CKT[l.tier],sz=tw*(.74+.05*l.tier)*(l.kind==='chest'?1.35:1)*(ft<1?.65+.35*e:1);y-=bob;
   c.save();c.globalAlpha=a;
-  if(ft>=1){c.fillStyle='#0007';c.beginPath();c.ellipse(tp.x,tp.y+sz*.42,sz*.4,sz*.12,0,0,7);c.fill()}
+  if(ft>=1&&!l.lo){c.fillStyle='#0007';c.beginPath();c.ellipse(tp.x,tp.y+sz*.42,sz*.4,sz*.12,0,0,7);c.fill()}
   // golden glow (all drops), rarity halo inside it
-  c.globalCompositeOperation='lighter';{const pr=.5+.5*Math.sin(TM*5+ph),r=sz*(.95+.18*pr),g=c.createRadialGradient(x,y,sz*.1,x,y,r);g.addColorStop(0,'#fff3b0');g.addColorStop(.35,'#ffd23acc');g.addColorStop(1,'#ffb00000');c.globalAlpha=a*(.55+.3*pr);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill()}
-  if(l.tier>=1){const r=sz*.62,g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,T.c+'aa');g.addColorStop(1,T.c+'00');c.globalAlpha=a*T.glow;c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill()}
+  c.globalCompositeOperation='lighter';if(!l.lo){const pr=.5+.5*Math.sin(TM*5+ph),r=sz*(.95+.18*pr);c.globalAlpha=a*(.55+.3*pr);c.drawImage(ckGlowImg('gold'),x-r,y-r,r*2,r*2)}
+  if(l.tier>=1&&!l.lo){const r=sz*.62;c.globalAlpha=a*T.glow;c.drawImage(ckGlowImg(T.c),x-r,y-r,r*2,r*2)}
   if(l.tier>=4&&ft>=1&&!lo){const bw=sz*.55,g=c.createLinearGradient(0,y-tw*3.2,0,y);g.addColorStop(0,T.c+'00');g.addColorStop(1,T.c+'99');c.globalAlpha=a;c.fillStyle=g;c.fillRect(x-bw/2,y-tw*3.2,bw,tw*3.2)}
   c.globalCompositeOperation='source-over';c.globalAlpha=a;
   const ak=l.kind==='jackpot'?'dia':l.kind==='item'?null:l.kind==='chest'?'ch_'+CK_CH[l.ct].k:l.kind;let im=ak?CKA_IMG[ak]:null;if(!im&&l.kind==='item'){const it=IT.find(q=>q.id===l.id);im=it&&SP[it.sp]}
   if(im&&im.width){const s2=sz/Math.max(im.width,im.height);c.drawImage(im,x-im.width*s2/2,y-im.height*s2/2,im.width*s2,im.height*s2)}else c.drawImage(ckLootIcon(l.kind,T.c),x-sz/2,y-sz/2,sz,sz);
   // twinkling sparkles around every drop
-  if(!lo){for(let k=0;k<3;k++){const t=TM*1.6+ph+k*2.09,tw2=Math.max(0,Math.sin(t*2.3+k));if(tw2>.05)ckSparkle(x+Math.cos(t)*sz*.52,y+Math.sin(t*1.3)*sz*.46,sz*(.09+.07*tw2),a*tw2)}}
+  if(!lo&&!l.lo){for(let k=0;k<3;k++){const t=TM*1.6+ph+k*2.09,tw2=Math.max(0,Math.sin(t*2.3+k));if(tw2>.05)ckSparkle(x+Math.cos(t)*sz*.52,y+Math.sin(t*1.3)*sz*.46,sz*(.09+.07*tw2),a*tw2)}}
   if(l.tier>=5&&ft>=1&&Math.random()<.3)burst(x+(Math.random()-.5)*sz,y+(Math.random()-.5)*sz,['#ff5ad0','#7ad8ff','#ffe066'][Math.random()*3|0],1,60);
   if(l.kind==='jackpot'){c.font=`900 ${sz*.34|0}px Nunito,sans-serif`;c.textAlign='center';c.fillStyle='#fff';c.strokeStyle='#000';c.lineWidth=3;c.strokeText('★',x+sz*.36,y-sz*.32);c.fillText('★',x+sz*.36,y-sz*.32)}
   c.restore()}

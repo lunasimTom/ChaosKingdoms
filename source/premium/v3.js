@@ -277,6 +277,8 @@ function ckTipsHtml(){
  if(fly)ene.push(li('🦇',Z('飞行怪物','Flyers'),Z('幽灵和幼龙会飞越道路与障碍，直扑基地——在基地周围布防。','Ghosts and Wyrmlings fly over the road and obstacles straight at a base: guard your bases.')));
  if(i>=6)ene.push(li('👑',Z('精英怪','Elites'),Z('头顶金冠的精英怪生命 ×2.2，击杀奖励 ×3。','Elites wear a gold crown: 2.2x health, 3x gold.')));
  if(!ene.length)ene.push(li('⚔',Z('基础怪物','Basic monsters'),Z('这一关只有普通怪物——专心布置你的第一道防线。','Only basic monsters here: focus on building your first line.')));
+ // v5.6 mini-boss on Level 4
+ if(typeof ckIsMbLv==='function'&&ckIsMbLv(i)){const D=ckMbDef(i),M=CK_MBM[D[2]];boss.push(li('⚔',Z('小首领：','Mini-boss: ')+Z(D[0][0],D[0][1]),Z('最后一波末尾出现。生命约为首领的 40%，到达基地扣 5 点生命；生命降到一半时召唤 3 个护卫。','Arrives at the end of the final wave. About 40% of a boss\'s health, costs 5 lives if it reaches a base, and calls 3 guards at half health.')));boss.push(li('✨',Z('招牌技能：','Signature move: ')+Z(M[0][0],M[0][1]),Z(M[1][0],M[1][1])+(D[3]>1?Z('（强化版）',' (stronger here)'):'')))}
  // bosses
  if(L.boss){const n=np,ty=['m','p','e'][(i/8|0)%3],nm=i>=96?BOSS[13+(i-96)]:BOSS[i/8|0];
   boss.push(li('💀',Z('首领：','Boss: ')+TL(nm)+(n>1?' ×'+n:''),Z(`最后一波出现${n>1?n+'个首领，每个出怪口一个':'首领'}。首领无视建筑，直线冲向基地；到达后会持续攻击基地直到被击败。`,`Arrives in the final wave${n>1?': '+n+' bosses, one from each portal':''}. Bosses ignore buildings and march straight at a base, then besiege it until killed.`)));

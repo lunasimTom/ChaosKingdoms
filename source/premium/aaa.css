@@ -711,3 +711,6 @@ html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{white-space:nowrap!im
 .ck-inst .ck-instn{background:#2a1606aa;border:1px solid #ffcf9a44;border-radius:10px;padding:7px 10px;margin:6px auto;max-width:330px;text-align:left;line-height:1.45}
 .ck-ilinks{display:flex;flex-direction:column;gap:8px;max-width:300px;margin:8px auto 4px}
 .ck-ilinks .ck-ilink{display:flex;align-items:center;justify-content:center;text-decoration:none;min-height:38px;font-size:14px!important}
+/* v5.6 mini-boss level crest */
+html body #regs .nd.mini{box-shadow:0 0 0 2px #ffb02a,0 0 12px #ffb02a88!important}
+html body #regs .nd.mini b em{color:#ffd36a!important;font-size:12px!important;text-shadow:0 1px 2px #000,0 0 6px #ffb02a!important;opacity:1!important}

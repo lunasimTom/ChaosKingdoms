@@ -7,7 +7,44 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.5.3.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.6.0.apk` | Android app (package `com.chaoskingdoms.game`, version 5.6.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.6
+
+New code is in `source/premium/v56.js`.
+
+**Mini-bosses on Level 4.** Level 4 of every realm (I–XII) now ends with a mini-boss. Level 8 keeps its major boss, and the Fourfold Throne is unchanged.
+
+| Realm | Mini-boss | Signature move |
+| --- | --- | --- |
+| I Forest Kingdom | Ogre Warchief | Regrowth: heals quickly after 3 s without being hit |
+| II Desert Wasteland | Sand Vampire Lord | Sand dash: a burst of speed every 8 s |
+| III Ice Realm | Frost Troll Jarl | Frost aura: freezes nearby towers for 1 s every 4 s |
+| IV Lava Fortress | Ember Demon | Split: becomes two brutes when defeated |
+| V Sky Castle | Storm Golem | Storm shield: a damage-absorbing shield every 10 s |
+| VI Underground Dungeon | Death Knight Captain | Dark mending: heals the monsters around it |
+| VII Celestial Rift | Astral Golem | Frost aura (stronger) |
+| VIII Abyssal Crown | Abyss Countess | Storm shield (stronger) |
+| IX Stormfront Expanse | Iron Death Knight | Sand dash (stronger) |
+| X Emerald Wilds | Moss Troll | Regrowth (stronger) |
+| XI Obsidian Depths | Obsidian Golem | Dark mending (stronger) |
+| XII Crimson Caldera | Crimson Demon | Split (stronger) |
+
+- **Strength:** 3.2 times an ordinary brute of that wave. On Level 4 that is about 40% of the realm's boss; in late realms it keeps up with the tougher monsters. It is 1.5 times monster size, wears the elite crown and a gold aura, and shows its name and health bar.
+- **Rules:** it arrives at the end of the final wave (the number of waves is unchanged), costs 5 lives if it reaches a base, calls 3 guards at half health, and has no rage mode. On levels with several bases there is still only one.
+- **Rewards:** crowned-elite gold, plus a short treasure burst around where it fell (about 3.5 s to grab it), with a small chance of a diamond. Replays drop less.
+- **Where you see it:** the realm panel reads "Mini-boss: … · Boss: …", the Level 4 button carries a ⚔ crest with a gold ring, a "MINI-BOSS" banner announces it, and the 💡 tips explain its move. Statistics gain a "Mini-bosses defeated" line. Mini-bosses do not count toward the boss achievements.
+- **Balance check:** an auto-play bot still wins Levels 4 and 12 every time, losing no extra lives. Level 20 went from 4 wins in 4 to 3 in 4.
+
+**Treasure hoards on the Fourfold Throne (levels 97–100).**
+- **Size:** the final bosses drop 260, 300, 340 and 400 pieces (scaled by difficulty; replays 45%) instead of about 60.
+- **Layout:** the pieces land in 6–14 heaps up to nine layers deep, plus a carpet over the whole map.
+- **Can't be cleared:** a tap on a heap takes only its top three pieces, so most of the hoard is still there when the 8 seconds run out. A "LEGENDARY HOARD" banner opens it.
+- **Speed:** treasure glows are pre-rendered once, and the lower layers skip their glow, so a 400-piece hoard draws about as fast as an ordinary boss treasure.
+
+**Realm pictures.**
+- **Fix:** Celestial Rift, Abyssal Crown, Stormfront Expanse, Emerald Wilds, Obsidian Depths, Crimson Caldera and the Fourfold Throne no longer repeat the first six pictures.
+- **How:** each one is mirrored or re-framed from its base picture and colour-graded with the realm's own sky colours, plus a touch of its weather (stars, embers, rain, spores, sparks). The grade is made once in the game, so the file size doesn't grow. All 13 world atlas cards and the realm panel now differ.
 
 ## What changed in v5.5.3
 
@@ -1007,7 +1044,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.3.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.6.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
