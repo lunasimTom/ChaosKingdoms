@@ -30,9 +30,10 @@ setTimeout(ckRailV5,300);setTimeout(ckRailV5,1200);
 // ---- top-left: compact level badge; level + map name below the gold divider ----
 function ckMapLabel(){if(typeof L==='undefined'||!L||L.demo)return;const hud=document.getElementById('hud');if(!hud)return;let e=document.getElementById('ckmapn');
  if(!e){e=document.createElement('div');e.id='ckmapn';hud.appendChild(e)}const zh=LANG==='zh';
- e.innerHTML=(L.boss?`<b class="bo">👑 ${zh?'首领':'BOSS'}</b> · `:'')+`<span>${TL('Lv {0}',L.i+1)}</span> · ${TL(R[L.i/8|0].n)}`;e.classList.toggle('boss',!!L.boss)}
+ e.innerHTML=(L.boss?`<b class="bo">👑 ${zh?'首领':'BOSS'}</b><i>·</i>`:'')+`<span>${TL(R[L.i/8|0].n)}</span>`;e.classList.toggle('boss',!!L.boss)}
 function ckPlaceFloat(){const rail=document.getElementById('rail'),top=document.querySelector('#hud .top'),tip=document.querySelector('.ck-tipfloat'),m=document.getElementById('ckmapn');
- if(tip&&rail)tip.style.bottom=(rail.offsetHeight+6)+'px';if(m&&top)m.style.top=(top.offsetTop+top.offsetHeight+3)+'px'}
+ const sh=document.getElementById('shop'),open=(sh&&!sh.hidden)||mOpen||(typeof tab!=='undefined'&&tab==='s');
+ if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';m.style.display=(sh&&!sh.hidden)?'none':''}}
 // ---- V5 monster AI: situational, threat-based targeting ----
 // Awareness grows a little from level 1 (85%) to level 20 (100%). Near the base (last 25% of the
 // route or within 3 tiles) a monster commits to the base. Otherwise it attacks the most threatening
@@ -96,3 +97,14 @@ function ckIconize(root){(root||document).querySelectorAll('button,.shop-tab,.ta
  for(const[e,n]of CK_EMO){if(tx.startsWith(e)){tn.textContent=tx.slice(e.length).replace(/^\s+/,'');const s=document.createElement('span');s.className='ckico-w';s.innerHTML=ckIcoSvg(n);b.insertBefore(s,tn);break}}})}
 let ckIcoQ=0;new MutationObserver(()=>{if(ckIcoQ)return;ckIcoQ=requestAnimationFrame(()=>{ckIcoQ=0;try{ckIconize()}catch(_){}})}).observe(document.body,{childList:true,subtree:true,characterData:true});
 setTimeout(()=>{try{ckIconize()}catch(_){}},400);
+// ---- V5.1 home screen: logo on top, Play, commander + difficulty, Shop/Inventory row, utility tiles ----
+function ckHomeLayout(){const card=document.querySelector('#title .tcard');if(!card||card.classList.contains('ck-home'))return;
+ const logo=document.getElementById('logo');if(logo&&CKA.logo){logo.src=CKA.logo;logo.classList.add('ck-logo')}
+ const main=document.createElement('div');main.className='ck-hmain';const util=document.createElement('div');util.className='ck-hutil';
+ const sh=document.getElementById('ckshopbtn'),iv=document.getElementById('ckinvbtn');if(!sh||!iv)return;
+ main.append(sh,iv);
+ const tiles=[document.getElementById('histbtn'),document.getElementById('xferbtn'),document.getElementById('topupbtn'),card.querySelector('.opts .musbtn'),card.querySelector('.opts .rotbtn'),card.querySelector('.opts .langbtn')].filter(Boolean);
+ tiles.forEach(b=>{b.classList.add('ck-tile');b.style.gridColumn='';util.appendChild(b)});
+ const dif=document.getElementById('dif');(dif||card.lastChild).after(main);main.after(util);
+ card.classList.add('ck-home');try{ckIconize(card)}catch(_){}}
+setTimeout(ckHomeLayout,1000);setTimeout(ckHomeLayout,2000);

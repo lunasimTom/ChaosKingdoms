@@ -7,7 +7,35 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.0.apk` | Android app (package `com.chaoskingdoms.game`, version 5.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.1.apk` | Android app (package `com.chaoskingdoms.game`, version 5.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.1 · Polish
+
+**Home screen.**
+- Your Chaos Kingdoms logo sits at the top, floating gently with a soft golden glow.
+- Below it come Play, the commander card, difficulty, a Shop | Inventory row, and a 3 × 2 grid of icon tiles: Battle history, Progress transfer, Redeem Code, Music, Screen and Language.
+- Landscape uses two columns: the logo and Play on the left, everything else on the right.
+- It fits without clipping on screens down to 360 × 640, in English and Chinese.
+
+**Button colours.** Every action button (Settings, Inventory, the shop's Close, popups) now uses the bright highlighted gold. Only unselected tabs are dimmed, exactly like the shop tabs. Tabs no longer move up and down when tapped or selected.
+
+**Battle HUD.**
+- The tips 💡 is a plain bulb with no circle around it, and it hides whenever the shop or a popup is open.
+- "Inventory" (and 背包) fits its button in portrait and landscape.
+- The top-left badge reads "Lv 86" on one line, with "Lv" and the number the same size and smaller than before. On boss levels a small crown sits inside the badge.
+- The map name sits clearly under the gold divider, and hides while the shop is open.
+
+**Victory and Defeat.** The result window is wider, with a smaller banner. Loot collected and the rank card sit side by side, and the buttons share one row, so the window is far shorter.
+
+**Typography.** Descriptive text is now regular weight: item and chest explanations, notes, hints and the upgrade descriptions. Titles, buttons, labels and numbers stay bold. The embedded font gains its regular weight for this, both languages, and the game file grows by 0.3 MB.
+
+**Music.**
+- The music button shows "Music: on" from the first moment, and music starts with your first tap.
+- Tracks are now composed ahead of time and kept: the menu track while the game loads, and the next level's track while you're on the map or the result screen.
+- Turning music on now plays within about 30 ms instead of about 2.7 s.
+- Starting a level no longer goes silent: the current music keeps playing until the level's track takes over.
+
+**Fixes.** The "Commander levels now go to 50" notice can never show twice. It's now also recorded under its own browser storage key.
 
 ## What changed in V5
 
@@ -847,7 +875,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

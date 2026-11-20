@@ -16,7 +16,7 @@ def _cka():
         if not f.endswith('.png') or f.startswith('source-'): continue
         im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
         out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    assert len(out) == 81, sorted(out)
+    assert len(out) == 82, sorted(out)
     return 'const CKA=' + __import__('json').dumps(out) + ';'
 CKA_JS = _cka()
 
@@ -645,7 +645,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.0',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.1',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
@@ -688,6 +688,16 @@ rep("S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;", "S.lvr=s.lr==null
 
 # 49. V5 damage numbers: pop in, bigger + glowing for strong/gold hits, rounded outline.
 rep("c.font=`900 ${Math.max(12,tw*.26)}px Nunito`;c.textAlign='center';L.tx.forEach(t=>{c.globalAlpha=Math.min(1,t.l*2);c.lineWidth=3;c.strokeStyle='#170f2e';c.strokeText(t.s,t.x,t.y);c.fillStyle=t.c;c.fillText(t.s,t.x,t.y)});", "c.textAlign='center';c.lineJoin='round';L.tx.forEach(t=>{const age=(t.l0||(t.l0=t.l))-t.l,pop=age<.12?1+.4*(1-age/.12):1,big=/^#?(ff[c-e]|ffd|fe)/i.test(t.c||'')||/[!★]/.test(String(t.s));const fs=Math.max(12,tw*.26)*(big?1.22:1)*pop;c.font=`900 ${fs}px Nunito`;c.globalAlpha=Math.min(1,t.l*2);c.lineWidth=Math.max(3,fs*.2);c.strokeStyle='#120a24';c.strokeText(t.s,t.x,t.y);if(big){c.shadowColor=t.c;c.shadowBlur=10}c.fillStyle=t.c;c.fillText(t.s,t.x,t.y);c.shadowBlur=0});")
+
+# 50. V5.1 music: on by default (label shows it), tracks composed ahead of time and kept, so turning
+# music on or starting a level plays at once instead of waiting 1-3 s for the composer.
+rep("function song(key){return ckSong(key).catch(e=>{if(e==='superseded')throw e;console.warn('ckSong',e);return songV2(key)})}", "const CK_SP={};function song(key){if(MC[key])return Promise.resolve(MC[key]);if(CK_SP[key])return CK_SP[key];const p=ckSong(key).catch(e=>{if(e==='superseded')throw e;console.warn('ckSong',e);return songV2(key)}).then(b=>{MC[key]=b;delete CK_SP[key];return b},e=>{delete CK_SP[key];throw e});CK_SP[key]=p;return p};function ckPrefetch(k){if(!k||MC[k]||CK_SP[k]||Object.keys(CK_SP).length)return;song(k).catch(()=>{})};setTimeout(()=>ckPrefetch('menu'),1200);")
+rep("mon?TL('♪ Music: on'):TL('♪ Music: off')", "(mon||!mOff)?TL('♪ Music: on'):TL('♪ Music: off')", 2)
+rep("function start(i){closeM();recordSession('quit');load(i);", "function start(i){closeM();recordSession('quit');load(i);try{ckPrefetch('L'+i)}catch(_){}")
+
+rep("function mPlay(k){let tok=++mTok;mk=k;mStop();ambSet(AMBK(k));", "function mPlay(k){let tok=++mTok;mk=k;if(MC[k])mStop();ambSet(AMBK(k));")
+rep("function buildMap(){", "function buildMap(){try{let n=0;while(n<99&&S.prog[n])n++;ckPrefetch('L'+n)}catch(_){}")
+rep("function end(win){L.over=true;", "function end(win){L.over=true;try{setTimeout(()=>ckPrefetch('L'+(win?Math.min(99,L.i+1):L.i)),1500)}catch(_){}")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

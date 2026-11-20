@@ -4,7 +4,7 @@
    shown) are optional: saves and transfer codes from any older version load unchanged, and older
    versions ignore the new fields. Before anything is converted the raw save is copied once to
    localStorage 'ck25_bak_v44'. */
-const CK_VER='5.0',CK_BUILD=47;
+const CK_VER='5.1',CK_BUILD=48;
 function ckVerTxt(){return lvZ('版本','Version')+' '+CK_VER+' ('+lvZ('构建 ','build ')+CK_BUILD+')'}
 // ---- level-up rewards: gold + stars every level, a chest at milestones ----
 const CK_LV_CHEST={15:0,20:1,25:2,30:3,40:4,50:5};
@@ -16,7 +16,7 @@ function ckLvCheck(quiet){const lv=plLevel();if(S.lvr==null)S.lvr=Math.min(10,lv
  return got}
 function ckLvGotHtml(got){if(!got.length)return '';const zh=LANG==='zh';return `<div class="ck-lvgot">${got.map(g=>`<div><b>Lv.${g.lv}</b><span>+${g.gold.toLocaleString()} 🪙</span><span>+${g.star} ⭐</span>${g.chest!=null?`<span class="c">${ckChImg(g.chest,'ck-lvch')} ${ckChName(g.chest)}</span>`:''}</div>`).join('')}</div>`}
 // one-time notice for players whose saved XP now counts for more than Level 10
-function ckLvMigrate(){if(S.v44){ckLvCheck();return}const lv=plLevel(),had=S.lvr==null;S.v44=true;
+function ckLvMigrate(){let seen=false;try{seen=localStorage.getItem('ck25_v44n')==='1'}catch(_){}if(seen&&S.lvr!=null)S.v44=true;if(S.v44){ckLvCheck();return}const lv=plLevel(),had=S.lvr==null;S.v44=true;try{localStorage.setItem('ck25_v44n','1')}catch(_){}
  if(had&&lv>10){const got=ckLvCheck(true);const zh=LANG==='zh';
   modal(`<div class="ck-mig"><div class="ck-migb">${window.ckBadge?ckBadge(lv,'g'):''}</div><h2 class="f">${zh?'统帅等级扩展至 50 级！':'Commander levels now go to 50!'}</h2><p>${zh?`你已有的 <b>${(S.xp||0).toLocaleString()} XP</b> 全部保留并继续计入新的等级：`:`All your <b>${(S.xp||0).toLocaleString()} XP</b> carried over and now counts toward the new levels:`}</p><div class="ck-migl"><span>Lv.10</span><i>→</i><b>Lv.${lv}</b></div><p>${zh?'获得以下升级奖励：':'Level rewards received:'}</p>${ckLvGotHtml(got)}<p class="ck-migs">${zh?'已通关的关卡、星星、金币、钻石和道具均保持不变（另加上述奖励）。':'Your cleared stages, stars, gold, diamonds and items are unchanged (plus the rewards above).'}</p></div><button class="bt pay" id="m1">${zh?'太好了！':'Great!'}</button>`,closeM);
   try{refreshProfileTeaser()}catch(_){}}else ckLvCheck(true);

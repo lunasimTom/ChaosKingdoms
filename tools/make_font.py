@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Rebuild tools/fonts/cksans-noto-sans-sc-subset.css: Noto Sans SC (SIL OFL 1.1) subset to the characters
-used by the game, weights 500/700/900, as unicode-range slices embedded in base64.
+used by the game, weights 400/500/700/900, as unicode-range slices embedded in base64.
 Needs: `npm pack @fontsource/noto-sans-sc@5.3.1` extracted into ./package, and `pip install fonttools brotli`.
 Usage: python3 tools/make_font.py path/to/package"""
 import re, io, os, sys, glob, base64
@@ -20,7 +20,7 @@ def rng(s):
         else: out.add(int(p, 16))
     return out
 faces = []
-for w in (500, 700, 900):
+for w in (400, 500, 700, 900):
     css = open(os.path.join(PKG, f'{w}.css')).read()
     for m in re.finditer(r'@font-face\s*\{(.*?)\}', css, re.S):
         blk = m.group(1); src = re.search(r"url\(\./files/([^)]+\.woff2)\)", blk).group(1)

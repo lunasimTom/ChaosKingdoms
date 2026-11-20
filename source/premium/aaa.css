@@ -488,3 +488,93 @@ html body #hud .top #pz{flex:0 0 32px!important;width:32px!important;min-width:3
 /* item bar: items only, centred row */
 #inv{gap:6px!important;padding-left:6px!important}
 @media (prefers-reduced-motion:reduce){#modal.on #mbox,.screen.on{animation:none!important}}
+/* ================= V5.1 polish ================= */
+/* Button colour rule (same as the shop): every action button is the bright gold; only UNSELECTED tabs are dimmed. */
+:root{--ub-bg:linear-gradient(180deg,#fff0a6 0%,#ffd24d 46%,#f5a91a 54%,#e38c0c 100%);--ub-sh:0 4px 0 #7d4a0c,0 7px 9px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.75),inset 0 -3px 0 rgba(150,70,0,.35);--ub-on:0 3px 0 #7d4a0c,0 0 12px rgba(255,214,90,.6),inset 0 2px 0 rgba(255,255,255,.75),inset 0 -2px 0 rgba(150,70,0,.35)}
+html body #mbox .bt.g,html body #mbox .bt:not(.r):not(.pay):not(.cu-go),html body #mbox .bt.pay{background:var(--ub-bg)!important;border:2px solid #7d4a0c!important;color:#4a2a06!important;box-shadow:var(--ub-sh)!important;text-shadow:0 1px 0 rgba(255,255,255,.55)!important;filter:none}
+.ck-ub,.ck-ivt,.ck-ivu,.ck-ivs,#mbox .ck-forge .ck-fgo{background:var(--ub-bg)!important;box-shadow:var(--ub-sh)!important}
+/* tabs: fixed in place; unselected dimmed exactly like the shop tabs; selected glows */
+.ck-ivt,.ck-hst{transform:none!important;transition:filter .12s,box-shadow .12s!important;box-shadow:0 3px 0 #7d4a0c,0 4px 5px rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(150,70,0,.3)!important}
+.ck-ivt:not(.on),.ck-hst:not(.on){filter:brightness(.8) saturate(.85)!important}
+.ck-ivt.on,.ck-hst.on{filter:none!important;box-shadow:var(--ub-on)!important}
+.ck-ivt:active,.ck-hst:active{transform:none!important;filter:brightness(.95)!important}
+.ck-ivt small{top:-7px!important}
+/* tips: just the bulb, no frame */
+.ck-tipfloat{background:none!important;border:0!important;box-shadow:none!important;width:30px!important;height:30px!important;font-size:20px!important;filter:drop-shadow(0 0 6px #ffd36a99) drop-shadow(0 2px 2px #000a)}
+/* bottom panel tabs size to their label (EN "Inventory", ZH "背包") */
+#rail .tabs .tab,body #rail .tabs .tab{flex:0 0 auto!important;width:auto!important;min-width:54px!important;padding:0 10px!important;white-space:nowrap}
+/* level badge: "Lv 86" on one line, both parts the same size */
+html body #app #hud .top > .lv.lv{flex:0 0 46px!important;width:46px!important;min-width:46px!important;max-width:46px!important;height:26px!important;display:flex!important;align-items:center;justify-content:center;gap:3px;border-radius:8px}
+html body #app #hud .top > .lv.lv::before{content:'Lv'!important;position:static!important;font:900 12px/1 CKSans,sans-serif!important;letter-spacing:0!important;color:#c9b27a!important}
+html body #app #hud .top > .lv.lv #ln{font:900 12px/1 CKSans,sans-serif!important;margin:0!important;color:#ffe08a!important}
+html body #app #hud .top > .lv.lv:has(#ln.ck-boss)::before{content:'Lv'!important;font-size:12px!important}
+html body #app #hud .top > .lv.lv:has(#ln.ck-boss)::after{content:'👑';position:absolute;top:-1px;left:2px;font-size:8px;line-height:1}
+html body.pt #hud .top #cd{flex:0 0 44px!important;width:44px!important;min-width:44px!important;max-width:44px!important}
+html body:not(.pt) #app #hud .top > .lv.lv{flex:0 0 48px!important;width:48px!important;min-width:48px!important;max-width:48px!important}
+/* map name: clearly under the divider */
+#ckmapn{left:12px;font-size:11px;padding:2px 8px;border-radius:999px;background:linear-gradient(90deg,#0a1222cc,#0a122200);color:#e9dcb4}
+#ckmapn i{font-style:normal;margin:0 5px;color:#8b97b8}
+.ck-tipfloat.ck-hide{display:none!important}
+html body.pt #rail .tabs .tab,html body #rail .tabs .tab,html body.pt #rail .tabs .tab.on{flex:0 0 auto!important;width:auto!important;min-width:54px!important;padding:0 10px!important;white-space:nowrap}
+html body:not(.pt) #rail .tabs .tab,html body:not(.pt) #rail .tabs .tab.on{flex:0 0 auto!important;width:auto!important;min-width:54px!important;padding:0 10px!important;white-space:nowrap}
+html body:not(.pt) #rail{grid-template-columns:82px 1fr!important}html body:not(.pt) #rail .tabs .tab,html body:not(.pt) #rail .tabs .tab.on{width:100%!important;min-width:0!important;padding:0 6px!important;flex:0 0 auto!important}
+/* result screens (victory / defeat): wide and compact, no shrinking needed */
+#mbox.rmode{width:min(96vw,640px)!important;max-width:none!important;display:grid!important;grid-template-columns:1fr 1fr;gap:8px 10px!important;align-items:start;padding:14px 12px 12px!important}
+#mbox.rmode>*{grid-column:1/-1;margin:0!important}
+#mbox.rmode>.ck-rayhost{height:auto!important;min-height:0!important}
+#mbox.rmode .ck-rayhost img.bn,#mbox.rmode img.bn{width:min(58%,250px)!important;margin:0 auto!important}
+#mbox.rmode>p{font-size:12px!important}
+#mbox.rmode>.rw{padding:10px 12px!important}
+#mbox.rmode .rw-st img.ck-star{width:30px!important}
+#mbox.rmode .rw-row{padding:3px 0!important;font-size:12.5px!important}
+#mbox.rmode .rw-tot{font-size:24px!important;margin-top:4px!important}
+#mbox.rmode>.ck-drops{grid-column:1;align-self:stretch}
+#mbox.rmode>.vrk{grid-column:2;align-self:stretch;flex-direction:column!important;text-align:center;padding:10px 8px!important;gap:4px!important}
+#mbox.rmode>.vrk .vrk-b{width:48px!important;height:54px!important;margin:0 auto}
+#mbox.rmode>.vrk .vrk-t b,#mbox.rmode>.vrk .vrk-t>b{font-size:14px!important}
+#mbox.rmode>.vrk .vrk-go{display:none}
+#mbox.rmode>.ck-drops:last-of-type:not(:has(+.rp+.vrk)){grid-column:1/-1}
+#mbox.rmode .ck-drops .ck-dg{gap:4px!important}
+#mbox.rmode>.rp{font-size:11px!important;opacity:.85}
+#mbox.rmode>.rfoot{display:grid!important;grid-template-columns:1fr 1fr;gap:10px}
+#mbox.rmode>.rfoot .bt{margin:0!important;width:100%!important}
+#mbox.rmode>.rfoot .bt:only-child{grid-column:1/-1}
+#mbox.rmode>*{order:7}
+#mbox.rmode>.ck-rayhost,#mbox.rmode>img.bn{order:1}#mbox.rmode>p:not(.vlink):not(.rp):not(.ck-crown){order:2}#mbox.rmode>.rw{order:3}#mbox.rmode>.ck-crown{order:4}
+#mbox.rmode>.ck-drops,#mbox.rmode>.vrk{order:5}#mbox.rmode>.rp{order:6}#mbox.rmode>.rfoot{order:9}
+#mbox.rmode .ck-drops .ck-dchip,#mbox.rmode .ck-drops>div>span{font-size:11.5px!important}
+@media (orientation:landscape){#mbox.rmode img.bn,#mbox.rmode .ck-rayhost img.bn{width:min(34%,190px)!important}#mbox.rmode>.rw .rw-st img.ck-star{width:24px!important}}
+#mbox.rmode>.ck-crown{width:auto!important;justify-self:stretch;text-align:center}
+/* typography: long descriptive text is regular weight; titles, buttons, labels and numbers stay bold */
+.sd p,.sd small,.si .sd p,.si .sd small,.ck-ivn small,.ck-chinfo small:not(.own),.ck-chnote,.ck-ivnote,.cu-desc,.cu-note,.cu-break span,.ck-forge small,.ck-hshop p,
+#mbox p:not(.vlink):not(.ck-crown),#mbox .ckx-head p,.mb p,.tip,#sel,.ck-rate span,.ck-mig p,.ck-migs,#mbox .rp,.ck-dchip small,.pause-title p,.ckx-msg,
+#hp small,#tp small,.rd-hint,.realm-detail .hint,.vrk small,.lvc-t span,.ck-drops h5,.ck-set .ck-ver,.ivl,.ive,
+.ck-rcard p,.ck-rcard small,.ckx-list small,.ckx-desc,.tcard small,.diff-desc,.dsub,.picker-title p{font-weight:400!important}
+.sd small b,.sd p b,#mbox p b,.cu-break span b,.ck-rate b{font-weight:800!important}
+.sd small{line-height:1.38!important}
+/* ---- V5.1 home screen ---- */
+#title .tcard.ck-home{display:flex!important;flex-direction:column;align-items:stretch;gap:10px!important;padding-top:0!important;background:none!important;border:0!important;box-shadow:none!important;top:auto!important}
+#title .tcard.ck-home>.chip,#title .tcard.ck-home>#tdesc,#title .tcard.ck-home>label,#title .tcard.ck-home>.opts,#title .tcard.ck-home>.opts2{display:none!important}
+#title .tcard.ck-home>#logo.ck-logo{display:block!important;order:-2;width:min(100%,400px)!important;height:auto!important;max-height:30vh;object-fit:contain;margin:4px auto 2px!important;filter:drop-shadow(0 10px 18px #000c) drop-shadow(0 0 26px #ffd26a44);animation:ckLogoIn .8s cubic-bezier(.2,1.3,.4,1) both,ckLogoFloat 5s ease-in-out .8s infinite;-webkit-mask-image:none!important;mask-image:none!important;border:0!important;background:none!important;box-shadow:none!important;border-radius:0!important}
+@keyframes ckLogoIn{0%{opacity:0;transform:translateY(-16px) scale(.9)}100%{opacity:1;transform:none}}
+@keyframes ckLogoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#title .tcard.ck-home>#play{order:-1;height:56px!important;font-size:22px!important;letter-spacing:.12em;margin:0!important}
+#title .tcard.ck-home .difbox{padding:10px 12px 8px!important}
+.ck-hmain{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ck-hmain .bt{margin:0!important;height:48px!important;font-size:16px!important;width:100%!important}
+html body #title .tcard.ck-home .ck-hutil{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;width:100%}
+html body #title .tcard.ck-home .ck-hmain{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;width:100%}
+html body #title .tcard.ck-home .ck-hmain .bt{margin:0!important;height:48px!important;font-size:16px!important;width:100%!important;max-width:none!important}
+html body #title .tcard.ck-home .ck-hutil .bt.ck-tile{grid-column:auto!important;margin:0!important;width:100%!important;max-width:none!important;min-width:0!important;height:56px!important;min-height:0!important;padding:5px 4px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px!important;line-height:1.15!important;letter-spacing:0!important;white-space:normal!important;text-align:center;border-radius:12px!important;overflow:hidden}
+html body #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico-w{margin:0!important}html body #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:19px;height:19px}
+@media (max-height:700px){#title .tcard.ck-home{gap:7px!important}#title .tcard.ck-home>#logo.ck-logo{max-height:22vh}html body #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:48px!important;font-size:10.5px!important}html body #title .tcard.ck-home .ck-hmain .bt{height:42px!important}#title .tcard.ck-home>#play{height:48px!important}}
+@media (orientation:landscape) and (max-height:620px){
+ html body #title .tcard.ck-home{display:grid!important;grid-template-columns:1fr 1fr;column-gap:16px!important;row-gap:7px!important;width:calc(100% - 28px)!important;margin:0 auto!important;max-width:none!important;align-content:center;align-items:center}
+ html body #title .tcard.ck-home>#logo.ck-logo{grid-column:1;grid-row:1/3;align-self:center;max-height:56vh;width:100%!important;margin:0!important}
+ html body #title .tcard.ck-home>#play{grid-column:1;grid-row:3/5;align-self:start;margin-top:6px!important}
+ html body #title .tcard.ck-home>.cmd{grid-column:2;grid-row:1}html body #title .tcard.ck-home>#dif{grid-column:2;grid-row:2}
+ html body #title .tcard.ck-home>.ck-hmain{grid-column:2;grid-row:3}html body #title .tcard.ck-home>.ck-hutil{grid-column:2;grid-row:4}
+ html body #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:50px!important;flex-direction:column;gap:1px;font-size:10px!important;line-height:1.05!important;padding:3px 4px!important}html body #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:15px;height:15px}
+ html body #title .tcard.ck-home .ck-hmain .bt{height:40px!important}html body #title .tcard.ck-home .difbox{padding:8px 12px 6px!important}}
+@media (max-height:700px){html body #title .tcard.ck-home .ck-hutil .bt.ck-tile{padding:3px 4px!important;gap:1px!important;line-height:1.05!important}html body #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:15px;height:15px}}
+html body #shop .shh .bt.g,html body #shop .bt.g[data-x]{background:var(--ub-bg)!important;border:2px solid #7d4a0c!important;color:#4a2a06!important;box-shadow:var(--ub-sh)!important;text-shadow:0 1px 0 rgba(255,255,255,.55)!important}
