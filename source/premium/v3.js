@@ -44,6 +44,8 @@ function ckLbl(e,s,col){if(e.lbt>TM)return;e.lbt=TM+.9;const p=eS(e);txt(p.x,p.y
 function ckRole(e){
  if(L.demo)return;
  if(L.ckv!==L)ckV3Init();
+ // v4.2: late non-boss levels are much tougher: monster health x1.0 at Level 40 rising to x2.0 at Level 99
+ if(e.t!=='boss'&&!L.boss&&L.i>=40){const m=1+(Math.min(L.i,99)-39)/60;e.hp*=m;e.mx*=m}
  if(e.t==='boss'){ckBossPower(e);L.bsc=(L.bsc||0)+1;{const n=L.bsc;setTimeout(()=>{try{if(e.hp>0&&!L.over)CKS.bossSpawn(e)}catch(_){}},(n-1)*650+150)}if(L.bsc===1)L.bsps=[e.sp];else{const kn=k=>k==='b2_dread_knight'?'b2_death_knight':k,used=(L.bsps||[]).map(kn),pool=CK_BOSS_ART.filter(k=>!used.includes(kn(k))&&SP[k]&&SP[k].width);if(pool.length)e.sp=pool[Math.random()*pool.length|0];(L.bsps=L.bsps||[]).push(e.sp)}const ty=['m','p','e'][(L.i/8|0)%3];e.bw=ty;e.adt={p:0,m:0,e:0};e.adw=10;setTimeout(()=>{if(e.hp>0&&!L.over)toast(lvZ('首领弱点：'+CKDTN[ty][0]+'伤害 +30%','Boss weakness: '+CKDTN[ty][1]+' damage +30%'))},2600);return}
  const r=CK_NR;if(!r||!CKR[r])return;e.rl=r;
  if(r==='shield')e.sh=e.msh=e.mx*.45;
@@ -77,10 +79,10 @@ function ckOnDeath(e){
 // designed waves: deterministic per level and wave, themed by pattern and realm
 function ckWave(w){
  if(L.boss&&w===L.waves)return null;
- const i=L.i,r=rng(i*1013+w*97+7),n=5+w*2+(i/3|0),q=[];
+ const i=L.i,r=rng(i*1013+w*97+7),n=Math.round((5+w*2+(i/3|0))*(!L.boss&&i>=59?1.25:1)),q=[];
  const roles=Object.keys(CKR).filter(k=>i>=CKR[k].lv),fav=roles.length?roles[(i/8|0)%roles.length]:null;
  const pat=w===1?'mixed':['mixed','swarm','column','escort','mixed','column','swarm'][(w*3+i)%7];
- const rr=i<3?0:Math.min(.4,.1+i*.004);let heal=0,disr=0;
+ const late=!L.boss&&i>=59,rr=i<3?0:Math.min(late?.55:.4,(.1+i*.004)*(late?1.5:1));let heal=0,disr=0;
  for(let k=0;k<n;k++){
   let t,x=r();
   if(pat==='swarm')t=x<.7?'runner':'grunt';

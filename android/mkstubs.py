@@ -1,7 +1,8 @@
 import os,sys
 os.chdir(sys.argv[1])
 S={
-'android/content/Context.java':'package android.content; public abstract class Context {}',
+'android/content/Context.java':'package android.content; public abstract class Context { public static final String VIBRATOR_SERVICE="vibrator"; public Object getSystemService(String n){return null;} }',
+'android/os/Vibrator.java':'package android.os; public abstract class Vibrator { public boolean hasVibrator(){return false;} public void vibrate(long ms){} }',
 'android/app/Activity.java':'''package android.app; import android.content.*; import android.os.Bundle; import android.view.*;
 public class Activity extends Context { protected void onCreate(Bundle b){} public Window getWindow(){return null;} public void setContentView(View v){}
  public void onWindowFocusChanged(boolean f){} protected void onSaveInstanceState(Bundle b){} protected void onPause(){} protected void onResume(){} protected void onDestroy(){}

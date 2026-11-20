@@ -4,8 +4,8 @@ aligned (zipalign-equivalent) unsigned APK writer. No Android SDK required."""
 import struct, sys, zipfile, zlib
 
 PKG = 'com.chaoskingdoms.game'
-VERSION_CODE = 42
-VERSION_NAME = '4.1'
+VERSION_CODE = 43
+VERSION_NAME = '4.2'
 MIN_SDK, TARGET_SDK = 24, 34
 APP_LABEL = 'Chaos Kingdoms'
 ICON_PATH = 'res/drawable-xxxhdpi-v4/ic_launcher.png'
@@ -55,6 +55,7 @@ def manifest():
     tree = ('manifest', [('versionCode', T_DEC, VERSION_CODE), ('versionName', T_STR, VERSION_NAME),
                          ('package', T_STR, PKG, None)],
             [('uses-sdk', [('minSdkVersion', T_DEC, MIN_SDK), ('targetSdkVersion', T_DEC, TARGET_SDK)], []),
+             ('uses-permission', [('name', T_STR, 'android.permission.VIBRATE')], []),
              ('application', app_attrs, [
                  ('activity', act_attrs, [
                      ('intent-filter', [], [

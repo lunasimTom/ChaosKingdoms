@@ -7,7 +7,52 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v4.1.apk` | Android app (package `com.chaoskingdoms.game`, version 4.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v4.2.apk` | Android app (package `com.chaoskingdoms.game`, version 4.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v4.2 · Treasure & Challenge
+
+**Final-boss kill replay.** In the last wave of a boss level, the game records the last 3 seconds of play: 10 frames per second at reduced resolution. When the final boss dies, everything else on the map stops. The killing blow then replays in slow motion, zooming in on the boss, with a vignette and a Skip button. When the replay ends, the treasure bursts out.
+
+**Bigger, golden loot at random spots.**
+- Dropped items are about 50% larger.
+- Each one has a bright golden glow and twinkling sparkles. Legendary and higher items also get a light beam.
+- Items land at fully random positions anywhere on the map, not on tile centres, and never overlap.
+- A tap collects every item near your finger.
+
+**Pickup window.**
+- Boss loot lasts 8 seconds: fully visible for 7 seconds, fading during the last second, then gone.
+- Medium-monster drops still last 20 seconds.
+
+**Vibration.** Every pickup gives a short vibration. On Android this goes through the app, which now requests the VIBRATE permission. In browsers that support it, it uses the Vibration API.
+
+**Loot statistics.** The Victory and Defeat screens list every item collected from drops in that level, with its icon and quantity. Boss treasure and monster drops are listed separately.
+
+**Rare items in the shop.** The shop has a new section listing Diamonds, Diamond Shards, Enhancement Runes and the 6 rare items, each with its artwork and description. They can't be bought: each button reads "Boss drop only".
+
+**New artwork.** The two provided art sheets were cut into 22 icons. They replace the old icons everywhere the items appear:
+- Diamonds, shards, runes and the 6 rare items: their names now match the art (Time Crystal, Dragonfire Scroll, Royal Protection, Master Forging, Midas Mark, Ancient Horn).
+- River, Legion, Air Strike, Bomb and Helicopter items.
+- Gold coins, stars, trophy and medal.
+- The 4 attribute upgrade icons and the ending crest.
+
+Floating text labels and toasts still use emoji.
+
+**Harder late levels (non-boss levels only).** Boss levels and level paths are unchanged.
+- Monster HP rises steadily from ×1.0 at level 40 to ×2.0 at level 99.
+- From level 60, waves have 25% more monsters, and elites and special roles appear 1.5× as often.
+
+Total monster HP per level:
+
+| Level | v4.1 | v4.2 |
+| --- | --- | --- |
+| 46 | 141k | 163k |
+| 59 | 225k | 308k |
+| 66 | 428k | 754k |
+| 75 | 464k | 1,038k |
+| 86 | 761k | 1,705k |
+| 95 | 885k | 2,175k |
+
+**Tested:** the 42-state interface walkthrough, touch input, the gameplay simulations, the boss levels and the music worker all pass. From the kill through the replay to the end of the 8-second window takes about 14 seconds, with no errors, a median frame time of 24 ms and a worst frame of 62 ms.
 
 ## What changed in v4.1 · Loot
 
@@ -578,7 +623,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.2.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

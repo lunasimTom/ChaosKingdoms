@@ -8,6 +8,18 @@ orig = open(os.path.join(ROOT, 'source', 'original', 'Chaos_Kingdoms-comp1.html'
 out_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'dist', 'ChaosKingdoms.html')
 s = orig
 
+def _cka():
+    import io
+    from PIL import Image
+    d = os.path.join(SRC, 'items'); out = {}
+    for f in sorted(os.listdir(d)):
+        if not f.endswith('.png') or f.startswith('source-'): continue
+        im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
+        out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
+    assert len(out) == 22, sorted(out)
+    return 'const CKA=' + __import__('json').dumps(out) + ';'
+CKA_JS = _cka()
+
 def rep(old, new, count=1):
     global s
     n = s.count(old)
@@ -527,7 +539,7 @@ rep("L.refund=win&&!L.demo?L.tr.reduce(", "L.refund=win&&!L.demo?(L.trSnap||L.tr
 rep("*(L.bf.idol>0?2:1)*(1+(L.buffs&&L.buffs.bounty||0))", "*(L.bf.idol>0?2:1)*(L.bf.midas>0?3:1)*(1+(L.buffs&&L.buffs.bounty||0))")
 rep("IT.map(it=>{let lim=it.stock!=null", "IT.filter(it=>!it.rare).map(it=>{let lim=it.stock!=null")
 rep("function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;", "function useItem(id){let it=IT.find(x=>x.id===id);if(!it||!(L.inv[id]>0)||L.over)return;if(CK_RARE[id])return ckUseRare(id);")
-rep("setT('dia',(S.diamonds||0).toLocaleString());", "setT('dia',(S.diamonds||0).toLocaleString()+((S.frag|0)?' 💠'+S.frag+'/4':''));")
+rep("setT('dia',(S.diamonds||0).toLocaleString());", "setT('dia',(S.diamonds||0).toLocaleString());{const f=$('ckfr');if(f){const v=(S.frag|0)?'<img src=\"'+CKA.frag+'\" alt=\"\">'+S.frag+'/4':'';if(f._v!==v){f._v=v;f.innerHTML=v}}}")
 # saves: fragments and runes (fragments, like diamonds, are not part of progress transfer; runes are)
 rep("fx:S.fx||{},h100:S.h100|0}))", "fx:S.fx||{},h100:S.h100|0,fr:S.frag|0,ru:S.rune|0}))")
 rep("S.h100=Math.max(0,Math.min(5,s.h100|0));", "S.h100=Math.max(0,Math.min(5,s.h100|0));S.frag=Math.max(0,Math.min(3,s.fr|0));S.rune=Math.max(0,s.ru|0);")
@@ -537,6 +549,37 @@ rep("S.ss=Math.max(0,+j.ss||0);S.fx=fxClean(j.fx);selectedRealm=0;", "S.ss=Math.
 # attribute screen: runes + diamond exchange
 rep(" <div class=\"cu-note\">${note}</div></div>", " ${ckCuExtra(k)}<div class=\"cu-note\">${note}</div></div>")
 rep(" const b=document.getElementById('cugo');if(b&&!max)b.onclick=()=>cuUpgrade(k);", " const b=document.getElementById('cugo');if(b&&!max)b.onclick=()=>cuUpgrade(k);{const r=document.getElementById('ckrune');if(r)r.onclick=()=>{if(ckUseRune(k))cuOpen(k,true)};const x=document.getElementById('ckxch');if(x)x.onclick=()=>{if(ckExchange())cuOpen(k)}}")
+
+# 42. v4.2: new artwork everywhere (coin, diamond, star, trophy, medal, the four attributes, items,
+#     rare items, shards, runes), final-blow replay, 8 s treasure window, golden drops at random spots,
+#     haptics, per-level loot statistics, boss treasure shown in the shop, harder late non-boss levels.
+import re as _re
+rep("let q=tileAt(...pos(ev));hov=q;if(!q){L.placing=null;showSel(null);return}if(ckLootTap(q))return;", "let q=tileAt(...pos(ev));hov=q;if(!q){L.placing=null;showSel(null);return}if(ckLootTap(q,pos(ev)))return;")
+rep("<script>const SFXD=", "<script>"+CKA_JS+"\nconst SFXD=")
+for _k, _e in (('a', '⚔️'), ('d', '🛡️'), ('b', '🔨'), ('c', '🎯')):
+    rep(_k + ":{ico:'" + _e + "',", _k + ":{ico:(typeof ckImg==='function'?ckImg('cu_" + _k + "','ck-cu-ico'):'" + _e + "'),")
+_c0 = s.find('const CK_RES_ICON={'); assert _c0 > 0
+for _key, _art in (('coin', 'gold'), ('diamond', 'dia'), ('star', 'star'), ('trophy', 'cup'), ('medal', 'medal')):
+    _a = s.find(' ' + _key + ":'<svg class=\"ck-res-icon " + _key + '"', _c0); _z = s.find("</svg>'", _a)
+    assert _a > 0 and 0 < _z - _a < 4000, _key
+    s = s[:_a] + ' ' + _key + ":(typeof ckImg==='function'?ckImg('" + _art + "','ck-res-icon " + _key + "'):'')" + s[_z + len("</svg>'"):]
+_i = s.find("const COIN='<svg class=\"ck-res-icon coin\""); _j = s.find("</svg>'", _i)
+assert _i > 0 and 0 < _j - _i < 2000, 'COIN svg'
+s = s[:_i] + "const COIN='<img class=\"ck-res-icon coin\" src=\"'+CKA.gold+'\" alt=\"\">'" + s[_j + len("</svg>'"):]
+_m = _re.search(r'<span id="dmw"><svg class="ic dm".*?</svg><b id="dia">0</b>', s, _re.S)
+assert _m, 'HUD diamond svg'
+s = s[:_m.start()] + '<span id="dmw"><img class="ic dm ck-hud-dia" data-cka="dia" alt=""><b id="dia">0</b><span id="ckfr"></span>' + s[_m.end():]
+rep("let sg,ag,am=null,", "document.querySelectorAll('img[data-cka]').forEach(e=>{e.src=CKA[e.dataset.cka]});let sg,ag,am=null,")
+for _k, _e in (('a', '⚔️'), ('d', '🛡️'), ('b', '🔨'), ('c', '🎯')):
+    rep('data-cu="%s" role="button" tabindex="0"><em>%s</em>' % (_k, _e), 'data-cu="%s" role="button" tabindex="0"><em>${ckImg(\'cu_%s\',\'ck-cu-ico\')}</em>' % (_k, _k))
+for _id, _e, _k in ((9, '⚡', 'cu_b'), (10, '🛡️', 'cu_d'), (11, '⚔️', 'cu_a'), (12, '🗡️', 'cu_a'), (13, '🎯', 'cu_c'), (14, '💥', 'cu_c'), (15, '🏰', 'cu_d')):
+    _o = "{id:%d,%sg:'tow',ic:'%s'," % (_id, ' ' if _id < 10 else '', _e)
+    rep(_o, _o.replace("ic:'%s'," % _e, "ic:(typeof ckImg==='function'?ckImg('%s'):'%s')," % (_k, _e)))
+rep("}).join('')}</div>`;\n sh.innerHTML=`", "}).join('')}${ckShopRareHtml()}</div>`;\n sh.innerHTML=`")
+rep("'Tower refund (50%)')+' ('+L.tr.length+')',L.refund]);", "'Tower refund (50%)')+' ('+(L.trSnap||L.tr).length+')',L.refund]);")
+rep("${rewardPanel(st,pg)}${ckCrownHtml()}", "${rewardPanel(st,pg)}${ckCrownHtml()}${ckDropsHtml()}")
+rep("${rep()}<button class=\"bt r\" id=\"m1\">${TL('Retry level')}</button>", "${ckDropsHtml()}${rep()}<button class=\"bt r\" id=\"m1\">${TL('Retry level')}</button>")
+rep("if(Math.random()>=Math.min(.12,.035+L.i*.0009))return;", "if(Math.random()>=Math.min(.12,.035+L.i*.0009)*(!L.boss&&L.i>=59?1.5:1))return;")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

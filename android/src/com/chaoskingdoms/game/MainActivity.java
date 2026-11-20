@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.content.Context;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -151,6 +153,15 @@ public class MainActivity extends Activity {
                     setRequestedOrientation(o);
                 }
             });
+        }
+
+        /** Short haptic tick, used when the player picks up loot. */
+        @JavascriptInterface
+        public void vibrate(final int ms) {
+            try {
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                if (v != null && v.hasVibrator()) v.vibrate(Math.max(5, Math.min(200, ms)));
+            } catch (Throwable t) { /* no vibrator / permission: ignore */ }
         }
 
         @JavascriptInterface

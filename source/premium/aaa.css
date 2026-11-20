@@ -218,3 +218,34 @@ html body #app #hud .top>.lv>#ln,html body #app #hud .top>.lv>#lr{display:block;
 @keyframes ckRIn{from{opacity:0;transform:translate(-50%,20px) scale(.9)}}@keyframes ckROut{to{opacity:0;transform:translate(-50%,-14px)}}
 .ck-cux{display:grid;gap:8px;margin:10px 0 4px}.ck-cux>div{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:8px 10px;border-radius:10px;background:#ffffff0c;border:1px solid #ffffff1a}
 .ck-cux span{font-weight:800;color:#fff1bf}.ck-cux span em{font-style:normal;margin-right:5px}.ck-cux small{grid-column:1;font-size:11.5px;color:#aeb6d6}.ck-cux .cu-go{grid-column:2;grid-row:1/3;margin:0;padding:8px 12px;font-size:13px;white-space:nowrap}
+/* v4.2: artwork icons, loot stats, boss treasure in the shop, replay */
+img.ck-res-icon{width:1.25em;height:1.25em;object-fit:contain;vertical-align:-.25em;filter:drop-shadow(0 1px 1px #0008)}
+img.ck-aimg{width:1.6em;height:1.6em;object-fit:contain;vertical-align:middle;filter:drop-shadow(0 1px 2px #000a)}
+img.ck-cu-ico{width:1.5em;height:1.5em}
+.cu-ico img.ck-cu-ico{width:64px;height:64px;filter:drop-shadow(0 4px 8px #000c)}
+.cu-tab em img.ck-cu-ico{width:26px;height:26px}
+#dmw img.ck-hud-dia{width:18px;height:18px;object-fit:contain;vertical-align:-3px;filter:drop-shadow(0 1px 1px #000a)}
+#ckfr{font:800 10px Nunito,sans-serif;color:#bfeeff;margin-left:3px;white-space:nowrap}#ckfr img{width:12px;height:12px;vertical-align:-2px;margin-right:1px}
+.ck-fly img{width:34px;height:34px;object-fit:contain}
+.ck-rcard i img{width:46px;height:46px;object-fit:contain}
+.ck-cux em img{width:22px;height:22px;vertical-align:-5px}
+.crest img.ck-crest{width:clamp(64px,16vw,96px);height:auto}
+.ck-drops{margin:8px auto;max-width:30em;text-align:left;padding:8px 10px;border-radius:10px;background:#ffffff0a;border:1px solid #ffd36a44}
+.ck-drops h4{margin:0 0 4px;font:900 12px Cinzel,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;color:#f3c04d}
+.ck-drops small{display:block;margin:6px 0 3px;font:800 10px Nunito,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#a9b1d4}
+.ck-drops ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:5px}
+.ck-drops li{display:flex;align-items:center;gap:4px;padding:3px 8px 3px 4px;border-radius:99px;background:#0006;border:1px solid #ffffff1c;font-size:12px}
+.ck-drops li img{width:22px;height:22px}.ck-drops li b{color:#fff1bf}.ck-drops p{margin:2px 0;font-size:12px;color:#a9b1d4}
+.ck-shop-rare{margin-top:10px;padding-top:8px;border-top:1px solid #ffd36a55}
+.ck-shop-rare h4{display:flex;align-items:center;gap:6px;margin:0 0 6px;font:900 13px Cinzel,Georgia,serif;letter-spacing:.1em;color:#f3c04d}.ck-shop-rare h4 img{width:24px;height:24px}
+.ck-shop-rare .si.rare{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center;padding:6px 8px;margin-bottom:6px;border-radius:10px;background:linear-gradient(170deg,#2a1d4a,#140e26);border:1px solid #ffd36a66}
+.ck-shop-rare .sicon img{width:48px;height:48px;filter:drop-shadow(0 0 6px #ffd36a88)}.ck-shop-rare .sinfo b{display:block;color:#fff1bf}.ck-shop-rare .sinfo small{display:block;font-size:11px;color:#c9cfe8;line-height:1.3}.ck-shop-rare .sinfo .own{color:#ffd36a}
+.ck-shop-rare button[disabled]{opacity:.65;filter:grayscale(.4);font-size:11px;white-space:nowrap}
+#ck-replay{position:fixed;z-index:10030;overflow:hidden;background:#000;animation:ckFadeIn .25s ease both}#ck-replay.out{animation:ckRpOut .3s ease both}
+#ck-replay canvas{width:100%;height:100%;display:block}
+#ck-replay .lb{position:absolute;left:0;right:0;height:9%;background:#000}#ck-replay .lb.t{top:0}#ck-replay .lb.b{bottom:0}
+#ck-replay .tag{position:absolute;left:12px;top:calc(9% + 10px);display:flex;align-items:center;gap:7px;padding:5px 12px;border-radius:6px;background:#000a;border:1px solid #ff5a4a88;font:900 12px/1 Nunito,sans-serif;letter-spacing:.2em;color:#fff1e0}
+#ck-replay .tag i{width:9px;height:9px;border-radius:50%;background:#ff3a2a;box-shadow:0 0 8px #ff3a2a;animation:ckRec 1s steps(2) infinite}
+#ck-replay .skip{position:absolute;right:12px;top:calc(9% + 8px);border:1px solid #f3c04d88;background:#0b1024cc;color:#f3c04d;border-radius:99px;padding:6px 14px;font:800 12px Nunito,sans-serif;cursor:pointer}
+#ck-replay .bar{position:absolute;left:12%;right:12%;bottom:calc(9% + 10px);height:3px;background:#ffffff22;border-radius:3px}#ck-replay .bar b{display:block;height:100%;width:0;background:#ff5a4a;border-radius:3px}
+@keyframes ckRpOut{to{opacity:0}}@keyframes ckRec{50%{opacity:.2}}
