@@ -9,6 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.content.Context;
+import android.content.ContentValues;
+import android.util.Base64;
+import java.io.OutputStream;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -162,6 +165,28 @@ public class MainActivity extends Activity {
                 Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 if (v != null && v.hasVibrator()) v.vibrate(Math.max(5, Math.min(200, ms)));
             } catch (Throwable t) { /* no vibrator / permission: ignore */ }
+        }
+
+        /** Save a PNG (base64, no data: prefix) to the phone's Pictures/Chaos Kingdoms album. Android 10+. */
+        @JavascriptInterface
+        public String saveImage(String b64, String name) {
+            if (Build.VERSION.SDK_INT < 29) return "old";
+            try {
+                byte[] data = Base64.decode(b64, Base64.DEFAULT);
+                ContentValues v = new ContentValues();
+                v.put("_display_name", name);
+                v.put("mime_type", "image/png");
+                v.put("relative_path", "Pictures/Chaos Kingdoms");
+                Uri u = getContentResolver().insert(Uri.parse("content://media/external/images/media"), v);
+                if (u == null) return "err";
+                OutputStream o = getContentResolver().openOutputStream(u);
+                if (o == null) return "err";
+                o.write(data);
+                o.close();
+                return "ok";
+            } catch (Throwable t) {
+                return "err";
+            }
         }
 
         @JavascriptInterface

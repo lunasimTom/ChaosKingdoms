@@ -119,14 +119,16 @@ const CKS=(()=>{
     for(let i=0;i<2;i++){const fq=bell[(bar*2+i)%bell.length];tone(d,{t:t+i*1.2,type:'sine',f0:fq,dur:1.4,amp:.07});tone(d,{t:t+i*1.2,type:'sine',f0:fq*2.01,dur:.8,amp:.02})}bar++};
    play();const iv=setInterval(play,2400);return ()=>{live=false;clearInterval(iv);try{d.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}}},
   // loot: pickup chime brighter and richer with rarity; treasure burst = gold crash + rising sparkle
-  pickup:(tier=0)=>{if(!on())return false;const t=au.currentTime+.005,d=out(.85+.08*tier,.22+.04*tier,0),base=[1047,1175,1319,1397,1568,1760][Math.min(5,tier)];
-   // crisp "ka-ching": a bright click transient, a struck bell that rings out (~0.5 s, longer than a UI click),
-   // and a quick rising sparkle; rarer items add a higher bell and a shimmer
-   noise(d,{t,dur:.035,ft:'highpass',f0:6500,amp:.14});
-   tone(d,{t,type:'triangle',f0:base,dur:.14,amp:.24});
-   tone(d,{t:t+.065,type:'sine',f0:base*1.5,dur:.46,amp:.22});tone(d,{t:t+.065,type:'sine',f0:base*3.01,dur:.22,amp:.05});
-   [2,2.52,3].forEach((m,i)=>tone(d,{t:t+.13+i*.055,type:'sine',f0:base*m,dur:.24,amp:.05}));
-   if(tier>=2)tone(d,{t:t+.12,type:'sine',f0:base*2,dur:.34+.08*tier,amp:.1});if(tier>=4){[1,1.25,1.5,2].forEach((m,i)=>tone(d,{t:t+.18+i*.07,type:'sine',f0:base*m,dur:.5,amp:.08}));noise(d,{t,dur:.6,ft:'highpass',f0:6000,amp:.06})}return true},
+  pickup:(tier=0)=>{if(!on())return false;const t=au.currentTime+.005,d=out(.8+.07*tier,.34+.04*tier,0),base=[880,988,1047,1175,1319,1397][Math.min(5,tier)];
+   // v5.5.1: a warm, round "ting" (~0.8 s): soft sine bell + octave and fifth that bloom and fade, a light
+   // shimmer on top and a gentle low body; no hard click. Rarer items add a sweeter final note.
+   tone(d,{t,type:'sine',f0:base,dur:.62,amp:.2,a:.006});
+   tone(d,{t,type:'triangle',f0:base/2,dur:.32,amp:.05,a:.01});
+   tone(d,{t:t+.07,type:'sine',f0:base*2,dur:.72,amp:.11,a:.01});
+   tone(d,{t:t+.14,type:'sine',f0:base*1.5,dur:.78,amp:.09,a:.02});
+   [3,4,5,6].forEach((m,i)=>tone(d,{t:t+.03+i*.05,type:'sine',f0:base*m*1.002,dur:.34,amp:.03,a:.004}));
+   if(tier>=2)tone(d,{t:t+.22,type:'sine',f0:base*2.5,dur:.62,amp:.08,a:.02});
+   if(tier>=4){[1,1.25,1.5,2].forEach((m,i)=>tone(d,{t:t+.26+i*.08,type:'sine',f0:base*m*2,dur:.6,amp:.06,a:.01}));noise(d,{t:t+.05,dur:.7,ft:'highpass',f0:7000,amp:.035})}return true},
   lootBurst:(best=0)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.5,0);boom(d,t,55,1,.6);noise(d,{t,dur:1.4,ft:'highpass',f0:4000,f1:7000,amp:.18,a:.02});
    for(let i=0;i<14;i++)tone(d,{t:t+.05+i*.045,type:'sine',f0:R(1400,3600),dur:.25,amp:.07});
    if(best>=4){[523,659,784,1047].forEach((f,i)=>tone(d,{t:t+.35+i*.11,type:'sawtooth',f0:f,dur:.6,amp:.05,lp:2600}))}return true},

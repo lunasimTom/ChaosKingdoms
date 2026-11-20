@@ -370,7 +370,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -654,7 +654,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.5',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.5.1',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
@@ -720,14 +720,30 @@ rep("function checkAchievements(){progressStats();", "function checkAchievements
 rep('<div class="achgrid">${ach}</div>', '<div class="ck-pwrap">${ckProfileTabs()}</div>')
 rep("function openProfile(back){", "function openProfile(back){try{ckProfileOpened()}catch(_){}")
 rep("function end(win){L.over=true;try{setTimeout(()=>ckPrefetch(", "function end(win){L.over=true;try{ckAchEnd(win)}catch(_){}try{setTimeout(()=>ckPrefetch(")
-rep("const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);", "const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);try{newA.forEach(ckAExtra);if(newA.length){ckANew(newA);newA.forEach((a,i)=>setTimeout(()=>ckABanner(a),1600+i*2600))}}catch(_){}")
+rep("const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);", "const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);try{newA.forEach(ckAExtra);if(newA.length){ckANew(newA);newA.forEach((a,i)=>setTimeout(()=>ckABanner(a),1600+i*4200))}}catch(_){}")
 rep("${ckCrownHtml()}${ckDropsHtml()}", "${ckCrownHtml()}${ckDropsHtml()}${ckNextGoal()}")
 rep("$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'))}", "$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'));try{let e=document.getElementById('ckshow');if(!e){e=document.createElement('div');e.id='ckshow';$('pxp').after(e)}e.innerHTML=ckShowcaseHtml();ckDot()}catch(_){}}")
 rep("L.built++;", "L.built++;try{ckStat('bt_'+selK)}catch(_){}")
 rep("L.inv[id]--;ckIU(id);", "L.inv[id]--;ckIU(id);try{ckStat('items')}catch(_){}", 2)
-rep("c.lineWidth=2;if(selT){c.setLineDash([6,5]);", "c.lineWidth=2;if(selT||bm){c.setLineDash([6,5]);")
 rep(",hp:S.hap===false?0:1}))", ",hp:S.hap===false?0:1,sh:S.show||[],an:S.achNew||[],dl:S.dly||null}))")
 rep("S.hap=s.hp!==0;", "S.hap=s.hp!==0;S.show=Array.isArray(s.sh)?s.sh:[];S.achNew=Array.isArray(s.an)?s.an:[];S.dly=(s.dl&&typeof s.dl==='object')?s.dl:null;")
+
+# 53. v5.5.1 smarter routes: danger weighted by tower DPS (cap 4.5 per tile), weakest base preferred,
+# pathFrom stops at a base tile (bases may carry a defence cost now).
+rep("if(L.demo||!L.tr||!L.tr.length)return null;", "if(L.demo||!L.tr||!L.tr.length){L._dz=null;return null}")
+rep("z[y*C+x]=Math.min(1,z[y*C+x]+.22)}return z}", "z[y*C+x]=Math.min(4.5,z[y*C+x]+ckDangerW(t))}L._dz=z;return z}")
+rep("L.goals.forEach(g=>{df[g[1]*C+g[0]]=0;q.push([g[0],g[1]])});", "L.goals.forEach(g=>{df[g[1]*C+g[0]]=ckGoalCost(g,dz);q.push([g[0],g[1]])});")
+rep("if(L.df[cy*L.cols+cx]===0)break;", "if(L.goals.some(g=>g[0]===cx&&g[1]===cy))break;")
+
+# 54. v5.5.1 UI: soft range ring only for a built, selected tower; realm panel art; "Continue Game";
+# new saved fields bv (button vibration), a8 (original-8 bonus paid), ait (AI tip shown).
+rep("if(selT){c.setLineDash([6,5]);c.beginPath();c.arc(p.x,p.y,rg*tw,0,7);c.stroke();c.setLineDash([])}", "if(selT){try{ckRangeRing(p.x,p.y,rg*tw)}catch(_){}}")
+rep("<section class=\"realm-detail\">", "<section class=\"realm-detail\" style=\"--rd-art:url('${bg}')\">")
+rep("hint=ri===12?TL('Four unique boss battles on a dedicated special map.'):TL('Unlocks all 8 levels in this map. Levels then open one by one as you win.');", "hint=ri===12?TL('Four unique boss battles on a dedicated special map.'):'';")
+rep("<button class=\"bt\" id=\"m1\">▶ ${TL('Resume')}</button>", "<button class=\"bt\" id=\"m1\">▶ ${TL('Continue Game')}</button>")
+rep("e.innerHTML=ckShowcaseHtml();ckDot()}catch(_){}}", "e.innerHTML=ckShowcaseHtml();ckDot();ckHomeCard()}catch(_){}}")
+rep(",sh:S.show||[],an:S.achNew||[],dl:S.dly||null}))", ",sh:S.show||[],an:S.achNew||[],dl:S.dly||null,bv:S.bvib===false?0:1,a8:S.a8||[],ait:S.aitip?1:0}))")
+rep("S.dly=(s.dl&&typeof s.dl==='object')?s.dl:null;", "S.dly=(s.dl&&typeof s.dl==='object')?s.dl:null;S.bvib=s.bv!==0;S.a8=Array.isArray(s.a8)?s.a8:[];S.aitip=!!s.ait;")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

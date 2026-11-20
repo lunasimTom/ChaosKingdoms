@@ -7,7 +7,49 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.5.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.5.1.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.5.1
+
+New code is in `source/premium/v551.js`.
+
+**Smarter monsters (all types).**
+- **Danger:** each tower now adds danger to the tiles it covers in proportion to its damage per second, up to 4.5 per tile. Monsters route around strong firepower when a reasonable detour exists. In a test on level 41, monsters were covered by about half as many towers (2.3 → 1.2) and spent 3% of their time attacking towers instead of 15%.
+- **Several bases:** each base's starting cost reflects how well it's defended, so monsters head for the weaker base. One extra tower near a base was enough to send them to the other one.
+- **Breaching:** when the route ahead is heavily covered, monsters attack the weakest tower covering their path to open a gap. Brutes do this soonest, grunts later, and runners only when the way is truly blocked by fire.
+- **Each type keeps its character:** brutes break towers, runners raid the base, and flyers and bosses behave as before.
+- **First time:** a one-time tip explains the new behaviour.
+
+**Feel.**
+- **Pickup sound:** a warmer, rounder chime of about 0.8 s (a soft bell with octave and fifth, a light shimmer and no hard click). Rarer items add a sweeter final note.
+- **Button vibration:** every button gives a 10 ms tick, with its own "Button vibration" switch next to the volume sliders. The difficulty slider gives a firmer detent and a soft chime at each step.
+- **Achievement banner:** it stays 6 seconds, and tapping it opens that medal.
+- **Pause menu:** "Resume" is now "Continue Game" (继续游戏).
+
+**Achievements.**
+- **Recovery:** the check for achievements a save already qualifies for now repeats whenever no popup is open, so medals can no longer stay locked behind the startup notices.
+- **Original 8:** they now get the same tier bonus as the new ones (+1 diamond for each Silver one), paid once and recorded in the save so it is never paid twice.
+
+**Medal card.** "Save medal card" first shows a preview, then saves it the best way the device allows:
+- **Android app:** straight to the gallery (Pictures › Chaos Kingdoms) on Android 10 and newer. The app gained a small `saveImage` bridge for this.
+- **Phone browser:** the share sheet, where you can choose "Save Image".
+- **Desktop browser:** a normal download.
+- **Preview frames:** where downloads are blocked, a note tells you to press and hold (or right-click) the image.
+
+Every path ends with a clear success or failure message.
+
+**Visuals.**
+- **Popups:** every popup has a stronger background blur, with the home screen's rising fireflies drifting behind the card.
+- **Progress bars:** one refined design everywhere: a recessed track, a glossy gold fill with a highlight, depth and a slow light sweep. The Commander Record ring has a groove and a glow.
+- **Typography:** a scan of every screen in both languages turned the remaining explanatory text regular weight (Tower Synergy, rune and exchange notes, shop subtitles, tips, rank notes, rewards, the next-medal line). Only titles, headings, labels and numbers stay bold.
+- **Pause menu rank title:** it uses the game font in both languages.
+- **Level box:** it is exactly the height of the Settings button.
+- **Tower range:** no circle while placing a tower. Tapping a built tower shows a soft, semi-transparent ring with blurred edges.
+- **Map selection:** the realm panel uses its own blurred map art. The "Unlocks all 8 levels" note is gone once the map is unlocked. The level buttons are glossy gems: green when cleared, glowing gold for the next level, red-edged for the boss.
+- **Home commander card:** the whole card opens Commander Record. Three large medals sit in a symmetric row (empty slots show +), with an achievements progress bar and your title.
+- **Difficulty selector:** a richer card coloured by the chosen difficulty, a glowing track and handle, and a small pulse at each step.
+
+**Saves.** Every new field is optional: button vibration, original-8 bonus paid, AI tip shown. Saves and progress codes from v4.3 onwards load as before.
 
 ## What changed in v5.5 · Medals
 
@@ -931,7 +973,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

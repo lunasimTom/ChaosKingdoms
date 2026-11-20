@@ -1510,8 +1510,8 @@ const P=(p,f)=>{c.beginPath();p.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[
 const ell=(x,y,a,b,f)=>{c.beginPath();c.ellipse(x,y,a,b,0,0,7);if(f)c.fillStyle=f;c.fill()},circ=(x,y,r,f)=>{c.beginPath();c.arc(x,y,r,0,7);if(f)c.fillStyle=f;c.fill()},seg=(a,b)=>{c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()};
 const ngon=(x,y,r,n,o)=>Array.from({length:n},(_,i)=>[x+Math.cos(o+i*6.2832/n)*r,y+Math.sin(o+i*6.2832/n)*r]);
 const pp=(x,y)=>port?{x:ox+(y+.5)*tw,y:oy+(x+.5)*tw}:{x:ox+(x+.5)*tw,y:oy+(y+.5)*tw},cell=(x,y)=>L.g[y*L.cols+x];
-function save(){try{localStorage.setItem('ck25',JSON.stringify({v:'MAX1',n:S.name,own:S.own,p:S.prog,d:S.dif,dv:2,o:LAY,g:S.gold,dm:S.diamonds||0,bs:S.bonusStars||0,rc:S.redeemedCodes||[],u:S.unl,maps:S.maps,inv:S.inv||{},l:LANG,xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},h100:S.h100|0,fr:S.frag|0,ru:S.rune|0,s5:1,ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0,hp:S.hap===false?0:1,sh:S.show||[],an:S.achNew||[],dl:S.dly||null}))}catch(e){}}
-function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}try{if(!localStorage.getItem('ck25')){let n=localStorage.getItem('ck25_name');if(n)S.name=n}}catch(e){}try{let s=JSON.parse(localStorage.getItem('ck25'));if(s){S.name=s.n||'';S.own=s.own!==undefined?s.own:(s.n||'');S.prog=ckStar5(s.p||{},s.s5);S.chests=Array.isArray(s.ch)?s.ch:[];S.medals=Math.max(0,s.md|0);S.autoIt=(s.ai&&typeof s.ai==='object')?s.ai:{};S.dif=s.dv===2?Math.max(0,Math.min(4,s.d??2)):[1,2,3][Math.max(0,Math.min(2,s.d??1))];LAY=s.o||'auto';S.gold=s.g??3000;S.diamonds=Math.max(0,+s.dm||0);S.bonusStars=Math.max(0,+s.bs||0);S.redeemedCodes=Array.isArray(s.rc)?s.rc:[];S.unl=s.u||{};S.maps=s.maps||{};S.xp=Math.max(0,s.xp||0);S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},s.stats||{});S.ach=Array.isArray(s.ach)?s.ach:[];S.cc=(s.cc&&typeof s.cc==='object')?s.cc:{};S.mb=(s.mb&&typeof s.mb==='object')?s.mb:{};S.cu=(s.cu&&typeof s.cu==='object')?{a:s.cu.a|0,d:s.cu.d|0,b:s.cu.b|0,c:s.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+s.ss||0);S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;S.hap=s.hp!==0;S.show=Array.isArray(s.sh)?s.sh:[];S.achNew=Array.isArray(s.an)?s.an:[];S.dly=(s.dl&&typeof s.dl==='object')?s.dl:null;S.rune=Math.max(0,s.ru|0);S.inv=(s.inv&&typeof s.inv==='object')?s.inv:{};if(s.l==='zh'||s.l==='en')LANG=s.l}}catch(e){}}
+function save(){try{localStorage.setItem('ck25',JSON.stringify({v:'MAX1',n:S.name,own:S.own,p:S.prog,d:S.dif,dv:2,o:LAY,g:S.gold,dm:S.diamonds||0,bs:S.bonusStars||0,rc:S.redeemedCodes||[],u:S.unl,maps:S.maps,inv:S.inv||{},l:LANG,xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},h100:S.h100|0,fr:S.frag|0,ru:S.rune|0,s5:1,ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0,hp:S.hap===false?0:1,sh:S.show||[],an:S.achNew||[],dl:S.dly||null,bv:S.bvib===false?0:1,a8:S.a8||[],ait:S.aitip?1:0}))}catch(e){}}
+function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}try{if(!localStorage.getItem('ck25')){let n=localStorage.getItem('ck25_name');if(n)S.name=n}}catch(e){}try{let s=JSON.parse(localStorage.getItem('ck25'));if(s){S.name=s.n||'';S.own=s.own!==undefined?s.own:(s.n||'');S.prog=ckStar5(s.p||{},s.s5);S.chests=Array.isArray(s.ch)?s.ch:[];S.medals=Math.max(0,s.md|0);S.autoIt=(s.ai&&typeof s.ai==='object')?s.ai:{};S.dif=s.dv===2?Math.max(0,Math.min(4,s.d??2)):[1,2,3][Math.max(0,Math.min(2,s.d??1))];LAY=s.o||'auto';S.gold=s.g??3000;S.diamonds=Math.max(0,+s.dm||0);S.bonusStars=Math.max(0,+s.bs||0);S.redeemedCodes=Array.isArray(s.rc)?s.rc:[];S.unl=s.u||{};S.maps=s.maps||{};S.xp=Math.max(0,s.xp||0);S.stats=Object.assign({wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0},s.stats||{});S.ach=Array.isArray(s.ach)?s.ach:[];S.cc=(s.cc&&typeof s.cc==='object')?s.cc:{};S.mb=(s.mb&&typeof s.mb==='object')?s.mb:{};S.cu=(s.cu&&typeof s.cu==='object')?{a:s.cu.a|0,d:s.cu.d|0,b:s.cu.b|0,c:s.cu.c|0}:{a:0,d:0,b:0,c:0};S.ss=Math.max(0,+s.ss||0);S.fx=fxClean(s.fx);S.h100=Math.max(0,Math.min(5,s.h100|0));S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;S.hap=s.hp!==0;S.show=Array.isArray(s.sh)?s.sh:[];S.achNew=Array.isArray(s.an)?s.an:[];S.dly=(s.dl&&typeof s.dl==='object')?s.dl:null;S.bvib=s.bv!==0;S.a8=Array.isArray(s.a8)?s.a8:[];S.aitip=!!s.ait;S.rune=Math.max(0,s.ru|0);S.inv=(s.inv&&typeof s.inv==='object')?s.inv:{};if(s.l==='zh'||s.l==='en')LANG=s.l}}catch(e){}}
 function rs(){let d=Math.min(((navigator.hardwareConcurrency||4)>=6&&(navigator.deviceMemory||4)>=4)?2:1.5,(devicePixelRatio||1)*FS);cv.width=Math.round(W*d);cv.height=Math.round(H*d);c.setTransform(d,0,0,d,0,0)}
 const wantPort=()=>LAY==='p'||(LAY==='auto'&&innerHeight>innerWidth*1.05);
 let _vw=0,_vh=0;
@@ -1547,11 +1547,11 @@ const blk=(x,y)=>solid(x,y)||!!cell(x,y).tw;
 const cornerOK=()=>true;
 /* flow field: rocks block, towers are walls that cost extra to break, so enemies detour when cheap and smash through when sealed in */
 /* AI: cells inside tower fire range cost a little extra, so monsters pick the less-covered road when the detour is cheap */
-function dangerMap(){if(L.demo||!L.tr||!L.tr.length)return null;const C=L.cols,R=L.rows,z=new Float32Array(C*R);for(const t of L.tr){if(!t||t.hp<=0||t.k==='wall'||t.building)continue;let rg=0;try{rg=ts(t).rg}catch(_){rg=TW[t.k]?TW[t.k].rg:0}rg=(rg||0)*.85;if(rg<=0)continue;const x0=Math.max(0,Math.floor(t.x-rg)),x1=Math.min(C-1,Math.ceil(t.x+rg)),y0=Math.max(0,Math.floor(t.y-rg)),y1=Math.min(R-1,Math.ceil(t.y+rg));for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(Math.hypot(x-t.x,y-t.y)<=rg)z[y*C+x]=Math.min(1,z[y*C+x]+.22)}return z}
-function computeDF(){let C=L.cols,n=C*L.rows,dz=dangerMap(),df=new Float32Array(n).fill(1e9),q=[];L.goals.forEach(g=>{df[g[1]*C+g[0]]=0;q.push([g[0],g[1]])});
+function dangerMap(){if(L.demo||!L.tr||!L.tr.length){L._dz=null;return null}const C=L.cols,R=L.rows,z=new Float32Array(C*R);for(const t of L.tr){if(!t||t.hp<=0||t.k==='wall'||t.building)continue;let rg=0;try{rg=ts(t).rg}catch(_){rg=TW[t.k]?TW[t.k].rg:0}rg=(rg||0)*.85;if(rg<=0)continue;const x0=Math.max(0,Math.floor(t.x-rg)),x1=Math.min(C-1,Math.ceil(t.x+rg)),y0=Math.max(0,Math.floor(t.y-rg)),y1=Math.min(R-1,Math.ceil(t.y+rg));for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(Math.hypot(x-t.x,y-t.y)<=rg)z[y*C+x]=Math.min(4.5,z[y*C+x]+ckDangerW(t))}L._dz=z;return z}
+function computeDF(){let C=L.cols,n=C*L.rows,dz=dangerMap(),df=new Float32Array(n).fill(1e9),q=[];L.goals.forEach(g=>{df[g[1]*C+g[0]]=ckGoalCost(g,dz);q.push([g[0],g[1]])});
  while(q.length){q.sort((a,b)=>df[b[1]*C+b[0]]-df[a[1]*C+a[0]]);let[x,y]=q.pop(),d0=df[y*C+x],tt=cell(x,y).tw,ec=tt&&!L.demo?brk(tt):0;for(let d of DIRS){let nx=x-d[0],ny=y-d[1];if(solid(nx,ny)||!cornerOK(nx,ny,d))continue;let nd=d0+ec+(d[0]&&d[1]?1.4142:1)+(dz?dz[ny*C+nx]:0);if(nd<df[ny*C+nx]-1e-6){df[ny*C+nx]=nd;q.push([nx,ny])}}}L.df=df;return df}
 function nextStep(cx,cy,e=null){let g=L.df,C=L.cols,best=null,bv=1e9,prev=e&&e._nav?e._nav.prev:null,recent=e&&e._nav?e._nav.recent:[];for(let d of DIRS){let nx=cx+d[0],ny=cy+d[1];if(solid(nx,ny)||!cornerOK(cx,cy,d))continue;let tt=cell(nx,ny).tw,v=g[ny*C+nx]+(tt&&!L.demo?brk(tt):0)+1; if(g[ny*C+nx]>=1e8)continue;let key=nx+','+ny;if(prev===key)v+=.025;if(recent.includes(key))v+=.01;{let vs=e&&e._nav&&e._nav.vis?e._nav.vis[key]||0:0;v+=Math.min(vs,8)*.35}if(e&&!L.demo){let cw=0;for(const o of L.en){if(o!==e&&o.hp>0&&!o.fly&&Math.abs(o.x-nx)<.6&&Math.abs(o.y-ny)<.6)cw++}v+=Math.min(.6,cw*.2)}if(v<bv-1e-7){bv=v;best=[nx,ny]}}return best}
-function pathFrom(x,y){let out=[[x,y]],cx=x,cy=y;for(let it=0;it<200;it++){if(L.df[cy*L.cols+cx]===0)break;let b=nextStep(cx,cy);if(!b)break;cx=b[0];cy=b[1];out.push(b)}return out}
+function pathFrom(x,y){let out=[[x,y]],cx=x,cy=y;for(let it=0;it<200;it++){if(L.goals.some(g=>g[0]===cx&&g[1]===cy))break;let b=nextStep(cx,cy);if(!b)break;cx=b[0];cy=b[1];out.push(b)}return out}
 function openRoutes(){computeDF();L.orts=L.portals.map(p=>pathFrom(p[0],p[1]));/* Open-field mode: path data is for dynamic enemy movement only; never reserve or paint a monster-only road. */L.g.forEach(q=>q.p=false)}
 const reach=()=>L.portals.every(p=>L.df[p[1]*L.cols+p[0]]<1e8);
 function replan(){openRoutes()}
@@ -2353,7 +2353,7 @@ setTimeout(()=>{try{ckChInit()}catch(_){}const row=document.querySelector('#titl
    shown) are optional: saves and transfer codes from any older version load unchanged, and older
    versions ignore the new fields. Before anything is converted the raw save is copied once to
    localStorage 'ck25_bak_v44'. */
-const CK_VER='5.5',CK_BUILD=49;
+const CK_VER='5.5.1',CK_BUILD=50;
 function ckVerTxt(){return lvZ('版本','Version')+' '+CK_VER+' ('+lvZ('构建 ','build ')+CK_BUILD+')'}
 // ---- level-up rewards: gold + stars every level, a chest at milestones ----
 const CK_LV_CHEST={15:0,20:1,25:2,30:3,40:4,50:5};
@@ -2471,7 +2471,7 @@ function ckMapLabel(){if(typeof L==='undefined'||!L||L.demo)return;const hud=doc
  e.innerHTML=(L.boss?`<b class="bo">👑 ${zh?'首领':'BOSS'}</b><i>·</i>`:'')+`<span>${TL(R[L.i/8|0].n)}</span>`;e.classList.toggle('boss',!!L.boss)}
 function ckPlaceFloat(){const rail=document.getElementById('rail'),top=document.querySelector('#hud .top'),tip=document.querySelector('.ck-tipfloat'),m=document.getElementById('ckmapn');
  const sh=document.getElementById('shop'),open=(sh&&!sh.hidden)||mOpen||(typeof tab!=='undefined'&&tab==='s');
- if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';try{const ap=document.getElementById('app');ap.style.setProperty('--ck-toast-top',(top.offsetTop+top.offsetHeight+6+m.offsetHeight+6)+'px')}catch(_){}m.style.display=(sh&&!sh.hidden)?'none':''}}
+ if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';try{const mb=document.getElementById('menu');if(mb)document.getElementById('app').style.setProperty('--ck-menu-h',mb.offsetHeight+'px')}catch(_){}try{const ap=document.getElementById('app');ap.style.setProperty('--ck-toast-top',(top.offsetTop+top.offsetHeight+6+m.offsetHeight+6)+'px')}catch(_){}m.style.display=(sh&&!sh.hidden)?'none':''}}
 // ---- V5 monster AI: situational, threat-based targeting ----
 // Awareness grows a little from level 1 (85%) to level 20 (100%). Near the base (last 25% of the
 // route or within 3 tiles) a monster commits to the base. Otherwise it attacks the most threatening
@@ -2480,15 +2480,21 @@ function ckPlaceFloat(){const rail=document.getElementById('rail'),top=document.
 // flyers and bosses keep their own behaviour. A chase that drags on or loses sight ends (leash).
 const CK_AW={grunt:2.5,runner:1.0,brute:3.5,boss:3.2};
 function ckAware(e){const ramp=.85+.15*Math.min(1,(L.i||0)/19);return (CK_AW[e.t]||2)*ramp*(e.el?1.15:1)}
-function ckCommit(e){if(!L.df)return false;const C=L.cols,cx=Math.max(0,Math.min(C-1,Math.round(e.x))),cy=Math.max(0,Math.min(L.rows-1,Math.round(e.y))),df=L.df[cy*C+cx];
+// v5.5.1: how much tower fire lies ahead on this monster's route (sum of the danger map over the next 30 steps)
+function ckRouteDanger(e){if(!L._dz)return 0;if(e._rdT>TM)return e._rd||0;e._rdT=TM+.6;const C=L.cols;let x=Math.max(0,Math.min(C-1,Math.round(e.x))),y=Math.max(0,Math.min(L.rows-1,Math.round(e.y))),s=0;
+ for(let k=0;k<30;k++){s+=L._dz[y*C+x]||0;if(L.goals.some(g=>g[0]===x&&g[1]===y))break;const n=nextStep(x,y);if(!n)break;x=n[0];y=n[1]}e._rd=s;return s}
+// breach threshold per type: brutes push through towers soonest, runners only when the way is truly blocked by fire
+const CK_BREACH={brute:3,grunt:4.5,runner:7};
+function ckBreach(e){return ckRouteDanger(e)>=(CK_BREACH[e.t]||4.5)*(.85+.15*Math.min(1,(L.i||0)/19))}
+function ckCommit(e){if(ckBreach(e))return false;if(!L.df)return false;const C=L.cols,cx=Math.max(0,Math.min(C-1,Math.round(e.x))),cy=Math.max(0,Math.min(L.rows-1,Math.round(e.y))),df=L.df[cy*C+cx];
  if(!isFinite(df))return false;if(e.df0==null||df>e.df0)e.df0=df;return df<=3||df<=e.df0*.25}
 function ckTwThreat(e,t,d){let s=1;if(t.k==='wall')s+=.6;else{const st=ts(t);s+=Math.min(3,(st.dm||10)/Math.max(.2,st.rt||1)/40);if(d<=st.rg)s+=1.2}
  if(e._sh===t&&TM-(e._shT||-9)<2.5)s+=3;s+=(1-Math.min(1,t.hp/(t.mhp||t.hp||1)))*.8;s+=(t.lv||1)*.15;return s/(.6+d)}
-function ckPickTarget(e){const r=ckAware(e);let b=null,bs=0;for(const t of L.tr){if(!t||t.hp<=0||t.building&&!(t.hp>0))continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d>=r||!lineOK(e.x,e.y,t.x,t.y))continue;const s=ckTwThreat(e,t,d);if(s>bs){bs=s;b=t}}return b}
+function ckPickTarget(e){const br=ckBreach(e),r=ckAware(e)*(br?1.6:1);if(br)try{ckAITip()}catch(_){};let b=null,bs=0;for(const t of L.tr){if(!t||t.hp<=0||t.building&&!(t.hp>0))continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d>=r||!lineOK(e.x,e.y,t.x,t.y))continue;let s=ckTwThreat(e,t,d);if(br){const hp=Math.min(1,t.hp/(t.mhp||t.hp||1));s*=1.6-hp;if(L._dz){const C=L.cols,i=Math.round(t.y)*C+Math.round(t.x);s*=1+Math.min(2,(L._dz[i]||0)*.3)}}if(s>bs){bs=s;b=t}}return b}
 // ---- Settings screen (gear button): sound, music, gameplay, display, haptics, version ----
 function ckSettingsHtml(){const zh=LANG==='zh',sec=(t,b)=>`<div class="ck-set-sec"><h4>${t}</h4>${b}</div>`;
  return `<div class="ck-set"><h2 class="f">⚙ ${zh?'设置':'Settings'}</h2>`
-  +sec(zh?'声音':'Sound',`${sl()}<button class="bt g musbtn ck-setbtn">${(mon||!mOff)?TL('♪ Music: on'):TL('♪ Music: off')}</button>`)
+  +sec(zh?'声音':'Sound',`${sl()}<label class="ck-hapl"><input id="ckbvib" type="checkbox" ${S.bvib===false?'':'checked'}><span>${zh?'按钮震动':'Button vibration'}</span></label><button class="bt g musbtn ck-setbtn">${(mon||!mOff)?TL('♪ Music: on'):TL('♪ Music: off')}</button>`)
   +sec(zh?'游戏':'Gameplay',`${tg()}<label class="ck-hapl"><input id="ckhap" type="checkbox" ${S.hap===false?'':'checked'}><span>${zh?'震动反馈':'Haptics (vibration)'}</span></label>`)
   +sec(zh?'显示与语言':'Display & language',`<div class="ck-setrow"><button class="bt g rotbtn ck-setbtn">⟳ ${TL('Screen: ')}${TL('Auto')}</button><button class="bt g langbtn ck-setbtn">🌐 ${zh?'中文':'EN'}</button></div>`)
   +`<div class="ck-ver">${ckVerTxt()}</div></div><button class="bt g" id="m1">${zh?'返回':'Back'}</button>`}
@@ -2568,6 +2574,12 @@ async function ckInstall(){if(CK_DIP){const e=CK_DIP;CK_DIP=null;try{e.prompt();
  modal(`<div class="ck-inst"><img class="ck-insti" src="${CKA.appicon}" alt=""><h2 class="f">${zh?'安装到桌面':'Install Game'}</h2><p>${zh?'像应用一样从桌面或主屏幕启动，全屏游戏，离线也能玩。':'Launch it from your desktop or home screen like an app, full screen, and play offline.'}</p><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>${framed?`<p class="ck-instn">${zh?'当前页面嵌在预览窗口中，浏览器不允许直接安装。请在新标签页中打开游戏文件或网页后再安装。':'This page is shown inside a preview frame, where browsers do not allow installing. Open the game file or page in its own browser tab first.'}</p>`:''}</div><button class="bt g" id="m1">${zh?'知道了':'Got it'}</button>`,closeM)}
 setTimeout(ckInstallBtn,1300);setTimeout(ckInstallBtn,2600);
 
+// v5.5.1 danger map weights: each tower counts by its damage per second, so strong firepower is avoided more
+function ckDangerW(t){try{const st=ts(t),dps=(st.dm||10)/Math.max(.2,st.rt||1);return Math.max(.5,Math.min(2.2,.5+dps/45))}catch(_){return .8}}
+// several bases: each base starts with a cost equal to how well it is defended, so monsters choose the weakest one
+function ckGoalCost(g,dz){if(!dz||L.goals.length<2)return 0;const C=L.cols,R=L.rows,f=q=>{let s=0;for(let y=Math.max(0,q[1]-2);y<=Math.min(R-1,q[1]+2);y++)for(let x=Math.max(0,q[0]-2);x<=Math.min(C-1,q[0]+2);x++)s+=dz[y*C+x]||0;return s*.5};
+ const cs=L.goals.map(f),mn=Math.min(...cs);return f(g)-mn}
+
 /* ===== Chaos Kingdoms v5.5 · 40 achievements, points & titles, showcase, daily reward, statistics =====
    The 8 original achievements keep their ids, names, rank requirements and gold, so saves recognise them.
    32 new ones are added. Every achievement shows one of the 40 medal artworks (CKM[n]). Progress comes
@@ -2635,20 +2647,20 @@ function ckPoints(){let p=0;for(const id of (S.ach||[])){const a=CK_AMAP[id];if(
 function ckTitle(p){p=p==null?ckPoints():p;let t=CK_TITLES[0];for(const x of CK_TITLES)if(p>=x[0])t=x;return t}
 function ckTitleTxt(){const t=ckTitle();return LANG==='zh'?t[1]:t[2]}
 // extras on top of the gold (diamonds, chests); legacy achievements keep only their original gold
-function ckAExtra(a){if(a.legacy)return;const T=CK_TIER[a.tier];if(T.dia)S.diamonds=(S.diamonds||0)+T.dia;if(a.ex&&a.ex.chest!=null){ckChInit();S.chests[a.ex.chest]++}}
-function ckRewardTxt(a){const T=CK_TIER[a.tier],zh=LANG==='zh';let t='+'+(a.gold||0).toLocaleString()+' 🪙';if(!a.legacy&&T.dia)t+=' +'+T.dia+' 💎';if(a.ex&&a.ex.chest!=null)t+=' + 🎁 '+ckChName(a.ex.chest);return t+' · '+T.pts+(zh?' 点':' pts')}
+function ckAExtra(a){const T=CK_TIER[a.tier];if(a.legacy){S.a8=Array.isArray(S.a8)?S.a8:[];if(S.a8.includes(a.id))return;S.a8.push(a.id);if(T.dia){S.diamonds=(S.diamonds||0)+T.dia;try{ckStat('dia',T.dia)}catch(_){}}return}if(T.dia)S.diamonds=(S.diamonds||0)+T.dia;if(a.ex&&a.ex.chest!=null){ckChInit();S.chests[a.ex.chest]++}}
+function ckRewardTxt(a){const T=CK_TIER[a.tier],zh=LANG==='zh';let t='+'+(a.gold||0).toLocaleString()+' 🪙';if(T.dia)t+=' +'+T.dia+' 💎';if(a.ex&&a.ex.chest!=null)t+=' + 🎁 '+ckChName(a.ex.chest);return t+' · '+T.pts+(zh?' 点':' pts')}
 // out-of-battle checks (load, chests, forge...): grant gold + extras, show the banner
-function ckAchCheck(quiet){try{ckA55Init();const got=checkAchievements();if(!got.length)return got;let g=0;for(const a of got){g+=a.gold||0;ckAExtra(a)}if(g)Economy.grantWallet(g);ckANew(got);try{save();updWl()}catch(_){}
- if(quiet&&got.length>1)ckABanner(null,got);else got.forEach((a,i)=>setTimeout(()=>ckABanner(a),i*2600));return got}catch(e){console.warn('ach',e);return[]}}
+function ckAchCheck(quiet){try{ckA55Init();const got=checkAchievements();if(!got.length)return got;let g=0;for(const a of got){g+=a.gold||0;ckAExtra(a)}if(g)Economy.grantWallet(g);ckANew(got);try{save();updWl();ckHomeCard()}catch(_){}
+ if(quiet&&got.length>1)ckABanner(null,got);else got.forEach((a,i)=>setTimeout(()=>ckABanner(a),i*4200));return got}catch(e){console.warn('ach',e);return[]}}
 function ckANew(got){S.achNew=(S.achNew||[]).concat(got.map(a=>a.id));ckDot()}
-function ckDot(){const b=document.getElementById('profilebtn');if(b)b.classList.toggle('ck-dot',!!(S.achNew&&S.achNew.length))}
+function ckDot(){const on=!!(S.achNew&&S.achNew.length);const b=document.getElementById('profilebtn');if(b)b.classList.toggle('ck-dot',on);const t=document.querySelector('#title .profileteaser');if(t)t.classList.toggle('ck-dot',on)}
 // unlock banner (gold tier: bigger fanfare and haptics)
 function ckABanner(a,many){const zh=LANG==='zh',el=document.createElement('div');el.className='ck-abn'+(a&&a.tier==='g'?' g':'');
  if(many){el.innerHTML=`<img src="${CKM[many[0].m]}" alt=""><div><small>${zh?'成就补发':'Achievements unlocked'}</small><b>${zh?'已解锁 '+many.length+' 个成就！':many.length+' achievements unlocked!'}</b><span>${zh?'在统帅档案中查看':'See them in Commander Record'}</span></div>`}
  else el.innerHTML=`<img src="${CKM[a.m]}" alt=""><div><small>${zh?'成就解锁':'Achievement unlocked'} · ${CK_TIER[a.tier].n[zh?0:1]}</small><b>${ckAName(a)}</b><span>${ckRewardTxt(a)}</span></div>`;
- document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('in'));
+ el.onclick=()=>{el.remove();if(a)ckAchDetail(a.id);else openProfile(0)};document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('in'));
  try{if(a&&a.tier==='g'){CKS.fanfare()}else CKS.pickup(4)}catch(_){}ckVibe(a&&a.tier==='g'?[40,60,40,60,120]:[30,40,60]);
- setTimeout(()=>{el.classList.remove('in');setTimeout(()=>el.remove(),500)},3200)}
+ setTimeout(()=>{el.classList.remove('in');setTimeout(()=>el.remove(),500)},6000)}
 // the medal grid in Commander Record
 function ckAchGridHtml(){ckA55Init();ckAchStats();const zh=LANG==='zh',p=ckPoints(),t=ckTitle(p),nx=CK_TITLES.find(x=>x[0]>p);
  const head=`<div class="ck-ahead"><div><small>${zh?'成就点数':'Achievement points'}</small><b>${p}</b></div><div><small>${zh?'头衔':'Title'}</small><b>${zh?t[1]:t[2]}</b></div><div><small>${zh?'下一头衔':'Next title'}</small><b>${nx?(zh?nx[1]:nx[2])+' · '+nx[0]:'—'}</b></div></div>`;
@@ -2710,6 +2722,69 @@ function ckProfileOpened(){if(S.achNew&&S.achNew.length){setTimeout(()=>{S.achNe
 // startup: wire everything once the save is loaded
 (function a55Boot(){const go=()=>{if(typeof S==='undefined'||document.getElementById('ck-splash')){setTimeout(go,500);return}try{ckA55Init();ckDot();
  setTimeout(()=>{if(!mOpen)ckAchCheck(true);setTimeout(()=>{if(!mOpen&&S.mode==='title')ckDailyCheck()},1200)},1800)}catch(e){console.warn('a55',e)}};setTimeout(go,1500)})();
+
+/* ===== Chaos Kingdoms v5.5.1 · feel, achievement recovery, medal card, popups, home card, smarter AI ===== */
+// ---- button haptics: a 10 ms tick on every button press (own switch in Settings › Sound) ----
+function ckBtnVibe(){if(S.bvib===false)return;try{if(window.CKAndroid&&CKAndroid.vibrate){CKAndroid.vibrate(10);return}if(navigator.vibrate)navigator.vibrate(10)}catch(_){}}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button,.bt,.tab,.shop-tab,[role="button"],.realm-pin,.ck-am,.tw,.iv,.ck-dd');if(b&&!b.disabled)ckBtnVibe()},{capture:true,passive:true});
+// difficulty slider: a firmer detent each time the selection changes
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='difrange'){const v=+e.target.value;if(v!==ckBtnVibe.dv){ckBtnVibe.dv=v;if(S.bvib!==false){try{if(window.CKAndroid&&CKAndroid.vibrate)CKAndroid.vibrate(18);else if(navigator.vibrate)navigator.vibrate([18])}catch(_){}}try{CKS.pickup(0)}catch(_){}const db=document.getElementById('dif');if(db){db.classList.remove('ck-dpulse');void db.offsetWidth;db.classList.add('ck-dpulse')}}}},true);
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='ckbvib'){S.bvib=!!e.target.checked;try{save()}catch(_){}if(S.bvib)ckBtnVibe()}});
+if(typeof ZH==='object'){ZH['Continue Game']='继续游戏'}
+// ---- achievements: retry the recovery check whenever no popup is open; one-time tier bonus for the original 8 ----
+function ckA8Bonus(quiet){S.a8=Array.isArray(S.a8)?S.a8:[];let dia=0;const ids=[];
+ for(const id of (S.ach||[])){const a=CK_AMAP[id];if(!a||!a.legacy||S.a8.includes(id))continue;const d=CK_TIER[a.tier].dia;S.a8.push(id);if(d){dia+=d;ids.push(id)}}
+ if(dia){S.diamonds=(S.diamonds||0)+dia;try{ckStat('dia',dia);save();updWl()}catch(_){}if(!quiet)toast(lvZ('成就奖励补发：+'+dia+' 💎','Achievement bonus: +'+dia+' 💎'))}return dia}
+function ckAchTick(){try{if(typeof S==='undefined'||mOpen||document.getElementById('ck-splash'))return;ckA55Init();ckA8Bonus(false);ckAchCheck(true)}catch(_){}}
+setInterval(()=>{if(typeof S!=='undefined'&&S.mode!=='play')ckAchTick()},2500);
+// ---- medal card: preview first, then save in the best way this device allows, always with clear feedback ----
+function ckCardCanvas(a,cb){const zh=LANG==='zh',cv2=document.createElement('canvas'),w=720,h=900;cv2.width=w;cv2.height=h;const g=cv2.getContext('2d');
+ const bg=g.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#1d3157');bg.addColorStop(1,'#070c18');g.fillStyle=bg;g.fillRect(0,0,w,h);
+ const rg=g.createRadialGradient(w/2,330,20,w/2,330,320);rg.addColorStop(0,'#ffd36a55');rg.addColorStop(1,'#ffd36a00');g.fillStyle=rg;g.fillRect(0,0,w,h);
+ g.strokeStyle='#e9b95a';g.lineWidth=6;g.strokeRect(18,18,w-36,h-36);g.strokeStyle='#e9b95a55';g.lineWidth=2;g.strokeRect(32,32,w-64,h-64);
+ const txt=()=>{g.textAlign='center';g.fillStyle='#f3c04d';g.font='900 26px CKSans,sans-serif';g.fillText(zh?'成就解锁':'ACHIEVEMENT UNLOCKED',w/2,92);
+  g.fillStyle='#fff1c7';g.font='900 52px CKSans,sans-serif';g.fillText(ckAName(a),w/2,600);g.fillStyle='#c9d4ec';g.font='400 28px CKSans,sans-serif';g.fillText(ckADesc(a),w/2,650);
+  g.fillStyle=CK_TIER[a.tier].c;g.font='900 26px CKSans,sans-serif';g.fillText(CK_TIER[a.tier].n[zh?0:1]+' · '+CK_TIER[a.tier].pts+(zh?' 点':' pts'),w/2,700);
+  g.fillStyle='#ffe08a';g.font='900 30px CKSans,sans-serif';g.fillText((S.name||(zh?'指挥官':'Commander'))+' · '+ckTitleTxt()+' · Lv.'+plLevel(),w/2,780);
+  g.fillStyle='#8fa0c8';g.font='700 22px CKSans,sans-serif';g.fillText('Chaos Kingdoms · Tower Defense',w/2,842);cb(cv2)};
+ const im=new Image();im.onload=()=>{g.drawImage(im,w/2-180,150,360,360*im.height/im.width);txt()};im.onerror=txt;im.src=CKM[a.m]}
+function ckShareCard(a){ckCardCanvas(a,cv2=>{const url=cv2.toDataURL('image/png'),zh=LANG==='zh',name='chaos-kingdoms-'+a.id+'.png';
+ modal(`<div class="ck-card"><h2 class="f">${zh?'成就卡':'Medal Card'}</h2><img class="ck-cardimg" src="${url}" alt=""><p class="ck-cardst" id="ckcardst">${zh?'也可以长按（或右键）图片保存。':'You can also press and hold (or right-click) the image to save it.'}</p><div class="ck-adb"><button type="button" class="bt pay" id="ckcsave">${zh?'保存图片':'Save image'}</button><button type="button" class="bt g" id="m1">${zh?'返回':'Back'}</button></div></div>`,()=>ckAchDetail(a.id));
+ const st=document.getElementById('ckcardst'),say=(t,ok)=>{st.textContent=t;st.className='ck-cardst '+(ok?'ok':'bad');toast(t)};
+ document.getElementById('ckcsave').onclick=async()=>{
+  // 1) Android app: straight into the gallery
+  if(window.CKAndroid&&CKAndroid.saveImage){let r='err';try{r=CKAndroid.saveImage(url.split(',')[1],name)}catch(_){}
+   if(r==='ok')return say(zh?'✓ 已保存到相册（图片 › Chaos Kingdoms）':'✓ Saved to your gallery (Pictures › Chaos Kingdoms)',true);
+   return say(r==='old'?(zh?'此 Android 版本无法直接保存，请截屏保存。':'This Android version cannot save directly. Please take a screenshot.'):(zh?'保存失败，请截屏保存。':'Could not save. Please take a screenshot.'),false)}
+  // 2) phones: the share sheet (Save to Photos, messages...)
+  try{const blob=await (await fetch(url)).blob(),file=new File([blob],name,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:ckAName(a)});return say(zh?'✓ 已打开分享，可选择“存储图像”':'✓ Share sheet opened: choose Save Image to keep it',true)}}catch(e){if(e&&e.name==='AbortError')return say(zh?'已取消':'Cancelled',false)}
+  // 3) desktop: a normal download (blocked inside preview frames, so tell the player what to do then)
+  try{const l=document.createElement('a');l.href=url;l.download=name;document.body.appendChild(l);l.click();l.remove()}catch(_){}
+  say(window.top!==window?(zh?'预览窗口不允许下载：请右键（或长按）上方图片选择“保存图片”。':'Downloads are blocked in this preview: right-click (or press and hold) the image above and choose Save image.'):(zh?'✓ 已开始下载 '+name:'✓ Download started: '+name),window.top===window)}})}
+// ---- every popup: blurred background + the home screen's rising fireflies ----
+(function(){const m=document.getElementById('modal');if(!m||document.getElementById('ck-mfx'))return;const cv=document.createElement('canvas');cv.id='ck-mfx';m.insertBefore(cv,m.firstChild);
+ const g=cv.getContext('2d');let P=[],w=0,h=0,run=false,last=0;const dpr=Math.min(2,devicePixelRatio||1);
+ const spark=document.createElement('canvas');spark.width=spark.height=32;{const s=spark.getContext('2d'),gr=s.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,240,200,1)');gr.addColorStop(.25,'rgba(255,196,90,.85)');gr.addColorStop(1,'rgba(255,140,40,0)');s.fillStyle=gr;s.fillRect(0,0,32,32)}
+ const mk=init=>({x:Math.random()*w,y:init?Math.random()*h:h+10,r:(Math.random()*2.4+1)*dpr,vy:-(Math.random()*20+10)*dpr,vx:(Math.random()-.5)*10*dpr,ph:Math.random()*6.28,a:Math.random()*.55+.25});
+ const size=()=>{const r=m.getBoundingClientRect(),nw=Math.max(1,Math.round(r.width*dpr*.6)),nh=Math.max(1,Math.round(r.height*dpr*.6));if(nw!==w||nh!==h){w=cv.width=nw;h=cv.height=nh;P=Array.from({length:34},()=>mk(true))}};
+ const step=t=>{if(!m.classList.contains('on')){run=false;return}const dt=Math.min(.05,(t-(last||t))/1000);last=t;size();g.clearRect(0,0,w,h);g.globalCompositeOperation='lighter';
+  for(const p of P){p.y+=p.vy*dt*.6;p.x+=(p.vx+Math.sin(t/900+p.ph)*6*dpr)*dt*.6;if(p.y<-12){Object.assign(p,mk(false))}const fl=.6+.4*Math.sin(t/300+p.ph);g.globalAlpha=p.a*fl;const s=p.r*7;g.drawImage(spark,p.x-s/2,p.y-s/2,s,s)}
+  g.globalAlpha=1;g.globalCompositeOperation='source-over';requestAnimationFrame(step)};
+ new MutationObserver(()=>{if(m.classList.contains('on')&&!run){run=true;last=0;requestAnimationFrame(step)}}).observe(m,{attributes:true,attributeFilter:['class']})})();
+// ---- home commander card: the whole card opens Commander Record; title, 3 medals and progress, symmetric ----
+function ckHomeCard(){const t=document.querySelector('#title .profileteaser');if(!t)return;t.classList.add('ck-hcard');ckA55Init();ckAchStats();const zh=LANG==='zh';
+ let box=document.getElementById('ckhc');if(!box){box=document.createElement('div');box.id='ckhc';t.appendChild(box)}
+ const ids=(S.show||[]).filter(x=>CK_AMAP[x]&&(S.ach||[]).includes(x));const slots=[0,1,2].map(i=>ids[i]?`<img src="${CKM[CK_AMAP[ids[i]].m]}" alt="">`:`<i class="ck-hslot">+</i>`).join('');
+ const n=(S.ach||[]).length,tot=ACHS.length;
+ box.innerHTML=`<div class="ck-hmed">${slots}</div><div class="ck-hprog"><span>${zh?'成就':'Achievements'} <b>${n}/${tot}</b></span><span class="ck-ttl">${ckTitleTxt()}</span></div><div class="ck-bar"><em style="width:${Math.round(n/tot*100)}%"></em></div>`;
+ const old=document.getElementById('ckshow');if(old)old.style.display='none'}
+setTimeout(ckHomeCard,1500);
+// ---- smarter monsters (see the flow-field patch in the build): one-time tip the first time it matters ----
+function ckAITip(){if(S.aitip||L.demo)return;S.aitip=1;try{save()}catch(_){}setTimeout(()=>toast(lvZ('💡 怪物会绕开你的火力，并攻击防守薄弱的地方。请覆盖每一条路线！','💡 Monsters now dodge your firepower and strike where you are weakest. Cover every path!')),2500)}
+
+// soft range ring for a selected tower: semi-transparent, blurred edges, does not hide the map
+function ckRangeRing(x,y,r){const g=c.createRadialGradient(x,y,0,x,y,r*1.07);g.addColorStop(0,'rgba(255,226,150,.035)');g.addColorStop(.82,'rgba(255,226,150,.06)');g.addColorStop(.93,'rgba(255,234,170,.24)');g.addColorStop(.97,'rgba(255,234,170,.14)');g.addColorStop(1,'rgba(255,234,170,0)');
+ c.save();c.fillStyle=g;c.beginPath();c.arc(x,y,r*1.07,0,7);c.fill();c.restore()}
 
 /* ===== Chaos Kingdoms v3.6 · audio engine =====
    Every sound is synthesized with Web Audio at play time (no extra files), through the game's own
@@ -2832,14 +2907,16 @@ const CKS=(()=>{
     for(let i=0;i<2;i++){const fq=bell[(bar*2+i)%bell.length];tone(d,{t:t+i*1.2,type:'sine',f0:fq,dur:1.4,amp:.07});tone(d,{t:t+i*1.2,type:'sine',f0:fq*2.01,dur:.8,amp:.02})}bar++};
    play();const iv=setInterval(play,2400);return ()=>{live=false;clearInterval(iv);try{d.gain.setTargetAtTime(0,au.currentTime,.4)}catch(_){}}},
   // loot: pickup chime brighter and richer with rarity; treasure burst = gold crash + rising sparkle
-  pickup:(tier=0)=>{if(!on())return false;const t=au.currentTime+.005,d=out(.85+.08*tier,.22+.04*tier,0),base=[1047,1175,1319,1397,1568,1760][Math.min(5,tier)];
-   // crisp "ka-ching": a bright click transient, a struck bell that rings out (~0.5 s, longer than a UI click),
-   // and a quick rising sparkle; rarer items add a higher bell and a shimmer
-   noise(d,{t,dur:.035,ft:'highpass',f0:6500,amp:.14});
-   tone(d,{t,type:'triangle',f0:base,dur:.14,amp:.24});
-   tone(d,{t:t+.065,type:'sine',f0:base*1.5,dur:.46,amp:.22});tone(d,{t:t+.065,type:'sine',f0:base*3.01,dur:.22,amp:.05});
-   [2,2.52,3].forEach((m,i)=>tone(d,{t:t+.13+i*.055,type:'sine',f0:base*m,dur:.24,amp:.05}));
-   if(tier>=2)tone(d,{t:t+.12,type:'sine',f0:base*2,dur:.34+.08*tier,amp:.1});if(tier>=4){[1,1.25,1.5,2].forEach((m,i)=>tone(d,{t:t+.18+i*.07,type:'sine',f0:base*m,dur:.5,amp:.08}));noise(d,{t,dur:.6,ft:'highpass',f0:6000,amp:.06})}return true},
+  pickup:(tier=0)=>{if(!on())return false;const t=au.currentTime+.005,d=out(.8+.07*tier,.34+.04*tier,0),base=[880,988,1047,1175,1319,1397][Math.min(5,tier)];
+   // v5.5.1: a warm, round "ting" (~0.8 s): soft sine bell + octave and fifth that bloom and fade, a light
+   // shimmer on top and a gentle low body; no hard click. Rarer items add a sweeter final note.
+   tone(d,{t,type:'sine',f0:base,dur:.62,amp:.2,a:.006});
+   tone(d,{t,type:'triangle',f0:base/2,dur:.32,amp:.05,a:.01});
+   tone(d,{t:t+.07,type:'sine',f0:base*2,dur:.72,amp:.11,a:.01});
+   tone(d,{t:t+.14,type:'sine',f0:base*1.5,dur:.78,amp:.09,a:.02});
+   [3,4,5,6].forEach((m,i)=>tone(d,{t:t+.03+i*.05,type:'sine',f0:base*m*1.002,dur:.34,amp:.03,a:.004}));
+   if(tier>=2)tone(d,{t:t+.22,type:'sine',f0:base*2.5,dur:.62,amp:.08,a:.02});
+   if(tier>=4){[1,1.25,1.5,2].forEach((m,i)=>tone(d,{t:t+.26+i*.08,type:'sine',f0:base*m*2,dur:.6,amp:.06,a:.01}));noise(d,{t:t+.05,dur:.7,ft:'highpass',f0:7000,amp:.035})}return true},
   lootBurst:(best=0)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.5,0);boom(d,t,55,1,.6);noise(d,{t,dur:1.4,ft:'highpass',f0:4000,f1:7000,amp:.18,a:.02});
    for(let i=0;i<14;i++)tone(d,{t:t+.05+i*.045,type:'sine',f0:R(1400,3600),dur:.25,amp:.07});
    if(best>=4){[523,659,784,1047].forEach((f,i)=>tone(d,{t:t+.35+i*.11,type:'sawtooth',f0:f,dur:.6,amp:.05,lp:2600}))}return true},
@@ -3236,7 +3313,7 @@ function awardProgress(st){
  S.stats.streak=(S.stats.streak||0)+1;
  const gained=45+L.i*3+Math.round(st*7.2)+S.dif*10;S.xp+=gained;
  const after=rankAt(S.xp);try{ckLvCheck()}catch(_){}const newA=checkAchievements(),newSecrets=syncSecretMaps();
- const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);try{newA.forEach(ckAExtra);if(newA.length){ckANew(newA);newA.forEach((a,i)=>setTimeout(()=>ckABanner(a),1600+i*2600))}}catch(_){}
+ const achGold=newA.reduce((s,a)=>s+(a.gold||0),0);if(achGold)Economy.grantWallet(achGold);try{newA.forEach(ckAExtra);if(newA.length){ckANew(newA);newA.forEach((a,i)=>setTimeout(()=>ckABanner(a),1600+i*4200))}}catch(_){}
  return {gained,before,after,newA,newSecrets,achGold};
 }
 
@@ -4235,7 +4312,7 @@ const BG={c:null,k:''};function draw(){lay();c.save();c.clearRect(0,0,W,H);{let 
  if(L.shake>0)c.translate((Math.random()-.5)*L.shake*12,(Math.random()-.5)*L.shake*12);
  ground();drawDecals();L.g.forEach(q=>{if(q.ob&&!(TERR.on()&&L.kit))dOb(q)});drawRiver();dPortal();dBase();ckBaseDraw();
  L.g.forEach(q=>{if(q.nb){let p=pp(q.x,q.y);c.fillStyle='rgba(255,40,80,'+(.22+.08*Math.sin(TM*3))+')';c.fillRect(p.x-tw/2,p.y-tw/2,tw,tw);c.strokeStyle='rgba(255,90,110,.45)';c.lineWidth=1;c.strokeRect(p.x-tw/2+.5,p.y-tw/2+.5,tw-1,tw-1)}});
- if(S.mode==='play'){let h=selT||(bm?hov:null);if(h){let k=TW[selT?selT.k:selK],p=pp(h.x,h.y),q=cell(h.x,h.y),ok=!selT&&!q.p&&!q.ob&&!q.sw&&!q.wtr&&!q.sp&&!q.nb&&afford(k.cost),rg=selT?ts(selT).rg:k.rg;c.fillStyle=selT?'#ffd34a44':ok?'#8be05a66':'#ff5b7f66';c.fillRect(p.x-tw/2,p.y-tw/2,tw,tw);c.strokeStyle='#ffffffbb';c.lineWidth=2;if(selT||bm){c.setLineDash([6,5]);c.beginPath();c.arc(p.x,p.y,rg*tw,0,7);c.stroke();c.setLineDash([])}}}
+ if(S.mode==='play'){let h=selT||(bm?hov:null);if(h){let k=TW[selT?selT.k:selK],p=pp(h.x,h.y),q=cell(h.x,h.y),ok=!selT&&!q.p&&!q.ob&&!q.sw&&!q.wtr&&!q.sp&&!q.nb&&afford(k.cost),rg=selT?ts(selT).rg:k.rg;c.fillStyle=selT?'#ffd34a44':ok?'#8be05a66':'#ff5b7f66';c.fillRect(p.x-tw/2,p.y-tw/2,tw,tw);c.strokeStyle='#ffffffbb';c.lineWidth=2;if(selT){try{ckRangeRing(p.x,p.y,rg*tw)}catch(_){}}}}
  ckV3Ground();try{ckPopGround()}catch(_){}L.tr.slice().sort((a,b)=>a.y-b.y).forEach(t=>{if(!ckPopTw(t))dTw(t)});{const _o=L.en.map(e=>[eS(e).y,e]);_o.sort((a,b)=>a[0]-b[0]);for(let i=0;i<_o.length;i++)dEn(_o[i][1])}ckCorpses();L.shots.forEach(dShot);drawFx();dAir();ckLootDraw();
  L.rg.forEach(r=>{c.strokeStyle=r.k;c.globalAlpha=Math.max(0,r.l*2);c.lineWidth=4;c.beginPath();c.arc(r.x,r.y,r.r*tw,0,7);c.stroke();c.globalAlpha=1});
  L.bo.forEach(b=>{c.globalAlpha=Math.min(1,b.l*6);c.shadowBlur=12;c.shadowColor='#c9a0ff';c.lineJoin='round';[['#c9a0ff',6],['#fff',2.5]].forEach(s=>{c.strokeStyle=s[0];c.lineWidth=s[1]*tw/100*1.5;c.beginPath();b.p.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.stroke()});c.shadowBlur=0;c.globalAlpha=1});
@@ -4353,7 +4430,7 @@ function setT(id,v){let e=$(id);v=''+v;if(e.textContent!==v)e.textContent=v}
 function hud(){if(S.mode!=='play')return;try{ckPlaceFloat()}catch(_){}if(typeof updWl==='function')updWl();{let j=JSON.stringify(S.inv||{});if(j!==window.__ij){window.__ij=j;save()}}posTP();{let pl=L.placing;document.querySelectorAll('#inv .iv').forEach(b=>b.classList.toggle('act',b.dataset.use===pl));document.querySelectorAll('[data-cdid]').forEach(e=>{let id=e.dataset.cdid,r=L.cdn[id]||0;e.style.setProperty('--p',r>0?r/CDT[id]:0);let t=e.querySelector('.cdt'),v=r>0?Math.ceil(r):'';if(t&&t.textContent!=v)t.textContent=v})}setT('coin',ckCoinFmt(Economy.battleBalance()));setT('dia',(d=>d>=1e4?(Math.floor(d/100)/10)+'K':d.toLocaleString())(S.diamonds||0));{const f=$('ckfr');if(f){const v=(S.frag|0)?'<img src="'+CKA.frag+'" alt="">'+S.frag+'/4':'';if(f._v!==v){f._v=v;f.innerHTML=v}}}setT('lives',L.lives);$('lvw').classList.toggle('low',L.lives<=Math.max(3,L.mxl*.25));{let wb=$('wbar');if(wb)wb.style.width=(L.waves?Math.min(100,L.wave/L.waves*100):0)+'%'}setT('wv',L.wave+'/'+L.waves);{let q=L.nq?L.nq.q.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{}):null;L.nt=q?TL('Next: ')+Object.entries(q).map(([k,v])=>v+' '+TL(k)).join(', '):''}let f=L.wave>=L.waves;setCd(f?null:Math.ceil(L.cd),f?TL('Final'):'');$('skip').style.visibility=f?'hidden':'visible';
  let b=[];if(L.bf.ovc>0)b.push(TL('Speed {0}s',Math.ceil(L.bf.ovc)));if(L.bf.idol>0)b.push(TL('Gold ×2 {0}s',Math.ceil(L.bf.idol)));if(L.bf.horn>0)b.push(TL('Horn {0}s',Math.ceil(L.bf.horn)));if(L.bf.shield>0)b.push(TL('Shield {0}s',Math.ceil(L.bf.shield)));if(L.bf.aid>0)b.push(TL('Aid {0}s',Math.ceil(L.bf.aid)));setT('nxt',b.length?b.join(' · '):'');$('nxt').style.color=b.length?'var(--mint)':'';
  document.querySelectorAll('[data-cost]').forEach(x=>x.classList.toggle('no',!afford(+x.dataset.cost)))}
-function refreshProfileTeaser(){progressStats();let ri=rankAt(S.xp),next=RANKS[ri+1];$('ptitle').textContent=rankTitle(ri)+' · Lv.'+(ri+1);$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'));try{let e=document.getElementById('ckshow');if(!e){e=document.createElement('div');e.id='ckshow';$('pxp').after(e)}e.innerHTML=ckShowcaseHtml();ckDot()}catch(_){}}
+function refreshProfileTeaser(){progressStats();let ri=rankAt(S.xp),next=RANKS[ri+1];$('ptitle').textContent=rankTitle(ri)+' · Lv.'+(ri+1);$('pxp').textContent=S.xp+' XP'+(next?' / '+next.xp+' XP':' · '+TL('Max rank'));try{let e=document.getElementById('ckshow');if(!e){e=document.createElement('div');e.id='ckshow';$('pxp').after(e)}e.innerHTML=ckShowcaseHtml();ckDot();ckHomeCard()}catch(_){}}
 /*HIST_BEGIN*/
 const HK='ck25_history',HFN='chaos_kingdoms_history.json';
 let HIST={v:1,list:[],auto:false},HFH=null,histClr=0;
@@ -4401,7 +4478,7 @@ addEventListener('pagehide',()=>{try{if(S.mode==='play')recordSession('quit',tru
 
 /*XFER_BEGIN*/
 const XT=(e,z)=>LANG==='zh'?z:e;
-function xferObj(){progressStats();return{game:'Chaos Kingdoms',kind:'progress',v:1,t:new Date().toISOString(),n:S.name,own:S.own,p:S.prog,d:S.dif,g:S.gold,u:S.unl,maps:S.maps,inv:S.inv||{},xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},ru:S.rune|0,s5:1,md:S.medals|0,ai:S.autoIt||{},ver:'5.5',lr:S.lvr==null?null:S.lvr}}
+function xferObj(){progressStats();return{game:'Chaos Kingdoms',kind:'progress',v:1,t:new Date().toISOString(),n:S.name,own:S.own,p:S.prog,d:S.dif,g:S.gold,u:S.unl,maps:S.maps,inv:S.inv||{},xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},ru:S.rune|0,s5:1,md:S.medals|0,ai:S.autoIt||{},ver:'5.5.1',lr:S.lvr==null?null:S.lvr}}
 function xferEncode(){let j=JSON.stringify(xferObj()),b='';try{let u=new TextEncoder().encode(j);for(let i=0;i<u.length;i++)b+=String.fromCharCode(u[i]);return 'CK1:'+btoa(b)}catch(e){return j}}
 function xferParse(t){t=String(t||'').trim();if(!t)throw 0;let j;if(t.startsWith('CK1:')){let b=atob(t.slice(4).replace(/\s+/g,'')),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);j=JSON.parse(new TextDecoder().decode(u))}else j=JSON.parse(t);
  if(!j||j.game!=='Chaos Kingdoms'||j.kind!=='progress'||typeof j.p!=='object'||j.p===null)throw 0;return j}
@@ -4488,7 +4565,7 @@ function buildMap(){try{let n=0;while(n<99&&S.prog[n])n++;ckPrefetch('L'+n)}catc
    hint=TL('Complete the previous region boss to unlock this map.');
   }
  }else{
-  hint=ri===12?TL('Four unique boss battles on a dedicated special map.'):TL('Unlocks all 8 levels in this map. Levels then open one by one as you win.');
+  hint=ri===12?TL('Four unique boss battles on a dedicated special map.'):'';
  }
  const bg=SPRD['m_'+r.m]||SPRD.m_sky;
  $('regs').innerHTML=`<div class="world-shell">
@@ -4496,7 +4573,7 @@ function buildMap(){try{let n=0;while(n<99&&S.prog[n])n++;ckPrefetch('L'+n)}catc
    <div class="world-stars"></div><div class="world-title">${TL('World atlas')}</div><div class="world-grid">${pins}</div>
   </div>
   <div class="world-legend"><span><i></i>${TL('Unlocked')}</span><span><i class="wl-lock"></i>${TL('Locked')}</span></div>
-  <section class="realm-detail">
+  <section class="realm-detail" style="--rd-art:url('${bg}')">
    <div class="realm-detail-head"><span class="rd-icon rd-art" style="background-image:url('${bg}')"></span><b class="rd-name">${title}</b><span class="rd-progress">${unlocked?`${cleared}/${r.count||8} · ★ ${stars}/${(r.count||8)*5}`:(r.secret?TL('Hidden realm'):TL('Locked'))}</span></div>
    ${ri===12?`<div class="throne-banner"><div class="throne-kicker">${TL('✦ The Final Gauntlet ✦')}</div><strong>${TL('The Calamities Descend · The Final Battle')}</strong><p>${TL('A standalone finale map · face four calamity bosses in a row')}</p><div class="throne-bosses"><span>🌪️ ${BOSS[13]}</span><span>🐉 ${BOSS[14]}</span><span>☄️ ${BOSS[15]}</span><span>👹 ${BOSS[16]}</span></div></div>`:''}
    <div class="realm-hint">${boss}</div>
@@ -4566,7 +4643,7 @@ $('nm').oninput=e=>{S.name=e.target.value;try{localStorage.setItem('ck25_name',S
 const GOLD_CODES={};
 $('play').onclick=()=>{S.name=$('nm').value.trim()||'Commander';{let k0=normalizeCheatCode(S.name),special=Object.prototype.hasOwnProperty.call(GOLD_CODES,k0);if(!special){if(S.own&&S.own!==S.name){S.gold=3000;S.diamonds=0;S.frag=0;S.rune=0;S.bonusStars=0;S.chests=[0,0,0,0,0,0];S.medals=0;S.fx={};S.cc={};S.mb={};S.cu={a:0,d:0,b:0,c:0};S.ss=0;S.prog={};S.unl={};S.maps={};S.xp=0;S.inv={};S.ach=[];S.stats={wins:0,kills:0,built:0,upgrades:0,perfect:0,hardWins:0,bossWins:0,streak:0};selectedRealm=0}S.own=S.name}}S.cc=S.cc||{};{let k=normalizeCheatCode(S.name);if(Object.prototype.hasOwnProperty.call(GOLD_CODES,k)&&!S.cc[k]){S.cc[k]=1;Economy.grantWallet(GOLD_CODES[k]);setTimeout(()=>toast('🪙 +'+GOLD_CODES[k].toLocaleString()),300)}}updWl();save();if(!mOff)music(true);$('mt').textContent=mapT();toMap()};
 $('back').onclick=()=>{show('title');$('chip').hidden=!cheat()};
-const pauseM=()=>{modal(`<div class="pause-title"><span class="pause-emblem">✦</span><h2 class="f">${TL('Paused')}</h2><p>${L.reg.n}　·　${TL('Level {0}',L.i+1)}</p></div><button class="bt" id="m1">▶ ${TL('Resume')}</button><button class="bt pay" id="picklevel">✦ ${TL('Select level')}</button><button class="bt g ck-invp" data-ckinv="pause">🎒 ${lvZ('背包','Inventory')}</button><div class="pause-secondary"><button class="bt g" id="m3">↻ ${TL('Restart level')}</button><button class="bt g" data-cksettings="pause">⚙ ${lvZ('设置','Settings')}</button></div><button class="bt r" id="m2">⌂ ${TL('Quit to map')}</button>`);if(au)au.suspend().catch(()=>{});$('m1').onclick=()=>{closeM();resumeGameAudio()};$('m2').onclick=()=>{closeM();resumeGameAudio();toMap()};$('m3').onclick=()=>{closeM();resumeGameAudio();start(L.i)};$('picklevel').onclick=pauseLevelPicker;reM=pauseM};$('menu').onclick=()=>{if(S.mode==='play')ckSettingsOpen('hud')};
+const pauseM=()=>{modal(`<div class="pause-title"><span class="pause-emblem">✦</span><h2 class="f">${TL('Paused')}</h2><p>${L.reg.n}　·　${TL('Level {0}',L.i+1)}</p></div><button class="bt" id="m1">▶ ${TL('Continue Game')}</button><button class="bt pay" id="picklevel">✦ ${TL('Select level')}</button><button class="bt g ck-invp" data-ckinv="pause">🎒 ${lvZ('背包','Inventory')}</button><div class="pause-secondary"><button class="bt g" id="m3">↻ ${TL('Restart level')}</button><button class="bt g" data-cksettings="pause">⚙ ${lvZ('设置','Settings')}</button></div><button class="bt r" id="m2">⌂ ${TL('Quit to map')}</button>`);if(au)au.suspend().catch(()=>{});$('m1').onclick=()=>{closeM();resumeGameAudio()};$('m2').onclick=()=>{closeM();resumeGameAudio();toMap()};$('m3').onclick=()=>{closeM();resumeGameAudio();start(L.i)};$('picklevel').onclick=pauseLevelPicker;reM=pauseM};$('menu').onclick=()=>{if(S.mode==='play')ckSettingsOpen('hud')};
 /* ---------- arcade action score (NES-style pulse, triangle bass, noise drums) ---------- */
 const CK_SFXQ={build:.3,upgrade:.35,sell:.35,coin:.3,bank:.35,perfect:.5,wave:.55,arrow:.6,cannon:.7,ice:.6,zap:.6,toxin:.6,leak:.6};document.querySelectorAll('img[data-cka]').forEach(e=>{e.src=CKA[e.dataset.cka]});let sg,ag,am=null,an='',musV=1,sfxV=.8,ambV=.5,masV=1,au,mg,mt,mon=false,mb,dl,nb,mk='',mst=0,nxt=0,mOff=0,PW={};
 const SB={},AMB={menu:'wind',r0:'wind',r1:'drone',r2:'wind',r3:'drone',r4:'rain',r5:'rain',r6:'drone',r7:'drone',boss:'drone'};
@@ -6604,6 +6681,67 @@ html body #title .tcard.ck-home .ck-install .ckico{width:17px;height:17px}
 /* statistics */
 .ck-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ck-stats>div{padding:7px 9px;border-radius:10px;background:linear-gradient(180deg,#1b2643,#0e1528);border:1px solid #3a4870;text-align:left}
 .ck-stats small{display:block;font-size:10.5px;font-weight:400!important;color:#9fb0d6}.ck-stats b{display:block;font-size:14px;color:#fff1c7}
+/* ================= v5.5.1 ================= */
+/* popups: deeper blur + rising fireflies behind every card */
+#modal{backdrop-filter:blur(9px) saturate(1.15) brightness(.85)!important;-webkit-backdrop-filter:blur(9px) saturate(1.15) brightness(.85)!important}
+#ck-mfx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;mix-blend-mode:screen}
+#modal>#mbox{position:relative;z-index:1}
+/* one refined progress bar everywhere: recessed track, glossy gold fill, highlight and slow light sweep */
+.lvc-x,.vrk-x,.ck-bar,.ck-am u,.ck-adp u,.mr-t .vrk-x{position:relative;height:9px!important;border-radius:999px!important;overflow:hidden!important;background:linear-gradient(180deg,#03060d,#141c33)!important;box-shadow:inset 0 2px 3px #000e,inset 0 -1px 0 #ffffff14,0 1px 0 #ffffff12!important;border:1px solid #00000099!important}
+.lvc-x i,.vrk-x i,.ck-bar em,.ck-am u em,.ck-adp u em{position:relative;display:block;height:100%!important;border-radius:999px;background:linear-gradient(180deg,#fff6c8 0%,#ffd451 38%,#e8a227 62%,#b9700d 100%)!important;box-shadow:0 0 8px #ffc44a99,inset 0 1px 0 #fffbe6,inset 0 -2px 2px #8a4f0466!important;overflow:hidden}
+.lvc-x i::after,.vrk-x i::after,.ck-bar em::after,.ck-adp u em::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-45%;background:linear-gradient(90deg,#fff0,#fffc,#fff0);opacity:.55;animation:ckSweep 2.8s ease-in-out infinite}
+@keyframes ckSweep{0%{left:-45%}60%,100%{left:110%}}
+.ck-am u{height:5px!important}.ck-am u em{box-shadow:0 0 5px #ffc44a77!important}
+.ck-am:not(.ok) u em{background:linear-gradient(180deg,#e9eefc,#9aa8cc 55%,#6a7799)!important;box-shadow:none!important}
+/* Commander Record ring: track groove, glow and depth */
+.ring svg circle:first-child{stroke:#0a1020!important;filter:drop-shadow(0 1px 0 #ffffff1a)}
+.ring svg{filter:drop-shadow(0 0 8px #ffc44a66) drop-shadow(0 3px 4px #000a)}
+.ring{border-radius:50%;box-shadow:inset 0 3px 8px #000c,0 0 0 1px #e9b95a44}
+/* pause menu: rank title in the game font */
+.lvc-t>b,.lvc .lvc-t b{font:900 16px/1.2 CKSans,sans-serif!important;letter-spacing:.02em!important;text-transform:none!important}
+/* level box: exactly the settings button height */
+html body #app #hud .top > .lv.lv{height:var(--ck-menu-h,30px)!important;box-sizing:border-box}
+/* realm panel: its own blurred map art + glossy level gems */
+.realm-detail{position:relative;overflow:hidden;isolation:isolate}
+.realm-detail::before{content:'';position:absolute;inset:-20px;z-index:-2;background:var(--rd-art) center/cover;filter:blur(14px) saturate(1.25) brightness(.62);transform:scale(1.1)}
+.realm-detail::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#0b142ab3,#0a1124e6 70%);box-shadow:inset 0 0 0 1px #e9b95a55,inset 0 1px 0 #fff2c433}
+.realm-levels{gap:7px!important}
+.realm-levels .nd{position:relative;border-radius:14px!important;border:1.5px solid #c99a3e!important;background:radial-gradient(120% 90% at 50% 0%,#3b4f86 0%,#1b2648 55%,#0e1530 100%)!important;box-shadow:inset 0 1px 0 #ffffff40,inset 0 -6px 10px #0009,0 3px 0 #05080f,0 6px 12px #000a!important;overflow:hidden;transition:transform .12s}
+.realm-levels .nd::before{content:'';position:absolute;left:8%;right:8%;top:3px;height:38%;border-radius:10px 10px 50% 50%;background:linear-gradient(180deg,#ffffff55,#ffffff00);pointer-events:none}
+.realm-levels .nd.done{background:radial-gradient(120% 90% at 50% 0%,#3fae84 0%,#1d6b52 55%,#0f3a2e 100%)!important;border-color:#7ff0bf!important}
+.realm-levels .nd.open:not(.done){background:radial-gradient(120% 90% at 50% 0%,#fff1b8 0%,#e6b44a 50%,#9c6514 100%)!important;border-color:#fff0bd!important;box-shadow:inset 0 1px 0 #fff9,inset 0 -6px 10px #7a4a0a88,0 3px 0 #5a3508,0 0 16px #ffd36a88!important;animation:ckGemPulse 2.2s ease-in-out infinite}
+.realm-levels .nd.open:not(.done) b,.realm-levels .nd.open:not(.done) i{color:#3a2505!important}
+.realm-levels .nd.lk{filter:saturate(.6) brightness(.85)}
+.realm-levels .nd.boss{border-color:#ff9a7a!important}
+.realm-levels .nd b{font-weight:900!important;text-shadow:0 1px 2px #000a}
+.realm-levels .nd:active{transform:translateY(2px) scale(.97)}
+@keyframes ckGemPulse{50%{box-shadow:inset 0 1px 0 #fff9,inset 0 -6px 10px #7a4a0a88,0 3px 0 #5a3508,0 0 24px #ffd36acc}}
+/* home commander card: the whole card is the button; three medals, symmetric, prominent */
+#title .profileteaser.ck-hcard{position:relative;display:grid!important;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;column-gap:10px;row-gap:6px;align-items:center;padding:10px 12px!important;cursor:pointer}
+#title .profileteaser.ck-hcard>div:first-child{grid-column:1;grid-row:1}
+#title .profileteaser.ck-hcard #profilebtn{display:none!important}
+#title .profileteaser.ck-hcard::after{content:'›';position:absolute;right:10px;top:10px;font:900 20px/1 CKSans,sans-serif;color:#ffd24a;text-shadow:0 0 8px #ffb62e}
+#title .profileteaser.ck-hcard.ck-dot::before{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:#ff4a5e;box-shadow:0 0 8px #ff4a5e;animation:ckWarn 1.2s infinite}
+#ckhc{grid-column:1/-1;grid-row:2/4;display:grid;grid-template-columns:1fr;row-gap:6px}
+.ck-hmed{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;justify-items:center}
+.ck-hmed img,.ck-hmed .ck-hslot{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 0 8px #ffd36a88) drop-shadow(0 3px 3px #000b)}
+.ck-hslot{display:grid;place-items:center;border-radius:50%;border:2px dashed #e9b95a55;color:#e9b95a88;font:900 20px/1 CKSans,sans-serif;font-style:normal;filter:none!important;box-sizing:border-box}
+.ck-hprog{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#cfd6ea;font-weight:400}.ck-hprog b{color:#ffe08a}
+.ck-ttl{font:800 10.5px/1 CKSans,sans-serif;color:#ffd24a;letter-spacing:.06em;padding:2px 8px;border-radius:999px;border:1px solid #ffd24a66;background:#2a1d0a99}
+/* difficulty: refined card, glowing track and a pulse on each detent */
+#dif.difbox{border-radius:18px!important;background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--ac,#ffd36a) 22%,#1b2648) 0%,#111a33 60%,#0a1022 100%)!important;box-shadow:inset 0 1px 0 #ffffff33,inset 0 0 0 1px color-mix(in srgb,var(--ac,#ffd36a) 45%,#0000),0 8px 22px #000b,0 0 22px color-mix(in srgb,var(--ac,#ffd36a) 22%,#0000)!important;transition:background .3s,box-shadow .3s}
+#dif #difrange::-webkit-slider-runnable-track{box-shadow:inset 0 2px 4px #000e,0 1px 0 #ffffff22,0 0 14px color-mix(in srgb,var(--ac) 45%,transparent)!important}
+#dif #difrange::-webkit-slider-thumb{box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 35%,transparent),0 0 18px var(--ac),0 3px 6px #000c!important}
+#dif.ck-dpulse{animation:ckDPulse .35s ease-out}
+@keyframes ckDPulse{0%{transform:scale(1)}40%{transform:scale(1.015)}100%{transform:scale(1)}}
+#difname{text-shadow:0 0 12px color-mix(in srgb,var(--ac,#ffd36a) 70%,transparent)}
+/* medal card preview */
+.ck-card{text-align:center}.ck-cardimg{width:min(78%,300px);border-radius:12px;box-shadow:0 8px 20px #000c,0 0 0 1px #e9b95a66;margin:2px auto 8px;display:block}
+.ck-cardst{font-size:12px!important;color:#c9d4ec!important;font-weight:400!important;min-height:2.6em}.ck-cardst.ok{color:#8dffbb!important}.ck-cardst.bad{color:#ffb0a0!important}
+.ck-abn{pointer-events:auto!important;cursor:pointer}
+/* typography: remaining explanatory text found by the scan -> regular weight */
+.pfsynergy small,.pfsynergy div small,.ck-rune small,.ck-xch small,#shop .shh small,.ck-tips li,.ck-tips li span,#mbox li,#mbox li span,.vt .vs,.ck-adr,.ck-next span,.vrk-t span,.vrk-t small,.lvc-t span,.pfhero small,.realm-hint,.ck-chnote,.ck-ivn small,.ck-chinfo small,.cu-note,.cu-desc,.ck-set .ck-ver,.ck-hprog span{font-weight:400!important}
+.ck-next span b,.ck-adr b,#mbox li b,.vs b{font-weight:800!important}
 </style>
 <script id="ck-fixes">
 /* runtime fixes (source-level fixes live in build.py) */
@@ -6652,7 +6790,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v5.5 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v5.5.1 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}

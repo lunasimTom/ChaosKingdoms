@@ -635,3 +635,64 @@ html body #title .tcard.ck-home .ck-install .ckico{width:17px;height:17px}
 /* statistics */
 .ck-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ck-stats>div{padding:7px 9px;border-radius:10px;background:linear-gradient(180deg,#1b2643,#0e1528);border:1px solid #3a4870;text-align:left}
 .ck-stats small{display:block;font-size:10.5px;font-weight:400!important;color:#9fb0d6}.ck-stats b{display:block;font-size:14px;color:#fff1c7}
+/* ================= v5.5.1 ================= */
+/* popups: deeper blur + rising fireflies behind every card */
+#modal{backdrop-filter:blur(9px) saturate(1.15) brightness(.85)!important;-webkit-backdrop-filter:blur(9px) saturate(1.15) brightness(.85)!important}
+#ck-mfx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;mix-blend-mode:screen}
+#modal>#mbox{position:relative;z-index:1}
+/* one refined progress bar everywhere: recessed track, glossy gold fill, highlight and slow light sweep */
+.lvc-x,.vrk-x,.ck-bar,.ck-am u,.ck-adp u,.mr-t .vrk-x{position:relative;height:9px!important;border-radius:999px!important;overflow:hidden!important;background:linear-gradient(180deg,#03060d,#141c33)!important;box-shadow:inset 0 2px 3px #000e,inset 0 -1px 0 #ffffff14,0 1px 0 #ffffff12!important;border:1px solid #00000099!important}
+.lvc-x i,.vrk-x i,.ck-bar em,.ck-am u em,.ck-adp u em{position:relative;display:block;height:100%!important;border-radius:999px;background:linear-gradient(180deg,#fff6c8 0%,#ffd451 38%,#e8a227 62%,#b9700d 100%)!important;box-shadow:0 0 8px #ffc44a99,inset 0 1px 0 #fffbe6,inset 0 -2px 2px #8a4f0466!important;overflow:hidden}
+.lvc-x i::after,.vrk-x i::after,.ck-bar em::after,.ck-adp u em::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-45%;background:linear-gradient(90deg,#fff0,#fffc,#fff0);opacity:.55;animation:ckSweep 2.8s ease-in-out infinite}
+@keyframes ckSweep{0%{left:-45%}60%,100%{left:110%}}
+.ck-am u{height:5px!important}.ck-am u em{box-shadow:0 0 5px #ffc44a77!important}
+.ck-am:not(.ok) u em{background:linear-gradient(180deg,#e9eefc,#9aa8cc 55%,#6a7799)!important;box-shadow:none!important}
+/* Commander Record ring: track groove, glow and depth */
+.ring svg circle:first-child{stroke:#0a1020!important;filter:drop-shadow(0 1px 0 #ffffff1a)}
+.ring svg{filter:drop-shadow(0 0 8px #ffc44a66) drop-shadow(0 3px 4px #000a)}
+.ring{border-radius:50%;box-shadow:inset 0 3px 8px #000c,0 0 0 1px #e9b95a44}
+/* pause menu: rank title in the game font */
+.lvc-t>b,.lvc .lvc-t b{font:900 16px/1.2 CKSans,sans-serif!important;letter-spacing:.02em!important;text-transform:none!important}
+/* level box: exactly the settings button height */
+html body #app #hud .top > .lv.lv{height:var(--ck-menu-h,30px)!important;box-sizing:border-box}
+/* realm panel: its own blurred map art + glossy level gems */
+.realm-detail{position:relative;overflow:hidden;isolation:isolate}
+.realm-detail::before{content:'';position:absolute;inset:-20px;z-index:-2;background:var(--rd-art) center/cover;filter:blur(14px) saturate(1.25) brightness(.62);transform:scale(1.1)}
+.realm-detail::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#0b142ab3,#0a1124e6 70%);box-shadow:inset 0 0 0 1px #e9b95a55,inset 0 1px 0 #fff2c433}
+.realm-levels{gap:7px!important}
+.realm-levels .nd{position:relative;border-radius:14px!important;border:1.5px solid #c99a3e!important;background:radial-gradient(120% 90% at 50% 0%,#3b4f86 0%,#1b2648 55%,#0e1530 100%)!important;box-shadow:inset 0 1px 0 #ffffff40,inset 0 -6px 10px #0009,0 3px 0 #05080f,0 6px 12px #000a!important;overflow:hidden;transition:transform .12s}
+.realm-levels .nd::before{content:'';position:absolute;left:8%;right:8%;top:3px;height:38%;border-radius:10px 10px 50% 50%;background:linear-gradient(180deg,#ffffff55,#ffffff00);pointer-events:none}
+.realm-levels .nd.done{background:radial-gradient(120% 90% at 50% 0%,#3fae84 0%,#1d6b52 55%,#0f3a2e 100%)!important;border-color:#7ff0bf!important}
+.realm-levels .nd.open:not(.done){background:radial-gradient(120% 90% at 50% 0%,#fff1b8 0%,#e6b44a 50%,#9c6514 100%)!important;border-color:#fff0bd!important;box-shadow:inset 0 1px 0 #fff9,inset 0 -6px 10px #7a4a0a88,0 3px 0 #5a3508,0 0 16px #ffd36a88!important;animation:ckGemPulse 2.2s ease-in-out infinite}
+.realm-levels .nd.open:not(.done) b,.realm-levels .nd.open:not(.done) i{color:#3a2505!important}
+.realm-levels .nd.lk{filter:saturate(.6) brightness(.85)}
+.realm-levels .nd.boss{border-color:#ff9a7a!important}
+.realm-levels .nd b{font-weight:900!important;text-shadow:0 1px 2px #000a}
+.realm-levels .nd:active{transform:translateY(2px) scale(.97)}
+@keyframes ckGemPulse{50%{box-shadow:inset 0 1px 0 #fff9,inset 0 -6px 10px #7a4a0a88,0 3px 0 #5a3508,0 0 24px #ffd36acc}}
+/* home commander card: the whole card is the button; three medals, symmetric, prominent */
+#title .profileteaser.ck-hcard{position:relative;display:grid!important;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;column-gap:10px;row-gap:6px;align-items:center;padding:10px 12px!important;cursor:pointer}
+#title .profileteaser.ck-hcard>div:first-child{grid-column:1;grid-row:1}
+#title .profileteaser.ck-hcard #profilebtn{display:none!important}
+#title .profileteaser.ck-hcard::after{content:'›';position:absolute;right:10px;top:10px;font:900 20px/1 CKSans,sans-serif;color:#ffd24a;text-shadow:0 0 8px #ffb62e}
+#title .profileteaser.ck-hcard.ck-dot::before{content:'';position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:#ff4a5e;box-shadow:0 0 8px #ff4a5e;animation:ckWarn 1.2s infinite}
+#ckhc{grid-column:1/-1;grid-row:2/4;display:grid;grid-template-columns:1fr;row-gap:6px}
+.ck-hmed{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;justify-items:center}
+.ck-hmed img,.ck-hmed .ck-hslot{width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 0 8px #ffd36a88) drop-shadow(0 3px 3px #000b)}
+.ck-hslot{display:grid;place-items:center;border-radius:50%;border:2px dashed #e9b95a55;color:#e9b95a88;font:900 20px/1 CKSans,sans-serif;font-style:normal;filter:none!important;box-sizing:border-box}
+.ck-hprog{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#cfd6ea;font-weight:400}.ck-hprog b{color:#ffe08a}
+.ck-ttl{font:800 10.5px/1 CKSans,sans-serif;color:#ffd24a;letter-spacing:.06em;padding:2px 8px;border-radius:999px;border:1px solid #ffd24a66;background:#2a1d0a99}
+/* difficulty: refined card, glowing track and a pulse on each detent */
+#dif.difbox{border-radius:18px!important;background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--ac,#ffd36a) 22%,#1b2648) 0%,#111a33 60%,#0a1022 100%)!important;box-shadow:inset 0 1px 0 #ffffff33,inset 0 0 0 1px color-mix(in srgb,var(--ac,#ffd36a) 45%,#0000),0 8px 22px #000b,0 0 22px color-mix(in srgb,var(--ac,#ffd36a) 22%,#0000)!important;transition:background .3s,box-shadow .3s}
+#dif #difrange::-webkit-slider-runnable-track{box-shadow:inset 0 2px 4px #000e,0 1px 0 #ffffff22,0 0 14px color-mix(in srgb,var(--ac) 45%,transparent)!important}
+#dif #difrange::-webkit-slider-thumb{box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 35%,transparent),0 0 18px var(--ac),0 3px 6px #000c!important}
+#dif.ck-dpulse{animation:ckDPulse .35s ease-out}
+@keyframes ckDPulse{0%{transform:scale(1)}40%{transform:scale(1.015)}100%{transform:scale(1)}}
+#difname{text-shadow:0 0 12px color-mix(in srgb,var(--ac,#ffd36a) 70%,transparent)}
+/* medal card preview */
+.ck-card{text-align:center}.ck-cardimg{width:min(78%,300px);border-radius:12px;box-shadow:0 8px 20px #000c,0 0 0 1px #e9b95a66;margin:2px auto 8px;display:block}
+.ck-cardst{font-size:12px!important;color:#c9d4ec!important;font-weight:400!important;min-height:2.6em}.ck-cardst.ok{color:#8dffbb!important}.ck-cardst.bad{color:#ffb0a0!important}
+.ck-abn{pointer-events:auto!important;cursor:pointer}
+/* typography: remaining explanatory text found by the scan -> regular weight */
+.pfsynergy small,.pfsynergy div small,.ck-rune small,.ck-xch small,#shop .shh small,.ck-tips li,.ck-tips li span,#mbox li,#mbox li span,.vt .vs,.ck-adr,.ck-next span,.vrk-t span,.vrk-t small,.lvc-t span,.pfhero small,.realm-hint,.ck-chnote,.ck-ivn small,.ck-chinfo small,.cu-note,.cu-desc,.ck-set .ck-ver,.ck-hprog span{font-weight:400!important}
+.ck-next span b,.ck-adr b,#mbox li b,.vs b{font-weight:800!important}

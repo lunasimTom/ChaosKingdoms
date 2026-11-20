@@ -1,7 +1,10 @@
 import os,sys
 os.chdir(sys.argv[1])
 S={
-'android/content/Context.java':'package android.content; public abstract class Context { public static final String VIBRATOR_SERVICE="vibrator"; public Object getSystemService(String n){return null;} }',
+'android/content/Context.java':'package android.content; public abstract class Context { public static final String VIBRATOR_SERVICE="vibrator"; public Object getSystemService(String n){return null;} public ContentResolver getContentResolver(){return null;} }',
+'android/content/ContentValues.java':'package android.content; public final class ContentValues { public void put(String k, String v){} }',
+'android/content/ContentResolver.java':'package android.content; public abstract class ContentResolver { public final android.net.Uri insert(android.net.Uri u, ContentValues v){return null;} public final java.io.OutputStream openOutputStream(android.net.Uri u) throws java.io.FileNotFoundException {return null;} }',
+'android/util/Base64.java':'package android.util; public class Base64 { public static final int DEFAULT=0; public static byte[] decode(String s, int f){return null;} }',
 'android/os/Vibrator.java':'package android.os; public abstract class Vibrator { public boolean hasVibrator(){return false;} public void vibrate(long ms){} }',
 'android/app/Activity.java':'''package android.app; import android.content.*; import android.os.Bundle; import android.view.*;
 public class Activity extends Context { protected void onCreate(Bundle b){} public Window getWindow(){return null;} public void setContentView(View v){}

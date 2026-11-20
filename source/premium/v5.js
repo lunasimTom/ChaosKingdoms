@@ -33,7 +33,7 @@ function ckMapLabel(){if(typeof L==='undefined'||!L||L.demo)return;const hud=doc
  e.innerHTML=(L.boss?`<b class="bo">👑 ${zh?'首领':'BOSS'}</b><i>·</i>`:'')+`<span>${TL(R[L.i/8|0].n)}</span>`;e.classList.toggle('boss',!!L.boss)}
 function ckPlaceFloat(){const rail=document.getElementById('rail'),top=document.querySelector('#hud .top'),tip=document.querySelector('.ck-tipfloat'),m=document.getElementById('ckmapn');
  const sh=document.getElementById('shop'),open=(sh&&!sh.hidden)||mOpen||(typeof tab!=='undefined'&&tab==='s');
- if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';try{const ap=document.getElementById('app');ap.style.setProperty('--ck-toast-top',(top.offsetTop+top.offsetHeight+6+m.offsetHeight+6)+'px')}catch(_){}m.style.display=(sh&&!sh.hidden)?'none':''}}
+ if(tip&&rail){tip.style.bottom=(rail.offsetHeight+6)+'px';tip.classList.toggle('ck-hide',!!open)}if(m&&top){m.style.top=(top.offsetTop+top.offsetHeight+6)+'px';try{const mb=document.getElementById('menu');if(mb)document.getElementById('app').style.setProperty('--ck-menu-h',mb.offsetHeight+'px')}catch(_){}try{const ap=document.getElementById('app');ap.style.setProperty('--ck-toast-top',(top.offsetTop+top.offsetHeight+6+m.offsetHeight+6)+'px')}catch(_){}m.style.display=(sh&&!sh.hidden)?'none':''}}
 // ---- V5 monster AI: situational, threat-based targeting ----
 // Awareness grows a little from level 1 (85%) to level 20 (100%). Near the base (last 25% of the
 // route or within 3 tiles) a monster commits to the base. Otherwise it attacks the most threatening
@@ -42,15 +42,21 @@ function ckPlaceFloat(){const rail=document.getElementById('rail'),top=document.
 // flyers and bosses keep their own behaviour. A chase that drags on or loses sight ends (leash).
 const CK_AW={grunt:2.5,runner:1.0,brute:3.5,boss:3.2};
 function ckAware(e){const ramp=.85+.15*Math.min(1,(L.i||0)/19);return (CK_AW[e.t]||2)*ramp*(e.el?1.15:1)}
-function ckCommit(e){if(!L.df)return false;const C=L.cols,cx=Math.max(0,Math.min(C-1,Math.round(e.x))),cy=Math.max(0,Math.min(L.rows-1,Math.round(e.y))),df=L.df[cy*C+cx];
+// v5.5.1: how much tower fire lies ahead on this monster's route (sum of the danger map over the next 30 steps)
+function ckRouteDanger(e){if(!L._dz)return 0;if(e._rdT>TM)return e._rd||0;e._rdT=TM+.6;const C=L.cols;let x=Math.max(0,Math.min(C-1,Math.round(e.x))),y=Math.max(0,Math.min(L.rows-1,Math.round(e.y))),s=0;
+ for(let k=0;k<30;k++){s+=L._dz[y*C+x]||0;if(L.goals.some(g=>g[0]===x&&g[1]===y))break;const n=nextStep(x,y);if(!n)break;x=n[0];y=n[1]}e._rd=s;return s}
+// breach threshold per type: brutes push through towers soonest, runners only when the way is truly blocked by fire
+const CK_BREACH={brute:3,grunt:4.5,runner:7};
+function ckBreach(e){return ckRouteDanger(e)>=(CK_BREACH[e.t]||4.5)*(.85+.15*Math.min(1,(L.i||0)/19))}
+function ckCommit(e){if(ckBreach(e))return false;if(!L.df)return false;const C=L.cols,cx=Math.max(0,Math.min(C-1,Math.round(e.x))),cy=Math.max(0,Math.min(L.rows-1,Math.round(e.y))),df=L.df[cy*C+cx];
  if(!isFinite(df))return false;if(e.df0==null||df>e.df0)e.df0=df;return df<=3||df<=e.df0*.25}
 function ckTwThreat(e,t,d){let s=1;if(t.k==='wall')s+=.6;else{const st=ts(t);s+=Math.min(3,(st.dm||10)/Math.max(.2,st.rt||1)/40);if(d<=st.rg)s+=1.2}
  if(e._sh===t&&TM-(e._shT||-9)<2.5)s+=3;s+=(1-Math.min(1,t.hp/(t.mhp||t.hp||1)))*.8;s+=(t.lv||1)*.15;return s/(.6+d)}
-function ckPickTarget(e){const r=ckAware(e);let b=null,bs=0;for(const t of L.tr){if(!t||t.hp<=0||t.building&&!(t.hp>0))continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d>=r||!lineOK(e.x,e.y,t.x,t.y))continue;const s=ckTwThreat(e,t,d);if(s>bs){bs=s;b=t}}return b}
+function ckPickTarget(e){const br=ckBreach(e),r=ckAware(e)*(br?1.6:1);if(br)try{ckAITip()}catch(_){};let b=null,bs=0;for(const t of L.tr){if(!t||t.hp<=0||t.building&&!(t.hp>0))continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d>=r||!lineOK(e.x,e.y,t.x,t.y))continue;let s=ckTwThreat(e,t,d);if(br){const hp=Math.min(1,t.hp/(t.mhp||t.hp||1));s*=1.6-hp;if(L._dz){const C=L.cols,i=Math.round(t.y)*C+Math.round(t.x);s*=1+Math.min(2,(L._dz[i]||0)*.3)}}if(s>bs){bs=s;b=t}}return b}
 // ---- Settings screen (gear button): sound, music, gameplay, display, haptics, version ----
 function ckSettingsHtml(){const zh=LANG==='zh',sec=(t,b)=>`<div class="ck-set-sec"><h4>${t}</h4>${b}</div>`;
  return `<div class="ck-set"><h2 class="f">⚙ ${zh?'设置':'Settings'}</h2>`
-  +sec(zh?'声音':'Sound',`${sl()}<button class="bt g musbtn ck-setbtn">${mon?TL('♪ Music: on'):TL('♪ Music: off')}</button>`)
+  +sec(zh?'声音':'Sound',`${sl()}<label class="ck-hapl"><input id="ckbvib" type="checkbox" ${S.bvib===false?'':'checked'}><span>${zh?'按钮震动':'Button vibration'}</span></label><button class="bt g musbtn ck-setbtn">${mon?TL('♪ Music: on'):TL('♪ Music: off')}</button>`)
   +sec(zh?'游戏':'Gameplay',`${tg()}<label class="ck-hapl"><input id="ckhap" type="checkbox" ${S.hap===false?'':'checked'}><span>${zh?'震动反馈':'Haptics (vibration)'}</span></label>`)
   +sec(zh?'显示与语言':'Display & language',`<div class="ck-setrow"><button class="bt g rotbtn ck-setbtn">⟳ ${TL('Screen: ')}${TL('Auto')}</button><button class="bt g langbtn ck-setbtn">🌐 ${zh?'中文':'EN'}</button></div>`)
   +`<div class="ck-ver">${ckVerTxt()}</div></div><button class="bt g" id="m1">${zh?'返回':'Back'}</button>`}
@@ -129,3 +135,9 @@ async function ckInstall(){if(CK_DIP){const e=CK_DIP;CK_DIP=null;try{e.prompt();
  const steps=ios?(zh?['用 Safari 打开本游戏页面','点击底部的“分享”按钮 ⬆','选择“添加到主屏幕”']:['Open this game page in Safari','Tap the Share button ⬆','Choose “Add to Home Screen”']):android?(zh?['用 Chrome 打开本游戏页面','点击右上角菜单 ⋮','选择“安装应用”或“添加到主屏幕”']:['Open this game page in Chrome','Tap the ⋮ menu (top right)','Choose “Install app” or “Add to Home screen”']):(zh?['用 Chrome 或 Edge 打开本游戏页面','点击地址栏右侧的“安装”图标，或打开菜单 ⋮','选择“安装 Chaos Kingdoms”']:['Open this game page in Chrome or Edge','Click the Install icon at the right of the address bar, or open the ⋮ menu','Choose “Install Chaos Kingdoms”']);
  modal(`<div class="ck-inst"><img class="ck-insti" src="${CKA.appicon}" alt=""><h2 class="f">${zh?'安装到桌面':'Install Game'}</h2><p>${zh?'像应用一样从桌面或主屏幕启动，全屏游戏，离线也能玩。':'Launch it from your desktop or home screen like an app, full screen, and play offline.'}</p><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>${framed?`<p class="ck-instn">${zh?'当前页面嵌在预览窗口中，浏览器不允许直接安装。请在新标签页中打开游戏文件或网页后再安装。':'This page is shown inside a preview frame, where browsers do not allow installing. Open the game file or page in its own browser tab first.'}</p>`:''}</div><button class="bt g" id="m1">${zh?'知道了':'Got it'}</button>`,closeM)}
 setTimeout(ckInstallBtn,1300);setTimeout(ckInstallBtn,2600);
+
+// v5.5.1 danger map weights: each tower counts by its damage per second, so strong firepower is avoided more
+function ckDangerW(t){try{const st=ts(t),dps=(st.dm||10)/Math.max(.2,st.rt||1);return Math.max(.5,Math.min(2.2,.5+dps/45))}catch(_){return .8}}
+// several bases: each base starts with a cost equal to how well it is defended, so monsters choose the weakest one
+function ckGoalCost(g,dz){if(!dz||L.goals.length<2)return 0;const C=L.cols,R=L.rows,f=q=>{let s=0;for(let y=Math.max(0,q[1]-2);y<=Math.min(R-1,q[1]+2);y++)for(let x=Math.max(0,q[0]-2);x<=Math.min(C-1,q[0]+2);x++)s+=dz[y*C+x]||0;return s*.5};
+ const cs=L.goals.map(f),mn=Math.min(...cs);return f(g)-mn}

@@ -65,20 +65,20 @@ function ckPoints(){let p=0;for(const id of (S.ach||[])){const a=CK_AMAP[id];if(
 function ckTitle(p){p=p==null?ckPoints():p;let t=CK_TITLES[0];for(const x of CK_TITLES)if(p>=x[0])t=x;return t}
 function ckTitleTxt(){const t=ckTitle();return LANG==='zh'?t[1]:t[2]}
 // extras on top of the gold (diamonds, chests); legacy achievements keep only their original gold
-function ckAExtra(a){if(a.legacy)return;const T=CK_TIER[a.tier];if(T.dia)S.diamonds=(S.diamonds||0)+T.dia;if(a.ex&&a.ex.chest!=null){ckChInit();S.chests[a.ex.chest]++}}
-function ckRewardTxt(a){const T=CK_TIER[a.tier],zh=LANG==='zh';let t='+'+(a.gold||0).toLocaleString()+' 🪙';if(!a.legacy&&T.dia)t+=' +'+T.dia+' 💎';if(a.ex&&a.ex.chest!=null)t+=' + 🎁 '+ckChName(a.ex.chest);return t+' · '+T.pts+(zh?' 点':' pts')}
+function ckAExtra(a){const T=CK_TIER[a.tier];if(a.legacy){S.a8=Array.isArray(S.a8)?S.a8:[];if(S.a8.includes(a.id))return;S.a8.push(a.id);if(T.dia){S.diamonds=(S.diamonds||0)+T.dia;try{ckStat('dia',T.dia)}catch(_){}}return}if(T.dia)S.diamonds=(S.diamonds||0)+T.dia;if(a.ex&&a.ex.chest!=null){ckChInit();S.chests[a.ex.chest]++}}
+function ckRewardTxt(a){const T=CK_TIER[a.tier],zh=LANG==='zh';let t='+'+(a.gold||0).toLocaleString()+' 🪙';if(T.dia)t+=' +'+T.dia+' 💎';if(a.ex&&a.ex.chest!=null)t+=' + 🎁 '+ckChName(a.ex.chest);return t+' · '+T.pts+(zh?' 点':' pts')}
 // out-of-battle checks (load, chests, forge...): grant gold + extras, show the banner
-function ckAchCheck(quiet){try{ckA55Init();const got=checkAchievements();if(!got.length)return got;let g=0;for(const a of got){g+=a.gold||0;ckAExtra(a)}if(g)Economy.grantWallet(g);ckANew(got);try{save();updWl()}catch(_){}
- if(quiet&&got.length>1)ckABanner(null,got);else got.forEach((a,i)=>setTimeout(()=>ckABanner(a),i*2600));return got}catch(e){console.warn('ach',e);return[]}}
+function ckAchCheck(quiet){try{ckA55Init();const got=checkAchievements();if(!got.length)return got;let g=0;for(const a of got){g+=a.gold||0;ckAExtra(a)}if(g)Economy.grantWallet(g);ckANew(got);try{save();updWl();ckHomeCard()}catch(_){}
+ if(quiet&&got.length>1)ckABanner(null,got);else got.forEach((a,i)=>setTimeout(()=>ckABanner(a),i*4200));return got}catch(e){console.warn('ach',e);return[]}}
 function ckANew(got){S.achNew=(S.achNew||[]).concat(got.map(a=>a.id));ckDot()}
-function ckDot(){const b=document.getElementById('profilebtn');if(b)b.classList.toggle('ck-dot',!!(S.achNew&&S.achNew.length))}
+function ckDot(){const on=!!(S.achNew&&S.achNew.length);const b=document.getElementById('profilebtn');if(b)b.classList.toggle('ck-dot',on);const t=document.querySelector('#title .profileteaser');if(t)t.classList.toggle('ck-dot',on)}
 // unlock banner (gold tier: bigger fanfare and haptics)
 function ckABanner(a,many){const zh=LANG==='zh',el=document.createElement('div');el.className='ck-abn'+(a&&a.tier==='g'?' g':'');
  if(many){el.innerHTML=`<img src="${CKM[many[0].m]}" alt=""><div><small>${zh?'成就补发':'Achievements unlocked'}</small><b>${zh?'已解锁 '+many.length+' 个成就！':many.length+' achievements unlocked!'}</b><span>${zh?'在统帅档案中查看':'See them in Commander Record'}</span></div>`}
  else el.innerHTML=`<img src="${CKM[a.m]}" alt=""><div><small>${zh?'成就解锁':'Achievement unlocked'} · ${CK_TIER[a.tier].n[zh?0:1]}</small><b>${ckAName(a)}</b><span>${ckRewardTxt(a)}</span></div>`;
- document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('in'));
+ el.onclick=()=>{el.remove();if(a)ckAchDetail(a.id);else openProfile(0)};document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('in'));
  try{if(a&&a.tier==='g'){CKS.fanfare()}else CKS.pickup(4)}catch(_){}ckVibe(a&&a.tier==='g'?[40,60,40,60,120]:[30,40,60]);
- setTimeout(()=>{el.classList.remove('in');setTimeout(()=>el.remove(),500)},3200)}
+ setTimeout(()=>{el.classList.remove('in');setTimeout(()=>el.remove(),500)},6000)}
 // the medal grid in Commander Record
 function ckAchGridHtml(){ckA55Init();ckAchStats();const zh=LANG==='zh',p=ckPoints(),t=ckTitle(p),nx=CK_TITLES.find(x=>x[0]>p);
  const head=`<div class="ck-ahead"><div><small>${zh?'成就点数':'Achievement points'}</small><b>${p}</b></div><div><small>${zh?'头衔':'Title'}</small><b>${zh?t[1]:t[2]}</b></div><div><small>${zh?'下一头衔':'Next title'}</small><b>${nx?(zh?nx[1]:nx[2])+' · '+nx[0]:'—'}</b></div></div>`;
