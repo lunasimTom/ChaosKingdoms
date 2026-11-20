@@ -7,7 +7,75 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v4.3.apk` | Android app (package `com.chaoskingdoms.game`, version 4.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v4.4.apk` | Android app (package `com.chaoskingdoms.game`, version 4.4, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v4.4 · Commander 50
+
+New code is in `source/premium/v44.js` (levels, inventory, forge, saves) and `source/premium/cu44.js` (attribute upgrades).
+
+**Commander levels 1-50.** Levels 1-10 keep exactly the same XP thresholds. Levels 11-50 need gradually more XP each: 900 XP for 10→11, rising to 5,000 for 49→50.
+
+| Level | Total XP |
+| --- | --- |
+| 11 | 4,900 |
+| 20 | 17,750 |
+| 30 | 42,000 |
+| 40 | 76,750 |
+| 50 | 122,000 |
+
+- **Ranks:** 40 new bilingual rank titles, in themed groups of five: Dragon Knight, Storm Warden, Celestial Paladin, Abyss Warlord, Phoenix Marshal, Titan Overlord, Eternal Archon and Chaos Emperor (I-V).
+- **Badges:** all 50 levels use the badge artwork you provided. They show in the profile, pause menu, map banner and victory card.
+- **Level bonus:** the attack/defense bonus continues past level 10 at +0.5% per level (+30% at level 50).
+- **Level track:** the profile's level track shows a window of ten levels around your current one.
+- **Level rewards:** every new level gives 1,000 + 250 × level gold and 3 + level/5 stars. Milestones also give a chest: Green at 15, Blue at 20, Red at 25, Purple at 30, Gold at 40 and Black at 50.
+
+**Attribute upgrades go to level 30.**
+- Levels 1-10 are open as before. After that, every two commander levels unlock one more attribute level (cap 30 at commander level 50).
+- Star and gold costs continue the existing curve (stars 22 → 60, gold 12,000 → 50,000). Levels 11-30 also cost 10 diamonds each.
+- Effects:
+  - Attack and Defense: +1% per level.
+  - Crit: +2% per level to level 10, then +1% (40% at 30).
+  - Build Speed: reaches 1 s at level 10; each level after that adds +1.5% gold from kills (+30% at 30). Battles spend your wallet gold, so there are no "starting coins" to boost.
+- The upgrade screen shows the 30 levels in three tiers of ten (gold, sapphire, amethyst) and marks levels that still need a higher commander level.
+
+**Stars.** There is one star count again: every star earned counts fully toward upgrades. The 0.6 weighting from v4.3 is gone.
+
+**Save compatibility (old ↔ new).**
+- The commander level is always worked out from saved XP, so it can never be lost or reset.
+- Players with more than 4,000 XP move up automatically. For example, 11,082 XP is now level 16. A one-time window explains this and lists the level rewards received.
+- Cleared stages, stars, gold, diamonds, items, chests, attribute levels and AUTO switches are unchanged.
+- Before anything is converted, the old save is copied once to the browser's `ck25_bak_v44` entry.
+- New save fields are optional:
+  - Saves and progress-transfer codes from any older version load normally.
+  - v4.4 codes also import into v4.3. There the level simply shows as 10, and shards above 3 are capped, as v4.3 always did.
+- Importing an old code counts its level as already rewarded, so re-importing can't repeat rewards.
+- Exported codes now record their version. Before an import overwrites anything, it shows what the save contains, for example "Save from v4.3 or earlier · Lv.16 · 10 levels cleared · Atao".
+
+**Inventory (🎒).** Open it from the title screen, the pause menu, the ITEMS label of the item bar, or by long-pressing any item in the item bar (that opens straight to the item, without using it).
+- **Tabs:** Items, Rare, Chests and Materials. Each shows how many you hold, and the item bar always shows the same counts.
+- **Actions:** in battle you can Use items from here, and toggle AUTO.
+- **Selling:** pays 80% of the original price, after a second tap to confirm.
+
+| Item | Sells for |
+| --- | --- |
+| Shop item | 80% of its base gold price |
+| Rare item | 32,000 gold |
+| Enhancement Rune | 40,000 gold |
+| Chest | 4 / 8 / 16 / 28 / 48 / 80 diamonds |
+| Diamond shards | not sellable (crafting material) |
+
+**Diamond forge.** In Inventory › Materials, 4 diamond shards + 4,000 gold make 1 diamond, with an 85% success rate. A failure uses up the gold and all 4 shards. There is a hammering animation, then a flash for success or a cracked gem for failure. Shards no longer turn into diamonds by themselves.
+
+**Boss diamonds.** Besides the existing epic-tier diamond pieces, the final boss has a separate chance to drop 1-3 whole diamonds: 10% at level 1, rising to 60% at level 100. Replays get a quarter of that chance. Counting both sources, about 49% of first-clear boss treasures contain diamonds at level 1, and about 92% at level 100.
+
+**Other changes.**
+- **Chests:** the purchase screen no longer shows chest values. The actual value is still shown after opening.
+- **HUD:** the shard counter is gone.
+- **CALL button:** it stays fixed whatever the numbers show. Everything to its left now has a fixed width, and gold shows as e.g. 12.3K from 10,000 (diamonds from 10,000). In portrait, the rotate button now lives only in the pause menu ("Screen: …"), to make room.
+- **Settings:** the version number appears in the pause/settings menu.
+- **AUTO switch:** redesigned as a gold-trimmed toggle with a sliding ⚡ knob that glows emerald with a moving shine when on. Shop rows show the switch alone; the inventory also shows the AUTO label.
+- **World map:** the Fourfold Throne crown is centred on its text. The realm thumbnail now has the same proportions as the atlas tiles (about 1.2 : 1) and is larger.
+- **Profile:** "Stars collected" now counts out of 500 (5 stars per level).
 
 ## What changed in v4.3 · Treasure Chests
 
@@ -716,7 +784,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.3.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v4.4.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

@@ -53,7 +53,7 @@ function ckChGrant(r){
  if(r.star)S.bonusStars=(S.bonusStars||0)+r.star;
  if(r.frag){S.frag=(S.frag|0)+r.frag;ckForge()}
  if(r.rune)S.rune=(S.rune|0)+r.rune;
- if(r.medal){S.medals=(S.medals|0)+r.medal;S.xp=(S.xp||0)+r.medal*CK_MEDAL_XP}
+ if(r.medal){S.medals=(S.medals|0)+r.medal;S.xp=(S.xp||0)+r.medal*CK_MEDAL_XP;try{setTimeout(()=>ckLvCheck(),1600)}catch(_){}}
  if(r.rares){S.inv=S.inv||{};for(const x of r.rares)S.inv[x.k]=(S.inv[x.k]||0)+x.n}
  try{updWl()}catch(_){}try{if(typeof L!=='undefined'&&L&&L.inv)invR()}catch(_){}try{refreshProfileTeaser()}catch(_){}try{save()}catch(_){}}
 // reward list for display: [art key, name, amount]
@@ -70,11 +70,11 @@ function ckChRows(r){const zh=LANG==='zh',o=[];
 function ckChBuy(t){ckChInit();const P=CK_CH[t].p;if((S.diamonds||0)<P){toast(lvZ('钻石不足：需要 '+P+' 💎','Not enough diamonds: '+P+' 💎 needed'));return false}
  S.diamonds-=P;S.chests[t]++;try{save()}catch(_){}try{sfx('coin',.6)}catch(_){}toast(lvZ('已购买 ','Bought: ')+ckChName(t));ckChRefresh();return true}
 function ckChOpen(t){ckChInit();if(!(S.chests[t]>0))return;S.chests[t]--;const r=ckChRoll(t);ckChGrant(r);ckChFx(t,r);ckChRefresh()}
-function ckChRefresh(){try{if(typeof tab!=='undefined'&&tab==='s'&&shopPage==='chests')renderShop()}catch(_){}const m=document.getElementById('ck-chm');if(m)m.innerHTML=ckChestPage(false,true)}
+function ckChRefresh(){try{if(typeof tab!=='undefined'&&tab==='s'&&shopPage==='chests')renderShop()}catch(_){}const m=document.getElementById('ck-chm');if(m)m.innerHTML=ckChestPage(false,true);try{ckInvRefresh()}catch(_){}}
 // the chest page: owned chests (open), the diamond store (buy), the medal counter
 function ckChestPage(inShop,inner){ckChInit();const zh=LANG==='zh';
- const rows=CK_CH.map((c,t)=>`<div class="ck-chrow" style="--cc:${c.c}"><div class="ck-chart">${ckChImg(t,'ck-chimg')}</div><div class="ck-chinfo"><b>${ckChName(t)}</b><small>${zh?'价值约':'Worth about'} ${c.p} 💎 · ${zh?['3 类奖励','3-4 类奖励','4 类奖励','4-5 类奖励','5 类奖励','5-6 类奖励'][t]:['3 reward types','3-4 reward types','4 reward types','4-5 reward types','5 reward types','5-6 reward types'][t]}</small><small class="own">${zh?'拥有':'Owned'} ×${S.chests[t]}</small></div><div class="ck-chbtns"><button type="button" class="bt pay ck-chopen" data-copen="${t}" ${S.chests[t]>0?'':'disabled'}>${zh?'打开':'Open'}</button><button type="button" class="bt pay ck-chbuy" data-cbuy="${t}" ${(S.diamonds||0)>=c.p?'':'disabled'}>${ckImg('dia','ic')}<span class="price">${c.p}</span></button></div></div>`).join('');
- const head=`<div class="ck-chhead"><span>${ckImg('dia','ic')} <b>${(S.diamonds||0).toLocaleString()}</b></span><span>${ckImg('medal','ic')} ${zh?'勋章':'Medals'} <b>${S.medals|0}</b></span></div><p class="ck-chnote">${zh?'宝箱可用钻石购买，或在击败首领时掉落（关卡越高越容易掉落）。宝箱无法出售。约 85% 的宝箱价值高于其价格。每枚勋章 = '+CK_MEDAL_XP+' 统帅经验。':'Buy chests with diamonds or win them from bosses (higher levels drop them more often). Chests can never be sold. About 85% of chests are worth more than their price. Each medal = '+CK_MEDAL_XP+' commander XP.'}</p>`;
+ const rows=CK_CH.map((c,t)=>`<div class="ck-chrow" style="--cc:${c.c}"><div class="ck-chart">${ckChImg(t,'ck-chimg')}</div><div class="ck-chinfo"><b>${ckChName(t)}</b><small>${zh?['3 类奖励','3-4 类奖励','4 类奖励','4-5 类奖励','5 类奖励','5-6 类奖励'][t]:['3 kinds of rewards','3-4 kinds of rewards','4 kinds of rewards','4-5 kinds of rewards','5 kinds of rewards','5-6 kinds of rewards'][t]}</small><small class="own">${zh?'拥有':'Owned'} ×${S.chests[t]}</small></div><div class="ck-chbtns"><button type="button" class="bt pay ck-chopen" data-copen="${t}" ${S.chests[t]>0?'':'disabled'}>${zh?'打开':'Open'}</button><button type="button" class="bt pay ck-chbuy" data-cbuy="${t}" ${(S.diamonds||0)>=c.p?'':'disabled'}>${ckImg('dia','ic')}<span class="price">${c.p}</span></button></div></div>`).join('');
+ const head=`<div class="ck-chhead"><span>${ckImg('dia','ic')} <b>${(S.diamonds||0).toLocaleString()}</b></span><span>${ckImg('medal','ic')} ${zh?'勋章':'Medals'} <b>${S.medals|0}</b></span></div><p class="ck-chnote">${zh?'宝箱可用钻石购买，或在击败首领时掉落（关卡越高越容易掉落）。每个宝箱内含多种奖励，打开后才知道是什么！每枚勋章 = '+CK_MEDAL_XP+' 统帅经验。':'Buy chests with diamonds or win them from bosses (higher levels drop them more often). Every chest holds several kinds of rewards: open it to find out what! Each medal = '+CK_MEDAL_XP+' commander XP.'}</p>`;
  const body=head+`<div class="ck-chlist">${rows}</div>`;
  if(inner)return body;
  return inShop?`<div class="shl ck-chshop">${body}</div>`:`<div class="ck-chmodal"><h2 class="f">${zh?'宝箱':'Treasure Chests'}</h2><div id="ck-chm">${body}</div><button class="bt g" id="m1">${zh?'关闭':'Close'}</button></div>`}
@@ -107,7 +107,7 @@ function ckChDrop(i,replay){const dm=[.8,.9,1,1.1,1.2][S.dif]||1;let p=Math.min(
 // ---- automatic item activation ----
 const CK_NOAUTO={river:1,air:1,bomb:1};   // these need the player to pick a spot on the map
 function ckAutoOk(id){return !!IT.find(x=>x.id===id)&&!CK_NOAUTO[id]&&!CK_RARE[id]}
-function ckAutoBtn(id){if(!ckAutoOk(id))return '';ckChInit();const on=!!S.autoIt[id],zh=LANG==='zh';return `<button type="button" class="ck-auto${on?' on':''}" data-auto="${id}" aria-pressed="${on}" title="${zh?'冷却结束后自动使用（需有库存）':'Use automatically whenever it is off cooldown and in stock'}">${on?(zh?'自动 ✓':'AUTO ✓'):(zh?'自动':'AUTO')}</button>`}
+function ckAutoBtn(id){if(!ckAutoOk(id))return '';ckChInit();const on=!!S.autoIt[id],zh=LANG==='zh';return `<button type="button" class="ck-auto${on?' on':''}" data-auto="${id}" role="switch" aria-checked="${on}" title="${zh?'冷却结束后自动使用（需有库存）':'Use automatically whenever it is off cooldown and in stock'}"><span class="trk"><i class="knob">⚡</i></span><b>${zh?'自动':'AUTO'}</b></button>`}
 let CK_AT=0;
 function ckAutoTick(dt){if((CK_AT-=dt)>0)return;CK_AT=.25;if(!L||L.demo||L.over||L.paused||mOpen||L.wave<1||!S.autoIt)return;try{if(ckLootBusy())return}catch(_){}
  const en=L.en.filter(e=>e.hp>0);if(!en.length)return;
@@ -116,6 +116,6 @@ function ckAutoTick(dt){if((CK_AT-=dt)>0)return;CK_AT=.25;if(!L||L.demo||L.over|
   try{useItem(id);invR()}catch(_){}}}
 // ---- wiring: clicks for chest and auto buttons (shop, modal), and the title-screen button ----
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-cbuy],[data-copen],[data-auto]');if(!b)return;e.stopPropagation();e.preventDefault();
- if(b.dataset.auto){ckChInit();const id=b.dataset.auto;S.autoIt[id]=!S.autoIt[id];if(!S.autoIt[id])delete S.autoIt[id];try{save()}catch(_){}try{renderShop()}catch(_){}toast((S.autoIt[id]?lvZ('已开启自动使用：','Auto-use on: '):lvZ('已关闭自动使用：','Auto-use off: '))+(IT.find(x=>x.id===id)||{}).n);return}
+ if(b.dataset.auto){ckChInit();const id=b.dataset.auto;S.autoIt[id]=!S.autoIt[id];if(!S.autoIt[id])delete S.autoIt[id];try{save()}catch(_){}try{renderShop()}catch(_){}try{ckInvRefresh();invR()}catch(_){}toast((S.autoIt[id]?lvZ('已开启自动使用：','Auto-use on: '):lvZ('已关闭自动使用：','Auto-use off: '))+(IT.find(x=>x.id===id)||{}).n);return}
  if(b.dataset.cbuy)ckChBuy(+b.dataset.cbuy);else if(b.dataset.copen)ckChOpen(+b.dataset.copen)},true);
 setTimeout(()=>{try{ckChInit()}catch(_){}const row=document.querySelector('#title .opts2');if(row&&!document.getElementById('ckchbtn')){const b=document.createElement('button');b.className='bt g';b.id='ckchbtn';b.style.gridColumn='1/-1';b.setAttribute('data-i18n','🎁 Treasure Chests');b.textContent='🎁 Treasure Chests';const tp=document.getElementById('topupbtn');row.insertBefore(b,tp||null);b.onclick=()=>ckChMenu();if(typeof ZH==='object')ZH['🎁 Treasure Chests']='🎁 宝箱';try{updLang()}catch(_){}}},60);

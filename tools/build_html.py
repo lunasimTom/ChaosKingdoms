@@ -16,7 +16,7 @@ def _cka():
         if not f.endswith('.png') or f.startswith('source-'): continue
         im = Image.open(os.path.join(d, f)).convert('RGBA'); buf = io.BytesIO(); im.save(buf, 'WEBP', quality=90, method=6)
         out[f[:-4]] = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    assert len(out) == 29, sorted(out)
+    assert len(out) == 79, sorted(out)
     return 'const CKA=' + __import__('json').dumps(out) + ';'
 CKA_JS = _cka()
 
@@ -361,7 +361,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -621,9 +621,45 @@ rep("const body=shopPage==='treasure'?renderTreasure():", "const body=shopPage==
 rep("<small>${shopPage==='items'?TL(", "<small>${shopPage==='chests'?ckLZ(['宝箱 · 钻石购买或首领掉落，无法出售','Chests · buy with diamonds or win them from bosses · cannot be sold']):shopPage==='items'?TL(")
 rep('</button><small>${lk?\'<a class="vlink" data-prof="shop"', '</button>${ckAutoBtn(it.id)}<small>${lk?\'<a class="vlink" data-prof="shop"')
 rep('<span class="cdt"></span><u>${L.inv[it.id]}</u></button>', '<span class="cdt"></span><u>${L.inv[it.id]}</u>${S.autoIt&&S.autoIt[it.id]&&ckAutoOk(it.id)?\'<i class="ck-ab">A</i>\':\'\'}</button>')
-rep("const starsTotal=()=>Object.values(S.prog||{}).reduce((a,v)=>a+(+v||0),0);", "const starsTotal=()=>Math.floor(Object.values(S.prog||{}).reduce((a,v)=>a+(+v||0),0)*3/5);")
 
 rep("Math.floor((H-48-156)/14));ox=Math.round((W-9*tw)/2);oy=48+Math.max(0,Math.round((H-48-156-14*tw)/2))", "Math.floor((H-48-156-CK_RAILX)/14));ox=Math.round((W-9*tw)/2);oy=48+Math.max(0,Math.round((H-48-156-CK_RAILX-14*tw)/2))")
+
+# 45. v4.4: 50 commander levels (levels 1-10 keep their XP thresholds), attribute upgrades to 30
+# (unlocked by commander level), inventory + diamond forge + level rewards (v44.js), boss diamonds,
+# version in Settings, level-50 badge art, fixed HUD widths. Saves stay compatible both ways.
+rep("{xp:4000,n:'混沌之主',en:'Lord of Chaos'}\n];", "{xp:4000,n:'混沌之主',en:'Lord of Chaos'},{xp:4900,n:'龙骑士 I',en:'Dragon Knight I'},{xp:5900,n:'龙骑士 II',en:'Dragon Knight II'},{xp:7000,n:'龙骑士 III',en:'Dragon Knight III'},{xp:8200,n:'龙骑士 IV',en:'Dragon Knight IV'},{xp:9500,n:'龙骑士 V',en:'Dragon Knight V'},{xp:10950,n:'风暴守望者 I',en:'Storm Warden I'},{xp:12500,n:'风暴守望者 II',en:'Storm Warden II'},{xp:14150,n:'风暴守望者 III',en:'Storm Warden III'},{xp:15900,n:'风暴守望者 IV',en:'Storm Warden IV'},{xp:17750,n:'风暴守望者 V',en:'Storm Warden V'},{xp:19700,n:'天界圣骑 I',en:'Celestial Paladin I'},{xp:21750,n:'天界圣骑 II',en:'Celestial Paladin II'},{xp:23900,n:'天界圣骑 III',en:'Celestial Paladin III'},{xp:26150,n:'天界圣骑 IV',en:'Celestial Paladin IV'},{xp:28500,n:'天界圣骑 V',en:'Celestial Paladin V'},{xp:31000,n:'深渊战主 I',en:'Abyss Warlord I'},{xp:33600,n:'深渊战主 II',en:'Abyss Warlord II'},{xp:36300,n:'深渊战主 III',en:'Abyss Warlord III'},{xp:39100,n:'深渊战主 IV',en:'Abyss Warlord IV'},{xp:42000,n:'深渊战主 V',en:'Abyss Warlord V'},{xp:45000,n:'凤凰元帅 I',en:'Phoenix Marshal I'},{xp:48100,n:'凤凰元帅 II',en:'Phoenix Marshal II'},{xp:51300,n:'凤凰元帅 III',en:'Phoenix Marshal III'},{xp:54600,n:'凤凰元帅 IV',en:'Phoenix Marshal IV'},{xp:58000,n:'凤凰元帅 V',en:'Phoenix Marshal V'},{xp:61550,n:'泰坦霸主 I',en:'Titan Overlord I'},{xp:65200,n:'泰坦霸主 II',en:'Titan Overlord II'},{xp:68950,n:'泰坦霸主 III',en:'Titan Overlord III'},{xp:72800,n:'泰坦霸主 IV',en:'Titan Overlord IV'},{xp:76750,n:'泰坦霸主 V',en:'Titan Overlord V'},{xp:80800,n:'永恒执政官 I',en:'Eternal Archon I'},{xp:84950,n:'永恒执政官 II',en:'Eternal Archon II'},{xp:89200,n:'永恒执政官 III',en:'Eternal Archon III'},{xp:93550,n:'永恒执政官 IV',en:'Eternal Archon IV'},{xp:98000,n:'永恒执政官 V',en:'Eternal Archon V'},{xp:102600,n:'混沌帝皇 I',en:'Chaos Emperor I'},{xp:107300,n:'混沌帝皇 II',en:'Chaos Emperor II'},{xp:112100,n:'混沌帝皇 III',en:'Chaos Emperor III'},{xp:117000,n:'混沌帝皇 IV',en:'Chaos Emperor IV'},{xp:122000,n:'混沌帝皇 V',en:'Chaos Emperor V'}\n];")
+rep("const LV_BONUS_PER=.01,LV_BONUS_MAX=.10;", "const LV_BONUS_PER=.01,LV_BONUS_MAX=.30;")
+rep("const lvBonus=lv=>Math.min(LV_BONUS_MAX,(lv==null?plLevel():lv)*LV_BONUS_PER);", "const lvBonus=lv=>{lv=lv==null?plLevel():lv;return Math.min(LV_BONUS_MAX,lv<=10?lv*LV_BONUS_PER:.10+(lv-10)*.005)};")
+rep("const CU_MAX=10,CU_PER=.01,CU_STAR=[2,3,4,6,8,10,13,16,18,20],CU_GOLD=[300,500,800,1200,1800,2600,3600,5000,7000,10000];",
+    "const CU_MAX=30,CU_PER=.01,CU_STAR=[2,3,4,6,8,10,13,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60],CU_GOLD=[300,500,800,1200,1800,2600,3600,5000,7000,10000,12000,14000,16000,18000,20000,22000,24000,26000,28000,30000,32000,34000,36000,38000,40000,42000,44000,46000,48000,50000];"
+    "const cuCap=lv=>{lv=lv==null?plLevel():lv;return cheat()?CU_MAX:lv<=10?10:Math.min(CU_MAX,10+Math.floor((lv-10)/2))};const ckCritPct=n=>n<=10?n*2:20+(n-10);const cuDia=n=>n<4?0:n<10?(n-3)*5:10;")
+rep("BUILD_BASE-cuLv('b')*(BUILD_BASE-BUILD_MIN)/CU_MAX", "BUILD_BASE-Math.min(10,cuLv('b'))*(BUILD_BASE-BUILD_MIN)/10")
+rep("Math.min(1,cuLv('c')*CRIT_PCT/100+fxCrit())", "Math.min(1,ckCritPct(cuLv('c'))/100+fxCrit())")
+rep("const killGold=e=>(e.t==='boss'?400:e.t==='brute'?80:e.fly?50:e.t==='runner'?35:25)*(e.el?3:1);", "const killGold=e=>Math.round((e.t==='boss'?400:e.t==='brute'?80:e.fly?50:e.t==='runner'?35:25)*(e.el?3:1)*(1+.015*Math.max(0,cuLv('b')-10)));")
+rep("const pips=n=>{let h='';for(let i=0;i<CU_MAX;i++)h+=`<u class=\"${i<n?'on':''}\"></u>`;return h};", "const pips=n=>{const d=Math.min(2,Math.floor(Math.max(0,n-1)/10)),k=n-d*10;let h='';for(let i=0;i<10;i++)h+=`<u class=\"${i<k?'on t'+d:(d>0?'on t'+(d-1):'')}\"></u>`;return h};")
+_a = s.index('function cuUpgrade(k){'); _b = s.index('\nwindow.cuOpen=cuOpen;', _a); assert s.count('function cuUpgrade(k){') == 1
+s = s[:_a] + open(os.path.join(SRC, 'cu44.js'), encoding='utf8').read() + s[_b:]
+rep("let trk='';for(let i=1;i<=10;i++){trk+=(i>1?", "let trk='';const _t0=Math.max(1,Math.min(RANKS.length-9,lv-4));for(let i=_t0;i<_t0+10;i++){trk+=(i>_t0?")
+rep("Lv.${ri+1}/10", "Lv.${ri+1}/${RANKS.length}")
+rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
+rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
+rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
+rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'4.4',lr:S.lvr==null?null:S.lvr}}")
+rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
+rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
+rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
+rep("<button class=\"bt pay\" id=\"picklevel\">✦ ${TL('Select level')}</button>", "<button class=\"bt pay\" id=\"picklevel\">✦ ${TL('Select level')}</button><button class=\"bt g ck-invp\" data-ckinv=\"pause\">🎒 ${lvZ('背包','Inventory')}</button>")
+rep("e.innerHTML='<span class=\"ivl\">'+TL('ITEMS')+'</span>'", "e.innerHTML='<span class=\"ivl\" data-ckinv=\"hud\" role=\"button\" tabindex=\"0\">'+TL('ITEMS')+'<i class=\"ck-bag\">🎒</i></span>'")
+rep("const after=rankAt(S.xp),newA=", "const after=rankAt(S.xp);try{ckLvCheck()}catch(_){}const newA=")
+
+rep("window.ckBadge=function(lv){lv=Math.max(1,Math.min(10,lv|0));return '<img class=\"ckbadge\" alt=\"Lv.'+lv+'\" draggable=\"false\" src=\"'+B[lv-1]+'\">'};", "window.ckBadge=function(lv){lv=Math.max(1,Math.min(50,lv|0));return '<img class=\"ckbadge\" alt=\"Lv.'+lv+'\" draggable=\"false\" src=\"'+((typeof CKA==='object'&&CKA['lv'+lv])||B[Math.min(9,lv-1)])+'\">'};")
+
+rep("setT('dia',(S.diamonds||0).toLocaleString())", "setT('dia',(d=>d>=1e4?(Math.floor(d/100)/10)+'K':d.toLocaleString())(S.diamonds||0))")
+
+rep("n>=1e5?Math.floor(n/1e3)+'K':d}", "n>=1e5?Math.floor(n/1e3)+'K':n>=1e4?(Math.floor(n/100)/10)+'K':d}")
+
+rep("${R.reduce((a,r)=>a+(r.secret?0:(r.count||8)*3),0)}</b><small>${TL('Stars collected')}", "${R.reduce((a,r)=>a+(r.secret?0:(r.count||8)*5),0)}</b><small>${TL('Stars collected')}")
 
 # ---------------------------------------------------------------- premium layer
 def b64(p):

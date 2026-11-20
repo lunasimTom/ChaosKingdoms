@@ -75,7 +75,9 @@ function ckTreasure(){const i=L.i,replay=!!(S.prog&&S.prog[i]),dm=[.7,.85,1,1.2,
  // better tiers grow with level, difficulty and how well the base was defended
  const up=(.8+i/250)*([.8,.9,1,1.15,1.3][S.dif]||1)*perf,w=CKT_W.map((x,t)=>t>=2?x*up:x);
  const out=[];for(let k=0;k<n;k++){let t=ckRoll(w);if(replay&&t>2)t=2;out.push(Object.assign({tier:t},ckPiece(t,true,replay)))}
- const ct=typeof ckChDrop==='function'?ckChDrop(i,replay):-1;if(ct>=0)out.push({tier:ct,kind:'chest',ct,amt:1});return{list:out,replay}}
+ const ct=typeof ckChDrop==='function'?ckChDrop(i,replay):-1;if(ct>=0)out.push({tier:ct,kind:'chest',ct,amt:1});
+ // v4.4: a separate chance of whole diamonds (10% at level 1 rising to 60% at level 100; replays a quarter)
+ if(Math.random()<(.1+.5*Math.min(1,i/99))*(replay?.25:1)){const R_=Math.random();out.push({tier:3,kind:'dia',amt:R_<.15?3:R_<.5?2:1})}return{list:out,replay}}
 // ---- state ----
 function ckLootReset(){L.loot=[];L.lw=null}
 function ckLootBusy(){return !!(L&&(L.rpPend||(L.lw&&!L.lw.done)))}
@@ -136,7 +138,7 @@ function ckDropIcon(k){if(k.startsWith('chest:'))return ckChImg(+k.slice(6));if(
 function ckDropsHtml(){const D=L&&L.drops;const row=(g)=>Object.keys(g).sort((a,b)=>(b==='dia')-(a==='dia')||(b==='rune')-(a==='rune')).map(k=>`<li>${ckDropIcon(k)}<span>${ckDropName(k)}</span><b>×${g[k].toLocaleString()}</b></li>`).join('');
  const bo=D?row(D.boss):'',mo=D?row(D.mon):'';
  return `<div class="ck-drops"><h4>${lvZ('本关拾取','Loot collected')}</h4>${bo?`<small>${lvZ('首领宝藏','Boss treasure')}</small><ul>${bo}</ul>`:''}${mo?`<small>${lvZ('怪物掉落','Monster drops')}</small><ul>${mo}</ul>`:''}${!bo&&!mo?`<p>${lvZ('本关没有拾取任何掉落物。','No drops were collected this level.')}</p>`:''}</div>`}
-function ckForge(){let n=0;while((S.frag|0)>=4){S.frag-=4;S.diamonds=(S.diamonds||0)+1;n++}if(n){toast(lvZ(`+${n} 💎 钻石锻造完成！`,`+${n} 💎 Diamond Forged!`));try{CKS.pickup(4)}catch(_){}const e=document.getElementById('dia');if(e){e.classList.remove('ck-forge');void e.offsetWidth;e.classList.add('ck-forge')}}}
+function ckForge(){}   // v4.4: shards are combined by hand in the forge (Inventory › Materials)
 // item flies from the tile to its counter in the top bar (or the item bar)
 function ckFly(l,p,to){try{const cv=document.getElementById('cv'),r=cv.getBoundingClientRect(),k=r.width/W,sx=r.left+p.x*k,sy=r.top+p.y*k;
  const tgt=to==='coin'?document.getElementById('coin'):to==='inv'?document.getElementById('inv'):document.getElementById('dia');const tr=tgt?tgt.getBoundingClientRect():{left:innerWidth/2,top:10,width:0,height:0};
@@ -207,7 +209,7 @@ function ckReplay(e){const fr=CKREC.frames.slice(-24);if(fr.length<6||L.over){ck
  // fail-safe: never let the replay hold the game for more than its length + 2 s
  setTimeout(end,DUR+2000)}
 // ---- shop: boss treasure (shown, never for sale) ----
-function ckShopRareHtml(){const zh=LANG==='zh',rows=[['dia',ckLZ(['钻石','Diamond']),zh?'首领宝藏掉落，也可通过兑换码获得；可在加成强化界面兑换为 10,000 金币。':'Dropped by bosses, or get them with a redeem code. Exchange 1 for 10,000 gold in Bonus Upgrade.'],['frag',ckLZ(['钻石碎片','Diamond Shards']),zh?'集齐 4 个自动锻造成 1 颗钻石。':'4 shards forge 1 diamond automatically.'],['rune',ckLZ(['强化符','Enhancement Rune']),zh?'免费强化一项属性一次。':'Upgrades one attribute once, for free.']]
+function ckShopRareHtml(){const zh=LANG==='zh',rows=[['dia',ckLZ(['钻石','Diamond']),zh?'首领宝藏掉落，也可通过兑换码获得；可在加成强化界面兑换为 10,000 金币。':'Dropped by bosses, or get them with a redeem code. Exchange 1 for 10,000 gold in Bonus Upgrade.'],['frag',ckLZ(['钻石碎片','Diamond Shards']),zh?'在 背包 › 材料 中用 4 个碎片锻造 1 颗钻石。':'Forge 4 into 1 diamond in Inventory › Materials.'],['rune',ckLZ(['强化符','Enhancement Rune']),zh?'免费强化一项属性一次。':'Upgrades one attribute once, for free.']]
   .concat(Object.keys(CK_RARE).map(k=>[k,ckLZ(CK_RARE[k].n),ckLZ(CK_RARE[k].d)]));
  const own=k=>k==='dia'?(S.diamonds||0):k==='frag'?(S.frag|0):k==='rune'?(S.rune|0):(L&&L.inv&&L.inv[k]|0);
  // same row layout and buttons as the regular shop items; diamonds open the redeem-code page,
@@ -228,8 +230,8 @@ function ckStarMini(st){return `<span class="ck-smini">${'★'.repeat(st)}<u>${'
 function ckStar5(p,done){if(done||!p||typeof p!=='object')return p||{};const o={};for(const k in p){const v=p[k]|0;o[k]=v>=3?5:v===2?3:v}return o}
 // ---- diamond -> gold exchange and runes, inside the attribute upgrade screen ----
 function ckExchange(){if((S.diamonds||0)<1){toast(lvZ('钻石不足','Not enough diamonds'));return false}S.diamonds-=1;Economy.grantWallet(10000);try{updWl()}catch(_){}save();toast(lvZ('已兑换：1 💎 → 10,000 🪙','Exchanged: 1 💎 → 10,000 🪙'));try{sfx('coin',.6)}catch(_){}return true}
-function ckUseRune(k){if((S.rune|0)<1){toast(lvZ('没有强化符','No Enhancement Runes'));return false}if(cuLv(k)>=CU_MAX){toast(lvZ('该属性已满级','This attribute is already at max level'));return false}
+function ckUseRune(k){if((S.rune|0)<1){toast(lvZ('没有强化符','No Enhancement Runes'));return false}if(cuLv(k)>=Math.min(CU_MAX,cuCap())){toast(cuLv(k)>=CU_MAX?lvZ('该属性已满级','This attribute is already at max level'):lvZ('需要更高的统帅等级','A higher commander level is needed'));return false}
  S.rune-=1;S.cu=S.cu||{a:0,d:0,b:0,c:0};S.cu[k]=cuLv(k)+1;save();try{sfx('perfect',.5)}catch(_){}toast(lvZ('强化符生效！','Enhancement Rune applied!'));return true}
-function ckCuExtra(k){const zh=LANG==='zh',r=S.rune|0,max=cuLv(k)>=CU_MAX;
+function ckCuExtra(k){const zh=LANG==='zh',r=S.rune|0,max=cuLv(k)>=Math.min(CU_MAX,cuCap());
  return `<div class="ck-cux"><div class="ck-rune"><span><em>${ckImg('rune')}</em>${zh?'强化符':'Enhancement Runes'} <b>×${r}</b></span><small>${zh?'每张强化符可免费强化所选属性一次。':'Each rune upgrades the selected attribute once, for free.'}</small><button type="button" class="cu-go ${r&&!max?'':'off'}" id="ckrune" ${r&&!max?'':'disabled'}>${max?(zh?'已满级':'MAX'):(zh?'使用强化符':'Use a rune')}</button></div>
- <div class="ck-xch"><span><em>${ckImg('dia')}</em>${zh?'钻石兑换金币':'Diamond exchange'} <b>${(S.diamonds||0).toLocaleString()}</b>${(S.frag|0)?` <small>${ckImg('frag')} ${S.frag}/4</small>`:''}</span><small>${zh?'1 钻石 = 10,000 金币（金币无法兑换钻石）':'1 diamond = 10,000 gold (gold cannot be exchanged for diamonds)'}</small><button type="button" class="cu-go ${(S.diamonds||0)>=1?'':'off'}" id="ckxch" ${(S.diamonds||0)>=1?'':'disabled'}>${zh?'兑换 1 💎':'Exchange 1 💎'}</button></div></div>`}
+ <div class="ck-xch"><span><em>${ckImg('dia')}</em>${zh?'钻石兑换金币':'Diamond exchange'} <b>${(S.diamonds||0).toLocaleString()}</b>${(S.frag|0)?` <small>${ckImg('frag')} ×${S.frag}</small>`:''}</span><small>${zh?'1 钻石 = 10,000 金币（金币无法兑换钻石）':'1 diamond = 10,000 gold (gold cannot be exchanged for diamonds)'}</small><button type="button" class="cu-go ${(S.diamonds||0)>=1?'':'off'}" id="ckxch" ${(S.diamonds||0)>=1?'':'disabled'}>${zh?'兑换 1 💎':'Exchange 1 💎'}</button></div></div>`}
