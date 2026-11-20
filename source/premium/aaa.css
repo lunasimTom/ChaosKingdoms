@@ -696,3 +696,12 @@ html body #app #hud .top > .lv.lv{height:var(--ck-menu-h,30px)!important;box-siz
 /* typography: remaining explanatory text found by the scan -> regular weight */
 .pfsynergy small,.pfsynergy div small,.ck-rune small,.ck-xch small,#shop .shh small,.ck-tips li,.ck-tips li span,#mbox li,#mbox li span,.vt .vs,.ck-adr,.ck-next span,.vrk-t span,.vrk-t small,.lvc-t span,.pfhero small,.realm-hint,.ck-chnote,.ck-ivn small,.ck-chinfo small,.cu-note,.cu-desc,.ck-set .ck-ver,.ck-hprog span{font-weight:400!important}
 .ck-next span b,.ck-adr b,#mbox li b,.vs b{font-weight:800!important}
+/* v5.5.2 home buttons: one text size and one icon size everywhere; tile icons sit on one line */
+html body #app #title .tcard.ck-home .ck-hmain .bt,html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile,html body #app #title .tcard.ck-home .ck-install{font-size:14px!important}
+html body #app #title .tcard.ck-home .ck-hmain .bt .ckico,html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico,html body #app #title .tcard.ck-home .ck-install .ckico{width:19px!important;height:19px!important}
+html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{display:grid!important;grid-template-rows:21px 1fr;justify-items:center;align-items:start;align-content:stretch;row-gap:3px;padding:7px 4px 5px!important;height:68px!important;line-height:1.1!important}
+html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico-w{align-self:center;height:21px;display:flex;align-items:center}
+html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile>:not(.ckico-w){align-self:center}
+@media (max-height:700px){html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:54px!important;font-size:12.5px!important;padding:5px 4px 4px!important}html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:17px!important;height:17px!important}}
+@media (orientation:landscape) and (max-height:620px){html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:50px!important;font-size:11px!important;grid-template-rows:17px 1fr;padding:4px 4px 3px!important}html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:15px!important;height:15px!important}html body #app #title .tcard.ck-home .ck-hmain .bt{font-size:13px!important}}
+html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{white-space:nowrap!important}

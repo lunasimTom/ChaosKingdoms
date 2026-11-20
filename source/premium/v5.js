@@ -52,7 +52,7 @@ function ckCommit(e){if(ckBreach(e))return false;if(!L.df)return false;const C=L
  if(!isFinite(df))return false;if(e.df0==null||df>e.df0)e.df0=df;return df<=3||df<=e.df0*.25}
 function ckTwThreat(e,t,d){let s=1;if(t.k==='wall')s+=.6;else{const st=ts(t);s+=Math.min(3,(st.dm||10)/Math.max(.2,st.rt||1)/40);if(d<=st.rg)s+=1.2}
  if(e._sh===t&&TM-(e._shT||-9)<2.5)s+=3;s+=(1-Math.min(1,t.hp/(t.mhp||t.hp||1)))*.8;s+=(t.lv||1)*.15;return s/(.6+d)}
-function ckPickTarget(e){const br=ckBreach(e),r=ckAware(e)*(br?1.6:1);if(br)try{ckAITip()}catch(_){};let b=null,bs=0;for(const t of L.tr){if(!t||t.hp<=0||t.building&&!(t.hp>0))continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d>=r||!lineOK(e.x,e.y,t.x,t.y))continue;let s=ckTwThreat(e,t,d);if(br){const hp=Math.min(1,t.hp/(t.mhp||t.hp||1));s*=1.6-hp;if(L._dz){const C=L.cols,i=Math.round(t.y)*C+Math.round(t.x);s*=1+Math.min(2,(L._dz[i]||0)*.3)}}if(s>bs){bs=s;b=t}}return b}
+function ckPickTarget(e){const br=ckBreach(e),r=ckAware(e)*(br?1.6:1);let b=null,bs=0;for(const t of L.tr){if(!t||t.hp<=0||t.building&&!(t.hp>0))continue;const d=Math.hypot(t.x-e.x,t.y-e.y);if(d>=r||!lineOK(e.x,e.y,t.x,t.y))continue;let s=ckTwThreat(e,t,d);if(br){const hp=Math.min(1,t.hp/(t.mhp||t.hp||1));s*=1.6-hp;if(L._dz){const C=L.cols,i=Math.round(t.y)*C+Math.round(t.x);s*=1+Math.min(2,(L._dz[i]||0)*.3)}}if(s>bs){bs=s;b=t}}return b}
 // ---- Settings screen (gear button): sound, music, gameplay, display, haptics, version ----
 function ckSettingsHtml(){const zh=LANG==='zh',sec=(t,b)=>`<div class="ck-set-sec"><h4>${t}</h4>${b}</div>`;
  return `<div class="ck-set"><h2 class="f">⚙ ${zh?'设置':'Settings'}</h2>`

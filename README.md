@@ -7,7 +7,20 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.5.1.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.5.2.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.5.2
+
+**Home screen.**
+- **Same size everywhere:** Shop and Inventory now use the same text size (14 px) and icon size as the six buttons below them, in Chinese and English. An older rule had been forcing them smaller.
+- **Level icons:** the six buttons below put their icon at a fixed height, so every icon in a row sits on the same line however long the label is. Labels stay on one line; a long English label such as "Progress transfer" shrinks slightly instead of wrapping.
+
+**App icon.**
+- **Full artwork:** the yellow frame is gone and the artwork now fills the whole icon to the edges, under circle, rounded-square and squircle masks.
+- **Glossy finish:** a soft top highlight, a diagonal sheen, a light rim and a gentle edge shadow give it depth.
+- **Everywhere:** the Android adaptive and older-style icons, the browser icon and the home-screen (install) icons all use the new artwork. `tools/make_icon.py` regenerates them.
+
+**Monsters.** The one-time tip about smarter monsters has been removed; their behaviour is unchanged.
 
 ## What changed in v5.5.1
 
@@ -18,7 +31,6 @@ New code is in `source/premium/v551.js`.
 - **Several bases:** each base's starting cost reflects how well it's defended, so monsters head for the weaker base. One extra tower near a base was enough to send them to the other one.
 - **Breaching:** when the route ahead is heavily covered, monsters attack the weakest tower covering their path to open a gap. Brutes do this soonest, grunts later, and runners only when the way is truly blocked by fire.
 - **Each type keeps its character:** brutes break towers, runners raid the base, and flyers and bosses behave as before.
-- **First time:** a one-time tip explains the new behaviour.
 
 **Feel.**
 - **Pickup sound:** a warmer, rounder chime of about 0.8 s (a soft bell with octave and fifth, a light shimmer and no hard click). Rarer items add a sweeter final note.
@@ -973,7 +985,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.2.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

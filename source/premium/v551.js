@@ -54,9 +54,12 @@ function ckHomeCard(){const t=document.querySelector('#title .profileteaser');if
  box.innerHTML=`<div class="ck-hmed">${slots}</div><div class="ck-hprog"><span>${zh?'成就':'Achievements'} <b>${n}/${tot}</b></span><span class="ck-ttl">${ckTitleTxt()}</span></div><div class="ck-bar"><em style="width:${Math.round(n/tot*100)}%"></em></div>`;
  const old=document.getElementById('ckshow');if(old)old.style.display='none'}
 setTimeout(ckHomeCard,1500);
-// ---- smarter monsters (see the flow-field patch in the build): one-time tip the first time it matters ----
-function ckAITip(){if(S.aitip||L.demo)return;S.aitip=1;try{save()}catch(_){}setTimeout(()=>toast(lvZ('💡 怪物会绕开你的火力，并攻击防守薄弱的地方。请覆盖每一条路线！','💡 Monsters now dodge your firepower and strike where you are weakest. Cover every path!')),2500)}
+// ---- smarter monsters (see the flow-field patch in the build) ----
 
 // soft range ring for a selected tower: semi-transparent, blurred edges, does not hide the map
 function ckRangeRing(x,y,r){const g=c.createRadialGradient(x,y,0,x,y,r*1.07);g.addColorStop(0,'rgba(255,226,150,.035)');g.addColorStop(.82,'rgba(255,226,150,.06)');g.addColorStop(.93,'rgba(255,234,170,.24)');g.addColorStop(.97,'rgba(255,234,170,.14)');g.addColorStop(1,'rgba(255,234,170,0)');
  c.save();c.fillStyle=g;c.beginPath();c.arc(x,y,r*1.07,0,7);c.fill();c.restore()}
+
+// v5.5.2: keep every home tile label on one line (long English labels shrink a little instead of wrapping)
+function ckFitTiles(){const t=document.getElementById('title');if(!t||!t.offsetWidth)return;document.querySelectorAll('#title .ck-hutil .bt.ck-tile').forEach(b=>{b.style.removeProperty("font-size");let f=parseFloat(getComputedStyle(b).fontSize),n=0;while(b.scrollWidth>b.clientWidth+1&&n<12&&f>9){f-=.5;b.style.setProperty('font-size',f+'px','important');n++}})}
+addEventListener('resize',()=>setTimeout(ckFitTiles,60));setInterval(ckFitTiles,1200);setTimeout(ckFitTiles,400);
