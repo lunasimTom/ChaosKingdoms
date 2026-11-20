@@ -7,7 +7,29 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.5.2.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.5.3.apk` | Android app (package `com.chaoskingdoms.game`, version 5.5.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.5.3
+
+**Install Game button (browser version).**
+- **Language:** the button now switches between 安装到桌面 and "Install Game" as soon as you change the language. Before, it was drawn once at start-up and stayed Chinese.
+- **The guide fits where you are:**
+
+| Where the game is open | What the button does |
+| --- | --- |
+| A website, in Chrome or Edge (Android or desktop) | Opens the browser's own install dialog. If the browser isn't ready to offer it yet, it shows the menu steps instead. |
+| iPhone, Safari | Numbered steps with the Share and "Add to Home Screen" icons drawn in: Share (inside the ⋯ menu on iOS 26), Add to Home Screen, keep "Open as Web App" on, Add. |
+| iPhone, Chrome | Share in the address bar, Add to Home Screen, Add. |
+| iPhone, other browsers | Open the page in Safari first. |
+| WeChat and other in-app browsers | Open in Safari (iPhone) or in the browser (Android) first. |
+| A downloaded HTML file, or inside a preview frame (such as the Claude page) | Explains that browsers can't install a local file or a framed page. Points Android players to the APK, and everyone to the web version. |
+
+- **Your web address:** set `CK_WEB_URL` at the top of the install code in `source/premium/v5.js` to the `https://` address where you host the web folder. The guide then shows "Open the web version" and "Download the Android app (APK)" buttons. While it is empty, those buttons are hidden.
+
+**Hosting the web version.**
+- **Build the folder:** `python3 tools/make_web.py <folder>` collects everything needed: the game, `index.html` (opens the game), `manifest.webmanifest`, `sw.js` (offline cache), the icons and the APK. The download zip already contains this folder as `web/`.
+- **Upload:** drag the `web` folder onto a free static host such as Netlify Drop (app.netlify.com/drop) or Cloudflare Pages (Direct Upload). The game is then installable from Chrome and can be added to the iPhone Home Screen.
+- **Updating:** after a new release, upload the new `web` folder again. The offline cache is versioned, so installed copies pick up the update on their next start.
 
 ## What changed in v5.5.2
 
@@ -985,7 +1007,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.2.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.5.3.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

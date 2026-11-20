@@ -2353,7 +2353,7 @@ setTimeout(()=>{try{ckChInit()}catch(_){}const row=document.querySelector('#titl
    shown) are optional: saves and transfer codes from any older version load unchanged, and older
    versions ignore the new fields. Before anything is converted the raw save is copied once to
    localStorage 'ck25_bak_v44'. */
-const CK_VER='5.5.2',CK_BUILD=51;
+const CK_VER='5.5.3',CK_BUILD=52;
 function ckVerTxt(){return lvZ('版本','Version')+' '+CK_VER+' ('+lvZ('构建 ','build ')+CK_BUILD+')'}
 // ---- level-up rewards: gold + stars every level, a chest at milestones ----
 const CK_LV_CHEST={15:0,20:1,25:2,30:3,40:4,50:5};
@@ -2564,14 +2564,46 @@ setTimeout(ckHomeLayout,1000);setTimeout(ckHomeLayout,2000);
 let CK_DIP=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();CK_DIP=e;ckInstallBtn()});
 window.addEventListener('appinstalled',()=>{CK_DIP=null;toast(lvZ('已安装到桌面！','Installed!'));ckInstallBtn()});
 function ckStandalone(){try{return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true}catch(_){return false}}
+// v5.5.3: your hosted web address (https://…/). Set it after uploading the web folder; leave '' to hide the links.
+const CK_WEB_URL='';
 function ckInstallBtn(){const card=document.querySelector('#title .tcard.ck-home');if(!card)return;let b=document.getElementById('ckinstall');
  const hide=!!window.CKAndroid||ckStandalone();if(hide){if(b)b.remove();return}
  if(!b){b=document.createElement('button');b.id='ckinstall';b.className='bt g ck-install';b.type='button';b.onclick=ckInstall;const u=card.querySelector('.ck-hutil');(u||card.lastChild).after(b)}
- b.innerHTML=ckIcoSvg('install')+' '+lvZ('安装到桌面','Install Game')}
-async function ckInstall(){if(CK_DIP){const e=CK_DIP;CK_DIP=null;try{e.prompt();const r=await e.userChoice;if(r&&r.outcome==='accepted')return}catch(_){}}
- const zh=LANG==='zh',ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua)||(/Mac/.test(ua)&&'ontouchend' in document),android=/Android/.test(ua),framed=window.top!==window;
- const steps=ios?(zh?['用 Safari 打开本游戏页面','点击底部的“分享”按钮 ⬆','选择“添加到主屏幕”']:['Open this game page in Safari','Tap the Share button ⬆','Choose “Add to Home Screen”']):android?(zh?['用 Chrome 打开本游戏页面','点击右上角菜单 ⋮','选择“安装应用”或“添加到主屏幕”']:['Open this game page in Chrome','Tap the ⋮ menu (top right)','Choose “Install app” or “Add to Home screen”']):(zh?['用 Chrome 或 Edge 打开本游戏页面','点击地址栏右侧的“安装”图标，或打开菜单 ⋮','选择“安装 Chaos Kingdoms”']:['Open this game page in Chrome or Edge','Click the Install icon at the right of the address bar, or open the ⋮ menu','Choose “Install Chaos Kingdoms”']);
- modal(`<div class="ck-inst"><img class="ck-insti" src="${CKA.appicon}" alt=""><h2 class="f">${zh?'安装到桌面':'Install Game'}</h2><p>${zh?'像应用一样从桌面或主屏幕启动，全屏游戏，离线也能玩。':'Launch it from your desktop or home screen like an app, full screen, and play offline.'}</p><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>${framed?`<p class="ck-instn">${zh?'当前页面嵌在预览窗口中，浏览器不允许直接安装。请在新标签页中打开游戏文件或网页后再安装。':'This page is shown inside a preview frame, where browsers do not allow installing. Open the game file or page in its own browser tab first.'}</p>`:''}</div><button class="bt g" id="m1">${zh?'知道了':'Got it'}</button>`,closeM)}
+ if(b.dataset.l!==LANG){b.dataset.l=LANG;b.innerHTML=ckIcoSvg('install')+' '+lvZ('安装到桌面','Install Game')}}
+// redraw the button (and an open install guide) whenever the language changes
+(function(){try{const o=updLang;updLang=function(){const r=o.apply(this,arguments);try{ckInstallBtn()}catch(_){}return r}}catch(_){}})();
+function ckInstallCtx(){const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1),android=/Android/.test(ua);
+ let framed=false;try{framed=window.top!==window}catch(_){framed=true}
+ const hosted=/^https?:$/.test(location.protocol)&&!framed;
+ const inapp=/MicroMessenger|WeChat|QQ\/|Weibo|FBAN|FBAV|Instagram|Line\/|TikTok|musical_ly|Bytedance|DingTalk|Alipay/i.test(ua);
+ const iosAlt=ios&&/CriOS|FxiOS|EdgiOS|OPiOS|YaBrowser|GSA\//.test(ua);
+ return {ios,android,framed,hosted,inapp,iosChrome:ios&&/CriOS/.test(ua),iosAlt,desktop:!ios&&!android}}
+const CK_SHARE_SVG='<svg class="ck-isv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2"/></svg>';
+const CK_ADD_SVG='<svg class="ck-isv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/></svg>';
+const CK_DOTS_SVG='<svg class="ck-isv" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+const CK_VDOTS_SVG='<svg class="ck-isv" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
+async function ckInstall(){if(CK_DIP){const e=CK_DIP;try{e.prompt();const r=await e.userChoice;CK_DIP=null;if(r&&r.outcome==='accepted')return}catch(_){CK_DIP=null}}
+ ckInstallGuide()}
+function ckInstallGuide(){const zh=LANG==='zh',c=ckInstallCtx(),Z=(a,b)=>zh?a:b,b=s=>'<b>'+s+'</b>';
+ let steps=[],note='',links='';
+ const web=CK_WEB_URL&&/^https:\/\//.test(CK_WEB_URL)?CK_WEB_URL.replace(/\/?$/,'/'):'';
+ const openWeb=web?`<a class="bt g ck-ilink" href="${web}" target="_blank" rel="noopener">${Z('打开网页版','Open the web version')}</a>`:'';
+ const apk=web?`<a class="bt g ck-ilink" href="${web}ChaosKingdoms-v${CK_VER}.apk" target="_blank" rel="noopener" download>${Z('下载安卓应用 (APK)','Download the Android app (APK)')}</a>`:'';
+ if(c.ios){
+  if(!c.hosted){note=Z('这个页面是本地文件或嵌在预览窗口中，iPhone 无法把它添加到主屏幕。','This copy is a local file or sits inside a preview window, so iPhone cannot add it to the Home Screen.')+' '+(web?Z('请先用 Safari 打开网页版，再按下面的步骤操作。','Open the web version in Safari first, then follow the steps below.'):Z('需要先用 Safari 打开游戏的网页版。','You need to open the game\'s web version in Safari first.'));links=openWeb}
+  if(c.inapp)steps=[Z('点击右上角的 '+CK_DOTS_SVG+' 菜单，选择“在 Safari 中打开”','Tap the '+CK_DOTS_SVG+' menu (top right) and choose '+b('Open in Safari')),Z('在 Safari 中按“安装步骤”添加到主屏幕','Then add it to the Home Screen from Safari')];
+  else if(c.iosChrome)steps=[Z('点击地址栏右侧的分享按钮 '+CK_SHARE_SVG,'Tap the Share button '+CK_SHARE_SVG+' at the right of the address bar'),Z('选择 '+b('添加到主屏幕')+' '+CK_ADD_SVG,'Choose '+b('Add to Home Screen')+' '+CK_ADD_SVG),Z('点击右上角的 '+b('添加'),'Tap '+b('Add')+' (top right)')];
+  else if(c.iosAlt)steps=[Z('在 Safari 中打开本页（复制链接后粘贴到 Safari）','Open this page in Safari (copy the link and paste it into Safari)'),Z('点击分享按钮 '+CK_SHARE_SVG+'，选择 '+b('添加到主屏幕'),'Tap Share '+CK_SHARE_SVG+' and choose '+b('Add to Home Screen'))];
+  else steps=[Z('点击底部的分享按钮 '+CK_SHARE_SVG+'<br><small>iOS 26：先点右下角的 '+CK_DOTS_SVG+'，再点“分享”</small>','Tap the Share button '+CK_SHARE_SVG+' at the bottom<br><small>iOS 26: tap '+CK_DOTS_SVG+' (bottom right) first, then '+b('Share')+'</small>'),Z('向下滑动，选择 '+b('添加到主屏幕')+' '+CK_ADD_SVG,'Scroll down and choose '+b('Add to Home Screen')+' '+CK_ADD_SVG),Z('保持“作为网页 App 打开”开启，点击右上角的 '+b('添加'),'Keep '+b('Open as Web App')+' on, then tap '+b('Add')+' (top right)'),Z('从主屏幕上的 Chaos Kingdoms 图标启动游戏','Start the game from the Chaos Kingdoms icon on your Home Screen')]
+ }else if(c.android){
+  if(!c.hosted){note=Z('这个页面是本地文件或嵌在预览窗口中，Chrome 无法安装它，所以菜单里不会出现“安装应用”。','This copy is a local file or sits inside a preview window, so Chrome cannot install it and the menu shows no '+b('Install app')+'.');
+   steps=web?[Z('打开网页版，再从 Chrome 菜单 '+CK_VDOTS_SVG+' 中选择 '+b('安装应用'),'Open the web version, then choose '+b('Install app')+' from the Chrome menu '+CK_VDOTS_SVG),Z('或者安装安卓应用（APK），体验最完整','Or install the Android app (APK) for the full experience')]:[Z('安装安卓应用（APK）：在下载页获取 ChaosKingdoms-v'+CK_VER+'.apk，点击安装','Install the Android app: get ChaosKingdoms-v'+CK_VER+'.apk from the download page and tap it'),Z('或者用 Chrome 打开游戏的网页版，再选择“安装应用”','Or open the game\'s web version in Chrome and choose '+b('Install app'))];links=openWeb+apk}
+  else if(c.inapp)steps=[Z('点击右上角菜单，选择“在浏览器中打开”','Tap the menu (top right) and choose '+b('Open in browser')),Z('在 Chrome 中点击 '+CK_VDOTS_SVG+'，选择 '+b('安装应用'),'In Chrome, tap '+CK_VDOTS_SVG+' and choose '+b('Install app'))];
+  else steps=[Z('点击右上角的 '+CK_VDOTS_SVG+' 菜单','Tap the '+CK_VDOTS_SVG+' menu (top right)'),Z('选择 '+b('安装应用')+'（或“添加到主屏幕” › “安装”）','Choose '+b('Install app')+' (or '+b('Add to Home screen')+' › '+b('Install')+')'),Z('确认安装，然后从主屏幕启动游戏','Confirm, then start the game from your home screen')]
+ }else{
+  if(!c.hosted){note=Z('这个页面是本地文件或嵌在预览窗口中，浏览器无法安装它。','This copy is a local file or sits inside a preview window, so the browser cannot install it.');links=openWeb}
+  steps=[...(c.hosted?[]:[Z('用 Chrome 或 Edge 打开游戏的网页版','Open the game\'s web version in Chrome or Edge')]),Z('点击地址栏右侧的安装图标，或菜单 '+CK_VDOTS_SVG+' › '+b('安装 Chaos Kingdoms'),'Click the install icon at the right of the address bar, or '+CK_VDOTS_SVG+' › '+b('Install Chaos Kingdoms'))]}
+ modal(`<div class="ck-inst"><img class="ck-insti" src="${CKA.appicon}" alt=""><h2 class="f">${Z('安装到桌面','Install Game')}</h2><p>${Z('像应用一样从主屏幕启动，全屏游戏，离线也能玩。','Launch it from your home screen like an app, full screen, and play offline.')}</p>${note?`<p class="ck-instn">${note}</p>`:''}<ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>${links?`<div class="ck-ilinks">${links}</div>`:''}</div><button class="bt g" id="m1">${Z('知道了','Got it')}</button>`,closeM)}
 setTimeout(ckInstallBtn,1300);setTimeout(ckInstallBtn,2600);
 
 // v5.5.1 danger map weights: each tower counts by its damage per second, so strong firepower is avoided more
@@ -4481,7 +4513,7 @@ addEventListener('pagehide',()=>{try{if(S.mode==='play')recordSession('quit',tru
 
 /*XFER_BEGIN*/
 const XT=(e,z)=>LANG==='zh'?z:e;
-function xferObj(){progressStats();return{game:'Chaos Kingdoms',kind:'progress',v:1,t:new Date().toISOString(),n:S.name,own:S.own,p:S.prog,d:S.dif,g:S.gold,u:S.unl,maps:S.maps,inv:S.inv||{},xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},ru:S.rune|0,s5:1,md:S.medals|0,ai:S.autoIt||{},ver:'5.5.2',lr:S.lvr==null?null:S.lvr}}
+function xferObj(){progressStats();return{game:'Chaos Kingdoms',kind:'progress',v:1,t:new Date().toISOString(),n:S.name,own:S.own,p:S.prog,d:S.dif,g:S.gold,u:S.unl,maps:S.maps,inv:S.inv||{},xp:S.xp,stats:S.stats,ach:S.ach,cc:S.cc||{},mb:S.mb||{},cu:S.cu||{a:0,d:0,b:0,c:0},ss:S.ss|0,fx:S.fx||{},ru:S.rune|0,s5:1,md:S.medals|0,ai:S.autoIt||{},ver:'5.5.3',lr:S.lvr==null?null:S.lvr}}
 function xferEncode(){let j=JSON.stringify(xferObj()),b='';try{let u=new TextEncoder().encode(j);for(let i=0;i<u.length;i++)b+=String.fromCharCode(u[i]);return 'CK1:'+btoa(b)}catch(e){return j}}
 function xferParse(t){t=String(t||'').trim();if(!t)throw 0;let j;if(t.startsWith('CK1:')){let b=atob(t.slice(4).replace(/\s+/g,'')),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);j=JSON.parse(new TextDecoder().decode(u))}else j=JSON.parse(t);
  if(!j||j.game!=='Chaos Kingdoms'||j.kind!=='progress'||typeof j.p!=='object'||j.p===null)throw 0;return j}
@@ -6754,6 +6786,12 @@ html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile>:not(.ckico-w){align-
 @media (max-height:700px){html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:54px!important;font-size:12.5px!important;padding:5px 4px 4px!important}html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:17px!important;height:17px!important}}
 @media (orientation:landscape) and (max-height:620px){html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:50px!important;font-size:11px!important;grid-template-rows:17px 1fr;padding:4px 4px 3px!important}html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:15px!important;height:15px!important}html body #app #title .tcard.ck-home .ck-hmain .bt{font-size:13px!important}}
 html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{white-space:nowrap!important}
+/* v5.5.3 install guide */
+.ck-inst .ck-isv{width:1.15em;height:1.15em;vertical-align:-.22em;margin:0 1px;color:#ffd36a}
+.ck-inst li small{font-size:11.5px;opacity:.82}
+.ck-inst .ck-instn{background:#2a1606aa;border:1px solid #ffcf9a44;border-radius:10px;padding:7px 10px;margin:6px auto;max-width:330px;text-align:left;line-height:1.45}
+.ck-ilinks{display:flex;flex-direction:column;gap:8px;max-width:300px;margin:8px auto 4px}
+.ck-ilinks .ck-ilink{display:flex;align-items:center;justify-content:center;text-decoration:none;min-height:38px;font-size:14px!important}
 </style>
 <script id="ck-fixes">
 /* runtime fixes (source-level fixes live in build.py) */
@@ -6802,7 +6840,7 @@ const zh=()=>G('LANG')==='zh';
 (function title(){
  const t=$('title');if(!t||$('ck-bg'))return;const SP=G('SPRD')||{};
  const bg=document.createElement('div');bg.id='ck-bg';
- bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v5.5.2 · Strategy Edition</div>`;
+ bg.innerHTML=`<div class="ckb-art"></div><div class="ckb-shade"></div><div class="ckb-rays"></div><canvas></canvas><div class="ckb-fog"></div><div class="ckb-ver">v5.5.3 · Strategy Edition</div>`;
  const art=SP.m_forest||SP.m_sky;if(art)bg.querySelector('.ckb-art').style.backgroundImage=`url("${art}")`;
  t.insertBefore(bg,t.firstChild);
  const pb=$('play');if(pb&&!pb.querySelector('.ck-sweep')){pb.classList.add('ck-shine');const s=document.createElement('i');s.className='ck-sweep';pb.appendChild(s)}
