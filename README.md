@@ -7,7 +7,55 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.8.apk` | Android app (package `com.chaoskingdoms.game`, version 5.8, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.9.apk` | Android app (package `com.chaoskingdoms.game`, version 5.9, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.9
+
+New code is in `source/premium/v59.js`. The web HTML is 9.84 MB, and the build now refuses to write it at 10 MB or more.
+
+**Auto-use, as intended.**
+- **Different items overlap freely.** Freeze, Speed Boost and War Horn can all run at once.
+- **The same item waits.** It is never used again until its previous effect has completely ended. The durations are Freeze 10 s, Ice Bomb 6 s, Speed Boost 20 s, Gold Bag 30 s, War Horn 15 s, Shield 15 s, Summon Aid 6 s, Allied Legion 16 s, Attack Helicopter 14 s, and about 2 s for the instant items.
+- **Tested** with the No Item Cooldowns treasure on: Freeze fired at 0, 10, 20, 31 and 41 s, Speed Boost at 0, 20 and 40 s, and War Horn at 0, 15 and 30 s.
+
+**Shop.**
+- **One Buy button** per item, with a ×1 / ×10 switch beside it. The button shows the price for the chosen quantity, for example "Buy ×10 · 4,500".
+- **Correct ×10 price for the Healing Potion:** its price rises 100 per purchase up to 700, and the ×10 total follows that. 5.8 had this wrong.
+- **AUTO** is a round button: dark when off, glowing gold with a spinning ring when on.
+- **Layout:** the switch, AUTO and the owned count share one line, and Buy runs full width below, so no labels are clipped. The inventory uses the same round AUTO button.
+
+**New artwork.**
+- **Items:** your 12 higher-resolution item icons replace the old ones (Fire Bomb, Ice Bomb, Lightning Scroll, Healing Potion, War Horn, Gold Bag, Trap, Summon Aid, Shield, Speed Boost, Meteor, Freeze). They're swapped into the existing image slots, so the file doesn't grow.
+- **Backpack:** the new backpack image replaces the 🎒 emoji in the inventory title.
+- **Difficulty icons:** the sprout (Novice Trial), shield (Easy), crossed swords (Normal), flame (Hard) and skull (Chaos Inferno) replace the emoji in the difficulty panel.
+
+**Item effects.**
+- **No icon pop-up:** the icon and name that flashed in the middle of the battlefield are gone. The rings and pillars the original game drew around every tower are removed too.
+- **A new effects layer** draws over the battlefield. Long effects stay at the screen edges so the fight stays visible:
+  - **Freeze:** ice crystals grow in from the corners and edges with a frosted rim and glints for the full 10 s, then melt.
+  - **Ice Bomb:** cold fog rolls across the field with snowfall.
+  - **Meteor:** the sky darkens; meteors with long burning tails strike every enemy with impact flashes, debris and embers.
+  - **Fire Bomb:** a flame blossom with licking fire, smoke and embers.
+  - **Lightning Scroll:** the screen dims and forked bolts lash the six toughest enemies three times, with sparks.
+  - **Speed Boost:** a light-speed streak, then electric tendrils crackle along the screen edges for 20 s, with sparks rising from towers.
+  - **Gold Bag:** golden god-rays and a shower of spinning, bouncing coins, then faint glitter at the edges.
+  - **War Horn:** a sound wave rolls up the screen, then embers rise and the rim pulses like a war drum.
+  - **Trap:** steel spikes burst from the ground under the lead enemies, with dust and sparks.
+  - **Summon Aid:** heavenly beams descend one by one and feathers drift down.
+  - **Shield:** a shimmering hexagonal dome over every base, which shatters when it ends.
+  - **Healing Potion:** life motes and leaves spiral up around the bases.
+  - **Rare treasures:** Time Crystal winds a ghostly clock backwards; Dragonfire Scroll sweeps a wall of flame across the field; Royal Protection raises a golden dome; Master Forging throws sparks from every tower; Midas Mark sweeps a golden sheen; Ancient Horn combines the horn with crackling red energy.
+
+**World map.**
+- **Locked realms:** a small "Unlock map" button now sits at the top right of the panel, so a locked realm's panel is the same height as an unlocked one and never runs off screen.
+- **Spacing:** the rows of realm cards are closer together.
+
+**Consistency pass.**
+- **Commander Record:** the item links after "Unlocks:" in Next Level use the standard small gold button.
+- **Switches:** every checkbox (Settings and Battle history) is now the game's gold on/off switch.
+- **Inventory:** tabs no longer show empty "0" badges.
+
+**Testing.** The 42-step interface walk passes in portrait and landscape, along with inventory touch, the auto-use and item-bar flow, boss and loot flows, monster AI, mini-bosses, treasure hoards, the home screen fit, the v5.8 feature checks and save compatibility from v4.3. New checks cover auto-use timing, the shop quantity switch and potion pricing, every item effect, the locked-realm panel height, and the Commander Record buttons.
 
 ## What changed in v5.8
 
@@ -1077,7 +1125,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.8.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.9.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

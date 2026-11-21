@@ -28,6 +28,13 @@ def _ckm():
         out.append('data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode())
     return 'const CKM=' + __import__('json').dumps(out) + ';'
 CKA_JS = CKA_JS + _ckm()
+def _w59(name, size, q=84):
+    import io
+    from PIL import Image
+    im = Image.open(os.path.join(SRC, 'art59', name)).convert('RGBA')
+    if im.width != size: im = im.resize((size, size), Image.LANCZOS)
+    buf = io.BytesIO(); im.save(buf, 'WEBP', quality=q, method=6)
+    return 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
 def _ckr():
     d = os.path.join(SRC, 'realms')
     out = ['data:image/webp;base64,' + base64.b64encode(open(os.path.join(d, f'realm{i}.webp'), 'rb').read()).decode() for i in range(13)]
@@ -35,7 +42,7 @@ def _ckr():
     from PIL import Image
     buf = io.BytesIO(); Image.open(os.path.join(SRC, 'forge_strip.png')).convert('RGBA').save(buf, 'WEBP', quality=72, method=6)
     fg = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
-    return 'const CK_RIMG=' + __import__('json').dumps(out) + ';const CK_FORGEIMG=' + __import__('json').dumps(fg) + ';const CK_MENU_MP3=' + __import__('json').dumps('data:audio/mpeg;base64,' + base64.b64encode(open(os.path.join(SRC, 'menu_music.mp3'), 'rb').read()).decode()) + ';'
+    return 'const CK_RIMG=' + __import__('json').dumps(out) + ';const CK_FORGEIMG=' + __import__('json').dumps(fg) + ';const CK_DIFIMG=' + __import__('json').dumps([_w59('dif%d.png' % i, 96, 78) for i in range(5)]) + ';const CK_BAGIMG=' + __import__('json').dumps(_w59('bag.png', 128, 80)) + ';const CK_MENU_MP3=' + __import__('json').dumps('data:audio/mpeg;base64,' + base64.b64encode(open(os.path.join(SRC, 'menu_music.mp3'), 'rb').read()).decode()) + ';'
 CKA_JS = CKA_JS + _ckr()
 
 def rep(old, new, count=1):
@@ -379,7 +386,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -663,7 +670,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.8',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'5.9',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
@@ -764,8 +771,11 @@ rep(",boss=hidden?TL('Hidden realm'):TL('Boss: {0}',BOSS[ri]);", ",boss=hidden?T
 rep("${k===(r.count||8)-1||ri===12?'boss':''}", "${k===(r.count||8)-1||ri===12?'boss':''}${k===3&&ri<12?' mini':''}")
 rep("(k===(r.count||8)-1||ri===12)?'♛':''}", "(k===(r.count||8)-1||ri===12)?'♛':(k===3&&ri<12)?'⚔':''}")
 # 62. v5.8: Buy x10 in the item shop, synergies move to Help
-rep("`}</button>${ckAutoBtn(it.id)}<small>", "`}</button>${(!lim&&!lk)?ckX10Btn(it.id,pr):''}${ckAutoBtn(it.id)}<small>")
+rep("<span class=\"buytxt\">${TL('Buy<br>').replace('<br>','')}</span>${COIN}<span class=\"price\">${pr}</span>`}</button>${ckAutoBtn(it.id)}<small>", "<span class=\"buytxt\">${TL('Buy<br>').replace('<br>','')}${(!lim&&ckQ(it.id)===10)?' ×10':''}</span>${COIN}<span class=\"price\">${lim?pr:ckQPrice(it.id,pr)}</span>`}</button>${(!lim&&!lk)?ckQTog(it.id):''}${ckAutoBtn(it.id)}<small>")
 rep('<div class="pfsection">${TL(\'Tower Synergies\')}</div><div class="pfsynergy"><div><b>❄ ${TL(\'Frost + Cannon\')}</b><small>${TL(\'Slowed enemies take bonus cannon splash damage.\')}</small></div><div><b>☠ ${TL(\'Poison + Lightning\')}</b><small>${TL(\'Poisoned enemies take bonus chain lightning damage.\')}</small></div><div><b>✧ ${TL(\'Holy + Heavy\')}</b><small>${TL(\'Holy towers excel against brutes and bosses.\')}</small></div><div><b>✦ ${TL(\'Tactical choices\')}</b><small>${TL(\'Pick one upgrade between waves.\')}</small></div></div>', '')
+# 63. v5.9: new item artwork replaces the 12 original item sprites in place
+for _k in ['i_fbomb','i_ibomb','i_scroll','i_potion','i_horn','i_gold','i_trap','i_aid','i_shield','i_speed','i_meteor','i_freeze']:
+    _n0 = len(s); s = re.sub(r'"%s":"data:image/[a-z]+;base64,[^"]*"' % _k, '"%s":"%s"' % (_k, _w59(_k + '.png', 144, 76)), s, count=1); assert len(s) != _n0, _k
 # 61. v5.8 size: the 1280x1260 'tower360' sheet in the original is never referenced (1.06 MB); drop it
 _n0=len(s);s=re.sub(r"SPRD\.tower360='[^']*';","",s);assert len(s)<_n0-500000,'tower360 not removed'
 # ---------------------------------------------------------------- premium layer
@@ -829,5 +839,6 @@ def _png2webp(m):
     return cache[key] or m.group(0)
 _png2webp.cache = {}
 s = re.sub(r'data:image/png;base64,([A-Za-z0-9+/=]+)', _png2webp, s)
+assert len(s.encode('utf8')) < 10_000_000, 'web HTML must stay under 10 MB (%d bytes)' % len(s.encode('utf8'))
 open(out_path, 'w', encoding='utf8').write(s)
 print('wrote', out_path, len(s))

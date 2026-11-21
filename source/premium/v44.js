@@ -4,7 +4,7 @@
    shown) are optional: saves and transfer codes from any older version load unchanged, and older
    versions ignore the new fields. Before anything is converted the raw save is copied once to
    localStorage 'ck25_bak_v44'. */
-const CK_VER='5.8',CK_BUILD=54;
+const CK_VER='5.9',CK_BUILD=55;
 function ckVerTxt(){return lvZ('版本','Version')+' '+CK_VER+' ('+lvZ('构建 ','build ')+CK_BUILD+')'}
 // ---- level-up rewards: gold + stars every level, a chest at milestones ----
 const CK_LV_CHEST={15:0,20:1,25:2,30:3,40:4,50:5};
@@ -41,7 +41,7 @@ function ckInvRows(){const zh=LANG==='zh',inv=S.inv||{},T=CKINV.tab,inB=S.mode==
  return rows.join('')}
 function ckInvHtml(){const zh=LANG==='zh',inv=S.inv||{};ckChInit();
  const cnt={items:IT.filter(it=>!it.rare&&inv[it.id]>0).reduce((a,it)=>a+inv[it.id],0),rare:Object.keys(CK_RARE).reduce((a,k)=>a+(inv[k]|0),0),chests:S.chests.reduce((a,b)=>a+b,0),mats:(S.frag|0)+(S.rune|0)};
- const tb=(k,l)=>`<button type="button" class="ck-ivt${CKINV.tab===k?' on':''}" data-ivtab="${k}">${l}<small>${cnt[k]}</small></button>`;
+ const tb=(k,l)=>`<button type="button" class="ck-ivt${CKINV.tab===k?' on':''}" data-ivtab="${k}">${l}${cnt[k]?`<small>${cnt[k]}</small>`:''}</button>`;
  return `<div class="ck-inv"><h2 class="f">🎒 ${zh?'背包':'Inventory'}</h2><div class="ck-ivhead"><span>${ckImg('gold','ic')} ${Economy.display(Economy.walletBalance())}</span><span>${ckImg('dia','ic')} ${(S.diamonds||0).toLocaleString()}</span></div><div class="ck-ivtabs">${tb('items',zh?'道具':'Items')}${tb('rare',zh?'稀有':'Rare')}${tb('chests',zh?'宝箱':'Chests')}${tb('mats',zh?'材料':'Materials')}</div><p class="ck-ivnote">${zh?'出售价格为原价的 80%。':'Items sell for 80% of their original price.'}</p><div class="ck-ivlist" id="ck-ivlist">${ckInvRows()}</div></div><button class="bt g" id="m1">${zh?'关闭':'Close'}</button>`}
 function ckInvOpen(from,tab,focus){CKINV.from=from||CKINV.from;if(tab)CKINV.tab=tab;CKINV.focus=focus||null;CKINV.arm=null;
  modal(ckInvHtml(),()=>{const f=CKINV.from;CKINV.from=null;closeM();if(f==='pause'&&typeof pauseM==='function')pauseM()});
