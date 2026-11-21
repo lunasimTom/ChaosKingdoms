@@ -7,7 +7,41 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v6.2.apk` | Android app (package `com.chaoskingdoms.game`, version 6.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v6.3.apk` | Android app (package `com.chaoskingdoms.game`, version 6.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in V6.3 (Android app build)
+
+APK only; `dist/ChaosKingdoms.html` stays at V6.0. New code is in `source/premium/v63.js`.
+
+**Multi-boss health bars.**
+- **One row per boss:** every boss in the level gets its own bar, stacked under the top bar. The Main Boss (the level's named boss) is always on top with a longer bar. For levels 97–100 it's the named calamity boss: Void Seraph, Eternal Wyrm, Chaos Sovereign or Abyssal Titan.
+- **Secondary bosses:** shorter bars below, in the order they appeared.
+- **Row layout:** a 15×15 portrait with a gold frame for the Main Boss, silver for the others. Then the name, which hides automatically when there isn't room, and a slim bar (6 px for the Main Boss, 5 px for the others). No percentages. Rows are 3 px apart, and the name column has a fixed width so all bars start at the same point.
+- **Colour:** follows health on every bar: dark blue → light blue → dark green → light green → yellow → red, blending smoothly.
+- **Damage trail:** behind the fill, a pale trail holds for 0.45 s after a hit, then drains to catch up, so damage feels weighty.
+- **Bar finish:** a dark track, glossy fill, soft glow, the Main Boss's reinforcement markers at 50% and 25%, a pulsing red glow while a boss rages and a gold shimmer while it channels reinforcements.
+- **Defeated boss:** the bar drains to zero, the portrait turns black with a small ✕, and the name dims.
+- **Mini-bosses:** the Level 4 mini-boss uses the same row instead of the small bar over its head. Its gold aura stays.
+- **No overlaps:** while the bars are shown, the realm label is hidden, and toasts and achievement popups sit below the bars.
+
+**Smaller art.** Images are now stored at about 2.5× their largest on-screen size, so the game's HTML shrinks from 9.87 MB to 8.49 MB with no visible loss:
+- items and icons: 128 px
+- shop item art: 120 px
+- monsters: 144 px
+- bosses: 240 px
+- chests and crown: 160 px
+- level badges: 96 px
+- logo: 540 px
+- Victory/Defeat banners: 480 px
+- realm cards: 300 px (Throne 640 px)
+
+**More diamonds after Level 60.**
+- **Boss treasure:** each diamond piece has a 50% chance of +1, plus an extra 35–55% chance of a bonus 1–3 diamonds. Replays get less.
+- **Boss chests:** they drop about 30% more often.
+- **Chests you open:** once you've cleared a level beyond 60, they give extra diamonds. A Red Chest goes from about 3.75 to about 4.5 diamonds on average.
+- **Measured** in boss treasure diamonds: Level 59 about 2.8, Level 66 about 4.6, Level 76 about 5.2.
+
+**Testing.** The full regression suite passes in both orientations, along with the V6.1/V6.2 checks and save compatibility from v4.3. A new V6.3 test covers four bosses at Level 100, three at Level 64, the Level 4 mini-boss, the damage-trail timing, Chinese names in landscape, and the diamond rates.
 
 ## What changed in V6.2 (Android app build)
 
@@ -1221,7 +1255,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.2.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.3.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
