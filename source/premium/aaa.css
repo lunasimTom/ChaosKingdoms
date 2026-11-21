@@ -919,3 +919,22 @@ html body #regs .world-scene .realm-pin.final-throne-pin::after{left:18%;right:9
 html body #app #rail #inv{padding-top:6px!important;padding-bottom:2px!important;box-sizing:content-box}
 html body .ck-auto.ck-autor b,html body .sb .ck-auto.ck-autor b{display:inline!important;background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;animation:none!important}
 @media (orientation:landscape) and (max-height:620px){html body #app #rail #inv{padding-top:2px!important;padding-bottom:0!important}}
+/* ================= v6.1 ================= */
+/* wave banner: no gold lines, the dark band fades out on every side */
+#ck-banner .ckw-band{border:0!important;background:radial-gradient(ellipse 60% 100% at 50% 50%,#08101fe6 0%,#08101fb0 55%,#08101f00 100%)!important;-webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);padding:16px 0 18px!important}
+#ck-banner.boss .ckw-band{background:radial-gradient(ellipse 60% 100% at 50% 50%,#3a0912ee 0%,#2a0710b0 55%,#2a071000 100%)!important}
+#ck-banner .ckw-band:before{display:none!important}
+/* tower panel: classic gold buttons; Sell in the game's red; equal heights; a little more compact */
+html body #app #tp{max-width:min(300px,78vw)!important}
+html body #app #tp .bt{min-height:40px!important;border-radius:11px!important;font:900 13px/1.15 CKSans,sans-serif!important;background:var(--ub-bg)!important;border:2px solid #7d4a0c!important;color:#4a2a06!important;box-shadow:var(--ub-sh)!important;text-shadow:0 1px 0 rgba(255,255,255,.55)!important}
+html body #app #tp .bt[data-a="s"]{background:linear-gradient(180deg,#ff9a8a 0%,#e5483a 48%,#c42f22 52%,#a8241a 100%)!important;border-color:#6e1410!important;color:#fff5f0!important;text-shadow:0 1px 0 #6e1410!important;box-shadow:0 4px 0 #6e1410,0 7px 9px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.45)!important}
+html body #app #tp .bt[data-a="x"]{min-height:30px!important;width:30px!important;padding:0!important}
+html body #app #tp .bt:disabled{filter:grayscale(.7) brightness(.8)!important}
+/* item bar: equal space above and below the buttons, nothing clipped */
+html body #app #rail #inv{padding-top:4px!important;padding-bottom:4px!important;box-sizing:content-box!important}
+@media (orientation:landscape) and (max-height:620px){html body #app #rail #inv{padding-top:2px!important;padding-bottom:2px!important}}
+/* achievement popup during a battle: smaller and below the HUD bar */
+html body .ck-abn.ck-abn-battle{top:calc(var(--ck-menu-h,30px) + 18px)!important;transform-origin:top center;scale:.82}
+html body .ck-abn.ck-abn-out{opacity:0!important;transition:opacity .35s ease}
+/* final realm panel: same layout as the other realms (no four-boss block) */
+html body #map .realm-detail .throne-banner{display:none!important}

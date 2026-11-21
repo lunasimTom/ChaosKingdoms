@@ -7,7 +7,37 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v6.0.apk` | Android app (package `com.chaoskingdoms.game`, version 6.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v6.1.apk` | Android app (package `com.chaoskingdoms.game`, version 6.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in V6.1 (Android app build)
+
+From this version on, only the Android app is built. `dist/ChaosKingdoms.html` stays at the last confirmed version (V6.0) until a version is approved for the web. The APK contains the V6.1 game.
+
+New code is in `source/premium/v61.js`.
+
+**No more screen tints.**
+- **Flashes:** items no longer flash a colour over the whole screen.
+- **Overlays:** no effect lays a veil or rim over the board. Freeze now shows frost patches under each frozen monster, ice crystals on it and a short cold burst. Ice Bomb is a gentle snowfall, and War Horn a single sound wave.
+- **Long buffs:** Speed Boost, War Horn, Gold Bag and Summon Aid have no lasting on-map indicator.
+- **Rings and halos:** the gold and cyan ellipses under every tower during War Horn and Speed Boost are gone, and so is the large shield halo over the bases. The smaller hex dome remains.
+
+**Towers.**
+- **Range:** tapping a built tower now shows its range as a soft filled circle with a gently pulsing edge, until the panel closes. Before, it was effectively invisible.
+- **Panel buttons:** every button in the tower panel uses the classic gold style, and Sell is the game's red. The panel is a little more compact.
+- **Closing:** the panel closes 35% sooner (0.98 s idle instead of 1.5 s).
+
+**Audio.**
+- **Pause:** the music drops to a whisper instead of continuing at a reduced level, and returns on resume. (Before, the first tap in the menu woke the audio back up.)
+- **Stuttering:** the audio engine uses the "playback" latency setting for a steadier buffer. One copy of the same sound plays per 60 ms, at most 16 voices at once. At 2× and 3× speed, repeated hit and monster sounds are thinned out while item, boss and loot sounds are kept. A 3× stress test with seven auto items stayed at the 16-voice cap.
+
+**Interface.**
+- **Wave banner:** no gold lines; the dark band fades out softly on every side.
+- **Item bar:** equal space above and below the buttons; the bottom edge is fully visible.
+- **Fourfold Throne:** its realm panel drops the four-boss block, so it matches the other realms in size and layout.
+- **Achievement popup:** during a battle it's smaller, sits below the HUD bar and closes after 4 s.
+- **Crown challenges:** descriptions stay in sentence case ("Lose no lives").
+
+**Testing.** The full regression suite passes (interface walk in both orientations, inventory touch, auto-use, bosses and loot, monster AI, mini-bosses, hoards, item effects, home grids, home fit), along with save compatibility from v4.3. A new V6.1 test covers the tower panel and range circle, Pause audio, item-bar spacing, the wave banner, the 3× stress run and the Throne panel.
 
 ## What changed in V6.0
 
@@ -1163,7 +1193,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.1.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
