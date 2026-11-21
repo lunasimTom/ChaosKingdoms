@@ -53,6 +53,11 @@ def _w59(name, size, q=84):
     if im.width != size: im = im.resize((size, size), Image.LANCZOS)
     buf = io.BytesIO(); im.save(buf, 'WEBP', quality=q, method=6)
     return 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
+def _ckframe():
+    import json as _j
+    d = os.path.join(SRC, 'frame'); meta = _j.load(open(os.path.join(d, 'meta.json')))
+    out = {n: ['data:image/webp;base64,' + _recode(os.path.join(d, n + '.png'), 9999, 86), wh[0], wh[1]] for n, wh in meta.items()}
+    return 'const CK_FRAME=' + _j.dumps(out) + ';'
 def _ckr():
     d = os.path.join(SRC, 'realms')
     out = ['data:image/webp;base64,' + _recode(os.path.join(d, f'realm{i}.webp'), 300 if i < 12 else 640, 80) for i in range(13)]
@@ -61,7 +66,7 @@ def _ckr():
     buf = io.BytesIO(); Image.open(os.path.join(SRC, 'forge_strip.png')).convert('RGBA').save(buf, 'WEBP', quality=72, method=6)
     fg = 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
     return 'const CK_RIMG=' + __import__('json').dumps(out) + ';const CK_FORGEIMG=' + __import__('json').dumps(fg) + ';const CK_DIFIMG=' + __import__('json').dumps([_w59('dif%d.png' % i, 96, 78) for i in range(5)]) + ';const CK_BAGIMG=' + __import__('json').dumps(_w59('bag.png', 128, 80)) + ';const CK_MENU_MP3=' + __import__('json').dumps('data:audio/mpeg;base64,' + base64.b64encode(open(os.path.join(SRC, 'menu_music.mp3'), 'rb').read()).decode()) + ';'
-CKA_JS = CKA_JS + _ckr()
+CKA_JS = CKA_JS + _ckr() + _ckframe()
 
 def rep(old, new, count=1):
     global s
@@ -404,7 +409,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v60.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v61.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v62.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v63.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v64.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v60.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v61.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v62.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v63.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v64.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v70.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -688,7 +693,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'6.4',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'7.0',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")

@@ -7,7 +7,56 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v6.4.apk` | Android app (package `com.chaoskingdoms.game`, version 6.4, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v7.0.apk` | Android app (package `com.chaoskingdoms.game`, version 7.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## V7.0: the milestone release
+
+V7.0 brings together everything from V5.8 to V6.4 and adds the ornate gold frame around the home screen. It ships as both the Android app (`dist/ChaosKingdoms-v7.0.apk`) and the single-file web game (`dist/ChaosKingdoms.html`, 8.6 MB, labelled V7.0 in Help › About). New code for this step is in `source/premium/v70.js`.
+
+**New in V7.0: the home frame.**
+- **The frame:** the owner's gold frame with the blue gem crest now surrounds the home screen panel.
+- **Any screen shape:** it's assembled from pieces at one uniform scale. The corners, crest, bottom centre and side diamonds keep their exact proportions; only plain bar segments stretch.
+- **Tested** on 412×839, 390×844, 360×640 and landscape 915×412, in English and Chinese. The whole home screen still fits without scrolling, and no button touches the frame.
+
+**What's new since 5.6.**
+
+*World and bosses*
+- **Map:** painted realm cards on the map (13 cards, the Throne full width), battlefield colours matched to each card, and a compact map. A locked realm keeps the same panel size.
+- **Mini-bosses** on Level 4 of every realm, with signature moves and an 8-second treasure grab.
+- **Multi-boss levels:** the Secondary Bosses arrive first. The Ultimate Boss appears only after they all fall, with a red "The Ultimate Boss is about to appear!" warning.
+- **Boss strength:** the Main Boss has ×2.5 defence, Secondary Bosses ×1.5. All bosses rage and summon twice, and none adapts its resistances.
+- **Loot:** every Secondary Boss drops its own loot. The Fourfold Throne bosses drop huge treasure hoards. Diamonds are more generous after Level 60.
+- **Freeze:** bosses can still be frozen, but a frozen boss can no longer get stuck at a health threshold.
+- **Boss bars:** one row per boss (main on top), each with a 15 px portrait and a square 8 px bar. The colour runs from dark blue to bright red, a matching damage trail drains behind the fill, defeated bosses are blacked out, and the bars sit inside the battlefield with taps passing through.
+
+*Items*
+- **Activations:** every item has its own synthesized sound and a cinematic effect drawn inside the battlefield. Effects move with the map's shake, pause under menus and never tint the screen or cover the interface.
+- **Auto-use:** different items overlap; the same item waits until its previous effect has ended.
+- **Shop:** one Buy button with a ×1/×10 switch, and a classic gold Auto button.
+- **Inventory:** aligned Use / Auto / red Sell buttons.
+- **Artwork:** new item, backpack and difficulty artwork, and a painted diamond-forge animation.
+
+*Interface*
+- **Home screen:** a one-screen layout with an equal 3×3 grid (Records/Install, Battle History, Progress Transfer, Screen, Redeem Code, Music, Language, Settings, Help).
+- **Help:** a Help hub with every tip and the version number.
+- **Medals:** a medal picker for the home card.
+- **Text:** Title Case for every English label, and Chinese everywhere in Chinese mode.
+- **Battle screen:**
+  - tapping the level badge opens the map at your current level;
+  - a tower's range circle appears when you select it;
+  - the tower panel has gold buttons with a red Sell, and closes sooner;
+  - wave banners are shorter, blood red and borderless;
+  - the item bar is fully visible.
+- **Install guide:** the browser version's install guide covers Chrome, iPhone Safari, iPhone Chrome and in-app browsers, in both languages.
+
+*Sound and performance*
+- **Music:** menu music starts immediately. Level tracks are prepared while you browse the map, and 6 stay cached.
+- **Steady audio:** a voice budget keeps sound steady in big 3× boss fights. Ambience is soft and very quiet, and the music drops to a whisper on Pause.
+- **Size:** art is stored at its display size; the web game went from 9.9 MB to 8.6 MB, and the APK is 6.4 MB.
+
+**Testing for V7.0.**
+- **Regressions:** the full regression suite passes in portrait and landscape: the 42-step interface walk, inventory touch, auto-use, bosses and loot, monster AI, mini-bosses, hoards, item effects, home grids and fit, the V6.x checks and the frame layout.
+- **Saves:** saves and export codes from v4.3 onward still load unchanged.
 
 ## What changed in V6.4 (Android app build)
 
@@ -108,7 +157,7 @@ APK only; `dist/ChaosKingdoms.html` stays at V6.0. New code is in `source/premiu
 
 ## What changed in V6.1 (Android app build)
 
-From this version on, only the Android app is built. `dist/ChaosKingdoms.html` stays at the last confirmed version (V6.0) until a version is approved for the web. The APK contains the V6.1 game.
+From V6.1 to V6.4 only the Android app was built; V7.0 ships both. The APK contains the V6.1 game.
 
 New code is in `source/premium/v61.js`.
 
@@ -1290,7 +1339,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.4.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v7.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
