@@ -1,10 +1,25 @@
-/* ===== Chaos Kingdoms v7.0 · original gold frame around the whole home screen ===== */
-function ckFrameFit(){const t=document.getElementById('title');if(!t||typeof CK_FRAME==='undefined')return;
- let fr=document.getElementById('ckframe');if(!fr){fr=document.createElement('div');fr.id='ckframe';fr.setAttribute('aria-hidden','true');fr.style.setProperty('--fimg',`url(${CK_FRAME})`);document.getElementById('app').appendChild(fr);t.classList.add('ck-fr')}
- const a=document.getElementById('app'),on=!!t.offsetParent&&getComputedStyle(t).visibility!=='hidden'&&getComputedStyle(t).display!=='none';fr.style.display=on?'':'none';if(!on)return;
- const s=Math.min(a.offsetWidth/1163,a.offsetHeight/1353*1.25).toFixed(4);if(fr._s!==s){fr._s=s;a.style.setProperty('--fs',s)}}
-setInterval(()=>{try{ckFrameFit()}catch(_){}},400);
-ckHomeFit=function(){try{ckFrameFit()}catch(_){}const card=document.querySelector('#title .tcard.ck-home'),t=document.getElementById('title');if(!card||!t||!t.offsetWidth)return;card.style.zoom='';
- const cs=getComputedStyle(t),avail=t.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom),need=card.scrollHeight+4;
- if(need>avail)card.style.zoom=Math.max(.45,avail/need).toFixed(3);t.scrollTop=0};
-addEventListener('resize',()=>setTimeout(ckHomeFit,120));setTimeout(ckHomeFit,300);setTimeout(ckHomeFit,2300);
+/* ===== Chaos Kingdoms v7.0 · gold frame, steady home layout, map polish ===== */
+
+// ---- 1. gold frame: one original PNG along the outer screen edge (border-image keeps corners undistorted) ----
+(function(){const a=document.getElementById('app');if(!a||typeof CK_FRAME==='undefined')return;const fr=document.createElement('div');fr.id='ckframe';fr.setAttribute('aria-hidden','true');
+ fr.style.setProperty('--fimg',`url(${CK_FRAME})`);a.appendChild(fr)})();
+
+// ---- 2. home fit: scale the menu card (transform, measured from its natural size) so it always fits inside the frame.
+//         Runs from a ResizeObserver before paint, so the menu never jumps after it appears. ----
+ckHomeFit=function(){const t=document.getElementById('title'),card=t&&t.querySelector('.tcard.ck-home');if(!card||!t.offsetWidth)return;
+ card.style.zoom='';card.style.transformOrigin='50% 0';t.scrollTop=0;const cs=getComputedStyle(t),pt=parseFloat(cs.paddingTop),avail=t.clientHeight-pt-parseFloat(cs.paddingBottom),need=card.offsetHeight;
+ if(need<=avail){if(card.style.transform)card.style.transform='';return}
+ const z=Math.max(.5,avail/need),A=document.getElementById('app'),k=(A.getBoundingClientRect().width/A.offsetWidth)||1;card.style.transform=`scale(${z.toFixed(4)})`;
+ const dy=(t.getBoundingClientRect().top+pt*k-card.getBoundingClientRect().top)/k;card.style.transform=`translateY(${dy.toFixed(1)}px) scale(${z.toFixed(4)})`};
+(function(){let ro=null,seen=null;const hook=()=>{const t=document.getElementById('title'),card=t&&t.querySelector('.tcard.ck-home');if(!card||card===seen)return;seen=card;
+  if(ro)ro.disconnect();ro=new ResizeObserver(()=>ckHomeFit());ro.observe(card);ro.observe(t);ckHomeFit()};
+ hook();new MutationObserver(hook).observe(document.getElementById('title')||document.body,{childList:true,subtree:true});addEventListener('resize',()=>ckHomeFit())})();
+
+// ---- 3. load every font face once the game is idle, so the first language switch has nothing left to load ----
+setTimeout(()=>{try{document.fonts.forEach(f=>{if(f.status==='unloaded')f.load().catch(()=>{})})}catch(_){}},1200);
+
+// ---- 4. map panel: the Fourfold Throne gets a boss line like every other map; tidy the kingdom title ----
+(function(){const o=buildMap;buildMap=function(){const r=o.apply(this,arguments);try{
+  const d=document.querySelector('#map .realm-detail');if(d&&selectedRealm===12){let h=d.querySelector(':scope>.realm-hint');if(!h){h=document.createElement('div');h.className='realm-hint';d.querySelector('.realm-detail-head').after(h)}
+   h.textContent=lvZ('终极首领：','Ultimate Bosses: ')+[13,14,15,16].map(i=>TL(BOSS[i])).join(' · ');h.style.setProperty('display','block','important');d.classList.add('ck-thr')}
+  document.querySelectorAll('#map h1,#map h2,#map .map-title,#map .mt,#map b,#map span').forEach(e=>{if(e.children.length===0&&/’s kingdom$/.test(e.textContent))e.textContent=e.textContent.replace(/’s kingdom$/,"'s Kingdom")})}catch(_){}return r}})();

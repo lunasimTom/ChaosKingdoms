@@ -13,6 +13,14 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 
 V7.0 brings together everything from V5.8 to V6.4 and adds the ornate gold frame around the home screen. It ships as both the Android app (`dist/ChaosKingdoms-v7.0.apk`) and the single-file web game (`dist/ChaosKingdoms.html`, 8.6 MB, labelled V7.0 in Help › About). New code for this step is in `source/premium/v70.js`.
 
+**V7.0 review fixes (rebuilt).**
+- The gold frame is the original PNG drawn along the outer edge of the whole screen (corners and crest keep their shape); no added background colour.
+- The home menu scales once, before it is shown, to fit inside the frame on every screen size: no shrink after loading, no jump on the first language switch (all font faces are loaded in the background).
+- Map screen: the Fourfold Throne card keeps the same size whether selected or not, has no translucent overlay or stray arrow button, and shows its crown, name and subtitle centred. Its panel now has a boss line like every other map and its four level boxes are centred.
+- The Unlock Map button sits under the map name instead of over it.
+- The item bar no longer shows the Android scrollbar over the item counts.
+- The kingdom title reads "Name's Kingdom" with a normal apostrophe.
+
 **New in V7.0: the home frame.**
 - **The frame:** the owner's gold frame with the blue gem crest now surrounds the home screen panel.
 - **Any screen shape:** it's assembled from pieces at one uniform scale. The corners, crest, bottom centre and side diamonds keep their exact proportions; only plain bar segments stretch.

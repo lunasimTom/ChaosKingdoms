@@ -727,10 +727,10 @@ html body #regs .world-scene .realm-pin.locked .pin-art{filter:grayscale(.8) bri
 html body #regs .world-scene .realm-pin.active .pin-art,html body #regs .world-scene .realm-pin.ck-herepin .pin-art{filter:drop-shadow(0 0 7px #ffd36a) drop-shadow(0 0 2px #fff3c0)!important;transform:scale(1.04)}
 html body #regs .world-scene .realm-pin:not(.locked):active .pin-art{transform:scale(.97)}
 html body #regs .world-scene .realm-pin .pin-no{position:absolute!important;left:9%!important;top:10%!important;z-index:2;font:900 11px/1 CKSans,sans-serif!important;color:#ffe9a8!important;text-shadow:0 1px 2px #000,0 0 4px #000!important;background:none!important;border:0!important;padding:0!important;margin:0!important;width:auto!important;height:auto!important}
-html body #regs .world-scene .realm-pin .pin-icon{position:absolute!important;right:8%!important;top:8%!important;z-index:2;font-size:12px!important;width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;margin:0!important;filter:drop-shadow(0 1px 2px #000)}
+html body #regs .world-scene .realm-pin .pin-icon{position:absolute!important;grid-column:auto!important;grid-row:auto!important;right:8%!important;top:8%!important;z-index:2;font-size:12px!important;width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;margin:0!important;filter:drop-shadow(0 1px 2px #000)}
 html body #regs .world-scene .realm-pin:not(.locked):not(.final-throne-pin) .pin-icon{display:none!important}
-html body #regs .world-scene .realm-pin .pin-name{position:absolute!important;left:6%!important;right:6%!important;bottom:23%!important;z-index:2;margin:0!important;text-align:center!important;font:800 10.5px/1.1 CKSans,sans-serif!important;color:#fff4d4!important;text-shadow:0 1px 2px #000,0 0 6px #000!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;letter-spacing:0!important}
-html body #regs .world-scene .realm-pin .pin-meta{position:absolute!important;left:6%!important;right:6%!important;bottom:11%!important;z-index:2;margin:0!important;text-align:center!important;font:700 9px/1 CKSans,sans-serif!important;color:#ffd98a!important;text-shadow:0 1px 2px #000!important;opacity:1!important}
+html body #regs .world-scene .realm-pin .pin-name{position:absolute!important;grid-column:auto!important;grid-row:auto!important;left:6%!important;right:6%!important;bottom:23%!important;z-index:2;margin:0!important;text-align:center!important;font:800 10.5px/1.1 CKSans,sans-serif!important;color:#fff4d4!important;text-shadow:0 1px 2px #000,0 0 6px #000!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;letter-spacing:0!important}
+html body #regs .world-scene .realm-pin .pin-meta{position:absolute!important;grid-column:auto!important;grid-row:auto!important;left:6%!important;right:6%!important;bottom:11%!important;z-index:2;margin:0!important;text-align:center!important;font:700 9px/1 CKSans,sans-serif!important;color:#ffd98a!important;text-shadow:0 1px 2px #000!important;opacity:1!important}
 html body #regs .world-scene .realm-pin.final-throne-pin .pin-icon{right:auto!important;left:7%!important;top:50%!important;transform:translateY(-50%)}
 html body #regs .world-scene .realm-pin.final-throne-pin .pin-icon img.ck-crown{width:46px!important;height:46px!important}
 html body #regs .world-scene .realm-pin.final-throne-pin .pin-name{bottom:30%!important;font-size:15px!important;color:#ffe9a8!important}
@@ -1003,4 +1003,28 @@ html body .ck-bbr.rage .ck-bbt{animation:ckBBRage .6s ease-in-out infinite}
 html body .ck-bbf{background:linear-gradient(180deg,color-mix(in srgb,var(--c) 55%,#fff) 0%,var(--c) 38%,var(--c) 70%,color-mix(in srgb,var(--c) 88%,#000) 100%)!important}
 /* ================= V7.0 home frame ================= */
 
-#app{--fs:.35}#title.ck-fr{padding:calc(var(--fs)*150px) calc(var(--fs)*58px) calc(var(--fs)*92px)!important;box-sizing:border-box}#ckframe{position:absolute;inset:0;pointer-events:none;z-index:50;border-style:solid;border-width:calc(var(--fs)*260px) calc(var(--fs)*330px) calc(var(--fs)*193px);border-image-source:var(--fimg);border-image-slice:260 330 193;border-image-repeat:stretch}
+#app{--fs:.3869}body:not(.pt) #app{--fs:.554}
+#ckframe{display:none;position:absolute;inset:0;pointer-events:none;z-index:50;border-style:solid;border-width:calc(var(--fs)*260px) calc(var(--fs)*330px) calc(var(--fs)*193px);border-image-source:var(--fimg);border-image-slice:260 330 193;border-image-repeat:stretch}
+#app:has(>#title.on) #ckframe{display:block}
+html body #app #title{padding:calc(var(--fs)*150px) calc(var(--fs)*58px) calc(var(--fs)*118px)!important;box-sizing:border-box;overflow:hidden!important}
+html body #app #title .tcard.ck-home{transform-origin:50% 0;zoom:1!important;flex-shrink:0}
+/* v7.0 item bar: no scrollbar overlay over the items */
+html body #rail #inv{scrollbar-width:none!important}html body #rail #inv::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+/* v7.0 Fourfold Throne card: same geometry selected or not, clean art, centred crown and text */
+html body #regs .rp-cell.rp-final{margin-top:6px!important}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin,html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin.active{transform:none!important;animation:none!important;width:100%!important;height:100%!important;min-height:96px!important;margin:0!important;overflow:hidden!important;position:relative!important;display:block!important}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin::after{content:none!important;display:none!important}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin::before{background:linear-gradient(180deg,#0000 35%,#000a 100%)!important;border:0!important;box-shadow:none!important}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin .pin-art,html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin.active .pin-art{position:absolute!important;inset:0!important;width:auto!important;height:auto!important;transform:none!important;opacity:1!important;background-size:cover!important;background-position:center!important;border-radius:inherit}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin.locked .pin-art{filter:grayscale(.75) brightness(.6)!important}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin .pin-icon{position:absolute!important;grid-column:auto!important;grid-row:auto!important;left:50%!important;top:12px!important;transform:translateX(-50%)!important;width:40px!important;height:40px!important;margin:0!important;display:flex!important;align-items:center;justify-content:center;z-index:2}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin .pin-icon .ck-crown{width:40px!important;height:40px!important;margin:0!important}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin .pin-name{position:absolute!important;grid-column:auto!important;grid-row:auto!important;left:8px!important;right:8px!important;top:56px!important;width:auto!important;text-align:center!important;transform:none!important;z-index:2}
+html body #map #regs .world-grid .rp-cell .realm-pin.final-throne-pin .pin-meta{position:absolute!important;grid-column:auto!important;grid-row:auto!important;left:8px!important;right:8px!important;top:84px!important;display:block!important;visibility:visible!important;opacity:1!important;line-height:14px!important;height:14px!important;width:auto!important;text-align:center!important;transform:none!important;z-index:2}
+/* v7.0 map panel: Unlock button under the map name (never over it); no empty bar */
+html body #map .realm-detail .realm-action:not(:has(.bt)){display:none!important}
+html body #map .realm-detail:has(.realm-action .bt) .realm-detail-head{min-height:70px!important;align-items:flex-start!important}
+html body #map .realm-detail:has(.realm-action .bt) .rd-name{padding-right:0!important;margin-top:6px!important}
+html body #map .realm-detail .realm-action:has(.bt){left:96px!important;right:auto!important;top:36px!important}
+
+html body #map .realm-detail.ck-thr .realm-levels{grid-template-columns:repeat(4,46.25px)!important;justify-content:center!important}
