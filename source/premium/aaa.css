@@ -714,3 +714,131 @@ html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{white-space:nowrap!im
 /* v5.6 mini-boss level crest */
 html body #regs .nd.mini{box-shadow:0 0 0 2px #ffb02a,0 0 12px #ffb02a88!important}
 html body #regs .nd.mini b em{color:#ffd36a!important;font-size:12px!important;text-shadow:0 1px 2px #000,0 0 6px #ffb02a!important;opacity:1!important}
+/* ================= v5.8 ================= */
+/* world atlas: painted realm cards, 3 per row, Throne full width */
+html body #regs .world-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px 8px!important;padding:2px 2px 4px!important}
+html body #regs .world-grid .rp-cell{grid-row:auto!important;grid-column:auto!important;min-width:0}
+html body #regs .world-grid .rp-cell.rp-final{grid-column:1/-1!important;margin-top:6px!important}
+html body #regs .world-scene .realm-pin{position:relative!important;inset:auto!important;transform:none!important;width:100%!important;max-width:none!important;aspect-ratio:346/180;height:auto!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:9%/16%!important;background:none!important;box-shadow:none!important;overflow:visible!important;display:block!important;animation:none!important;isolation:isolate}
+html body #regs .world-scene .realm-pin.final-throne-pin{aspect-ratio:733/236}
+html body #regs .world-scene .realm-pin .pin-art{position:absolute!important;inset:0!important;z-index:0!important;background-size:100% 100%!important;background-position:center!important;opacity:1!important;filter:drop-shadow(0 4px 6px #000a)!important;border-radius:0!important;transition:filter .2s ease,transform .2s ease}
+html body #regs .world-scene .realm-pin::after{content:"";position:absolute;left:5%;right:5%;bottom:7%;height:46%;z-index:1;pointer-events:none;background:linear-gradient(180deg,#0000,#0009 55%,#000c);border-radius:0 0 8px 8px}
+html body #regs .world-scene .realm-pin.locked .pin-art{filter:grayscale(.8) brightness(.55) contrast(1.05) drop-shadow(0 3px 5px #000a)!important}
+html body #regs .world-scene .realm-pin.active .pin-art,html body #regs .world-scene .realm-pin.ck-herepin .pin-art{filter:drop-shadow(0 0 7px #ffd36a) drop-shadow(0 0 2px #fff3c0)!important;transform:scale(1.04)}
+html body #regs .world-scene .realm-pin:not(.locked):active .pin-art{transform:scale(.97)}
+html body #regs .world-scene .realm-pin .pin-no{position:absolute!important;left:9%!important;top:10%!important;z-index:2;font:900 11px/1 CKSans,sans-serif!important;color:#ffe9a8!important;text-shadow:0 1px 2px #000,0 0 4px #000!important;background:none!important;border:0!important;padding:0!important;margin:0!important;width:auto!important;height:auto!important}
+html body #regs .world-scene .realm-pin .pin-icon{position:absolute!important;right:8%!important;top:8%!important;z-index:2;font-size:12px!important;width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;margin:0!important;filter:drop-shadow(0 1px 2px #000)}
+html body #regs .world-scene .realm-pin:not(.locked):not(.final-throne-pin) .pin-icon{display:none!important}
+html body #regs .world-scene .realm-pin .pin-name{position:absolute!important;left:6%!important;right:6%!important;bottom:23%!important;z-index:2;margin:0!important;text-align:center!important;font:800 10.5px/1.1 CKSans,sans-serif!important;color:#fff4d4!important;text-shadow:0 1px 2px #000,0 0 6px #000!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;letter-spacing:0!important}
+html body #regs .world-scene .realm-pin .pin-meta{position:absolute!important;left:6%!important;right:6%!important;bottom:11%!important;z-index:2;margin:0!important;text-align:center!important;font:700 9px/1 CKSans,sans-serif!important;color:#ffd98a!important;text-shadow:0 1px 2px #000!important;opacity:1!important}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-icon{right:auto!important;left:7%!important;top:50%!important;transform:translateY(-50%)}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-icon img.ck-crown{width:46px!important;height:46px!important}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-name{bottom:30%!important;font-size:15px!important;color:#ffe9a8!important}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-meta{bottom:15%!important;font-size:10.5px!important}
+html body #regs .world-scene .rp-cell:before,html body #regs .world-scene .rp-cell:after{display:none!important}
+html body #map .realm-detail .rd-art,html body #map .realm-detail img{border-radius:8px}
+/* "you are here" level marker (opened from the battle HUD) */
+html body #map .nd.ck-here{box-shadow:0 0 0 2px #fff3b0,0 0 16px 3px #ffd36a!important;animation:ckHere 1.4s ease-in-out infinite;position:relative}
+html body #map .nd .ck-herev{position:absolute;left:50%;top:-9px;transform:translateX(-50%);font:900 8.5px/1 CKSans,sans-serif;background:#ffd36a;color:#3a2206;padding:2px 5px;border-radius:6px;box-shadow:0 1px 3px #0008;letter-spacing:.04em;white-space:nowrap}
+@keyframes ckHere{50%{box-shadow:0 0 0 2px #fff,0 0 26px 6px #ffd36a}}
+html body #app #hud .top>.lv{cursor:pointer}
+html body #app #hud .top>.lv:active{transform:scale(.95)}
+/* shop x10 */
+html body #shop .sb .ck-x10{margin-top:5px!important;min-height:30px!important;font-size:12px!important;padding:3px 6px!important;background:linear-gradient(180deg,#ffe38a,#e6a52a)!important}
+html body #shop .sb .ck-x10 .buytxt{font-weight:900;margin-right:3px}
+html body #shop .sb .ck-x10:disabled{filter:grayscale(.8) brightness(.8)}
+/* item cast flourish + themed screen effects */
+#ck-cast{position:fixed;z-index:60;pointer-events:none;overflow:hidden;animation:ckCastIn .25s ease-out both}
+#ck-cast.out{animation:ckCastOut .5s ease forwards}
+#ck-cast .ck-cfx{position:absolute;inset:0}
+#ck-cast .ck-cc{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;animation:ckCastCard 1.25s cubic-bezier(.2,1.4,.4,1) forwards}
+#ck-cast .ck-cc img,#ck-cast .ck-cc em{position:relative;width:92px;height:92px;object-fit:contain;font-size:70px;font-style:normal;line-height:92px;text-align:center;filter:drop-shadow(0 0 14px var(--c)) drop-shadow(0 6px 8px #000a)}
+#ck-cast .ck-cc span{position:relative;font:900 20px/1.1 CKSans,sans-serif;color:#fff;letter-spacing:.06em;text-shadow:0 0 12px var(--c),0 2px 3px #000,0 0 2px #000;white-space:nowrap}
+#ck-cast .ck-crays{position:absolute;left:50%;top:46px;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c) 70%,transparent) 0 7deg,transparent 7deg 22deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 68%);mask:radial-gradient(circle,#000 18%,transparent 68%);animation:ckRays 1.4s linear forwards;opacity:.85}
+@keyframes ckCastIn{from{opacity:0}to{opacity:1}}
+@keyframes ckCastOut{to{opacity:0}}
+@keyframes ckCastCard{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}18%{transform:translate(-50%,-50%) scale(1.18);opacity:1}62%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-62%) scale(.92);opacity:0}}
+@keyframes ckRays{from{transform:rotate(0) scale(.5)}to{transform:rotate(80deg) scale(1.25);opacity:0}}
+#ck-cast.k-frost .ck-cfx{box-shadow:inset 0 0 90px 30px #d8f6ffcc;background:radial-gradient(ellipse at 50% 50%,#0000 55%,#bfeaff55 80%,#ffffffaa 100%);animation:ckPulse 4s ease-out forwards}
+#ck-cast.k-fire .ck-cfx{box-shadow:inset 0 0 110px 26px #ff7a2acc;background:radial-gradient(ellipse at 50% 100%,#ff8a3d55,#0000 60%);animation:ckFlick .18s steps(2) 6,ckPulse 1.8s ease-out forwards}
+#ck-cast.k-gold .ck-cfx{box-shadow:inset 0 0 80px 18px #ffd34aaa;background:radial-gradient(circle at 50% 30%,#fff1a855,#0000 60%)}
+#ck-cast.k-heal .ck-cfx{box-shadow:inset 0 0 80px 18px #7dffa0aa;background:radial-gradient(circle at 50% 80%,#7dffa044,#0000 60%)}
+#ck-cast.k-speed .ck-cfx{background:repeating-linear-gradient(100deg,#0000 0 26px,#7fe8ff33 26px 28px);box-shadow:inset 0 0 70px 14px #7fe8ff99;animation:ckStreak .5s linear 4}
+#ck-cast.k-storm .ck-cfx{background:#120a28aa;animation:ckStorm 1.6s ease-out forwards}
+#ck-cast.k-war .ck-cfx{box-shadow:inset 0 0 90px 20px #ffcf6aaa;background:radial-gradient(ellipse at 50% 110%,#ffcf6a55,#0000 55%)}
+#ck-cast.k-holy .ck-cfx{background:linear-gradient(180deg,#fff7d0aa,#0000 55%),repeating-linear-gradient(90deg,#0000 0 40px,#fff4c022 40px 60px)}
+#ck-cast.k-shield .ck-cfx{box-shadow:inset 0 0 90px 24px #aee6ffaa;background:radial-gradient(circle,#0000 50%,#aee6ff33 75%,#0000 100%)}
+#ck-cast.k-water .ck-cfx{box-shadow:inset 0 0 80px 18px #5ac8ffaa;background:linear-gradient(180deg,#0000 60%,#5ac8ff33)}
+@keyframes ckPulse{0%{opacity:0}12%{opacity:1}70%{opacity:.8}100%{opacity:.25}}
+@keyframes ckFlick{50%{filter:brightness(1.4)}}
+@keyframes ckStreak{from{background-position:0 0}to{background-position:-120px 0}}
+@keyframes ckStorm{0%{opacity:0}8%{opacity:1;background:#ffffffcc}14%{background:#120a28aa}28%{background:#ffffff88}34%{background:#120a28aa}100%{opacity:0}}
+/* forge v5.8 */
+#ck-fgfx.v58{background:radial-gradient(circle at 50% 44%,#1a2c6e 0,#0b1030 45%,#03050f 100%)!important}
+#ck-fgfx.v58 .fg-stage{position:relative;width:min(88vw,384px);aspect-ratio:384/256}
+#ck-fgfx.v58 .fg-stage canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+#ck-fgfx.v58 .fg-runes{position:absolute;left:50%;top:50%;width:118%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;z-index:0;background:repeating-conic-gradient(#ffd36a33 0 3deg,#0000 3deg 15deg);-webkit-mask:radial-gradient(circle,#0000 52%,#000 54%,#000 60%,#0000 62%,#0000 70%,#000 71%,#000 73%,#0000 75%);mask:radial-gradient(circle,#0000 52%,#000 54%,#000 60%,#0000 62%,#0000 70%,#000 71%,#000 73%,#0000 75%);animation:ckSpin 6s linear infinite}
+#ck-fgfx.v58 .fg-rays{position:absolute;left:50%;top:48%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:1;border-radius:50%;background:repeating-conic-gradient(#7ab8ff55 0 6deg,#0000 6deg 20deg);-webkit-mask:radial-gradient(circle,#000 10%,#0000 62%);mask:radial-gradient(circle,#000 10%,#0000 62%);opacity:0;transition:opacity .4s}
+#ck-fgfx.v58.win .fg-rays{opacity:1;animation:ckSpin 9s linear infinite}
+#ck-fgfx.v58 .fg-flash{position:absolute;inset:-30%;z-index:3;border-radius:50%;background:radial-gradient(circle,#fff 0,#bfe0ff88 20%,#0000 60%);opacity:0;pointer-events:none}
+#ck-fgfx.v58.win .fg-flash{animation:ckFgFlash .7s ease-out}
+#ck-fgfx.v58.crack .fg-flash{background:radial-gradient(circle,#ff9a9a 0,#ff3a3a55 25%,#0000 60%);animation:ckFgFlash .5s ease-out}
+#ck-fgfx.v58.crack .fg-stage{animation:ckShake .4s ease}
+#ck-fgfx.v58 .msg b{font-size:26px!important}
+#ck-fgfx.v58.win .msg b{color:#bfe6ff!important;text-shadow:0 0 14px #5aa8ff,0 2px 3px #000!important}
+#ck-fgfx.v58.fail .msg b{color:#ff9a9a!important}
+@keyframes ckSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes ckFgFlash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+@keyframes ckShake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+/* home: medal hint above the three slots, medal picker */
+#ckhc .ck-hhint{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0 4px;font:600 11px/1.2 CKSans,sans-serif;color:#ffe2a0;opacity:.92;cursor:pointer}
+#ckhc .ck-hhint b{font-size:14px;color:#ffd36a}
+#ckhc .ck-hmed{cursor:pointer}
+.ck-mph{font-weight:400!important;margin:0 0 8px!important;opacity:.9}
+.ck-mpg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-height:52vh;overflow:auto;padding:2px}
+.ck-mp{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:10px;border:1px solid #3b4a7a;background:#141d3c;color:#e9e2cc;font:600 9.5px/1.15 CKSans,sans-serif}
+.ck-mp img{width:46px;height:46px;object-fit:contain}
+.ck-mp span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ck-mp.on{border-color:#ffd36a;box-shadow:0 0 0 2px #ffd36a66,0 0 12px #ffd36a55;background:#2a2510}
+.ck-mp em{position:absolute;right:4px;top:4px;width:17px;height:17px;border-radius:50%;background:#ffd36a;color:#3a2206;font:900 11px/17px CKSans,sans-serif;font-style:normal}
+.ck-mpe{text-align:center;opacity:.85}
+/* help hub */
+.ck-help h3 small{font-size:11px;opacity:.7;margin-left:6px}
+.ck-htabs{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 8px}
+.ck-htabs .ck-hst{flex:1 1 22%;min-width:0;padding:6px 4px!important;font-size:11.5px!important}
+.ck-hbody{max-height:56vh;overflow:auto;padding-right:2px}
+.ck-help .ck-hti{width:22px;height:22px;object-fit:contain;vertical-align:-6px;margin-right:2px}
+.ck-help li small{display:block;margin-top:4px;opacity:.85;line-height:1.4}
+.ck-habout{text-align:center;padding:6px 4px}.ck-habout img{width:76px;height:76px;border-radius:18px;box-shadow:0 6px 16px #000a}
+.ck-habout h3{margin:8px 0 2px}.ck-hver{font:800 15px/1.2 CKSans,sans-serif!important;color:#ffd36a!important}
+/* home tiles: one 3x3 grid, equal widths, a little shorter */
+html body #app #title .tcard.ck-home .ck-hutil{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:56px!important;grid-template-rows:20px 1fr!important;padding:6px 3px 4px!important;font-size:13px!important;width:100%!important}
+html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile .ckico{width:18px!important;height:18px!important}
+html body #app #title .tcard.ck-home .ck-hutil #ckinstall{grid-column:auto!important;margin:0!important}
+html body #app #title .tcard.ck-home>.ck-install{display:none!important}
+html body #app #title .tcard.ck-home .ck-logo{max-height:19vh!important;width:auto!important;margin:0 auto!important}
+@media (max-height:700px){html body #app #title .tcard.ck-home .ck-hutil .bt.ck-tile{height:48px!important;font-size:11.5px!important;grid-template-rows:17px 1fr!important}}
+html body .ckb-ver{display:none!important}
+html body #regs .world-grid{grid-auto-rows:auto!important;align-items:start!important;align-content:start!important}
+html body #regs .world-grid .rp-cell{height:auto!important;min-height:0!important;padding:0!important;margin:0!important;display:block!important}
+html body #map .nd .ck-herev{top:auto!important;bottom:-8px!important}
+/* v5.8 refinements: shop button row wraps (Buy | x10 on one line, AUTO + owned below) */
+html body #shop .si .sb{flex-wrap:wrap!important;row-gap:6px!important;column-gap:6px!important;align-items:center!important}
+html body #shop .si .sb>.bt.pay{flex:1 1 calc(50% - 6px)!important;width:auto!important;min-width:0!important;max-width:none!important;margin:0!important;white-space:nowrap!important;font-size:12.5px!important;padding:4px 6px!important;min-height:36px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:3px}
+html body #shop .si .sb>.bt.pay .buytxt{display:inline!important}
+html body #shop .si .sb>.ck-x10{margin-top:0!important}
+html body #shop .si .sb>small{flex:1 1 auto}
+/* cast effects stay at the screen edges; a dark halo makes the item name readable */
+#ck-cast .ck-cfx{opacity:.75}
+#ck-cast.k-frost .ck-cfx{box-shadow:inset 0 0 46px 8px #d8f6ffcc!important;background:radial-gradient(ellipse at 50% 50%,#0000 68%,#bfeaff40 88%,#ffffff70 100%)!important}
+#ck-cast.k-fire .ck-cfx{box-shadow:inset 0 0 48px 8px #ff7a2acc!important;background:radial-gradient(ellipse at 50% 100%,#ff8a3d33,#0000 45%)!important}
+#ck-cast.k-gold .ck-cfx{box-shadow:inset 0 0 44px 8px #ffd34aaa!important;background:none!important}
+#ck-cast.k-heal .ck-cfx{box-shadow:inset 0 0 44px 8px #7dffa0aa!important;background:radial-gradient(circle at 50% 90%,#7dffa030,#0000 45%)!important}
+#ck-cast.k-war .ck-cfx{box-shadow:inset 0 0 44px 8px #ffcf6aaa!important;background:radial-gradient(ellipse at 50% 110%,#ffcf6a33,#0000 40%)!important}
+#ck-cast.k-holy .ck-cfx{background:linear-gradient(180deg,#fff7d066,#0000 35%)!important}
+#ck-cast.k-shield .ck-cfx{box-shadow:inset 0 0 44px 8px #aee6ffaa!important;background:none!important}
+#ck-cast.k-water .ck-cfx{box-shadow:inset 0 0 44px 8px #5ac8ffaa!important;background:linear-gradient(180deg,#0000 75%,#5ac8ff28)!important}
+#ck-cast.k-speed .ck-cfx{box-shadow:inset 0 0 40px 6px #7fe8ff99!important;background:repeating-linear-gradient(100deg,#0000 0 30px,#7fe8ff1c 30px 32px)!important}
+#ck-cast .ck-cc{isolation:isolate}
+#ck-cast .ck-cc::before{content:"";position:absolute;left:50%;top:50%;width:260px;height:190px;transform:translate(-50%,-50%);z-index:-1;background:radial-gradient(ellipse,#05081acc 0,#05081a88 40%,#0000 70%)}

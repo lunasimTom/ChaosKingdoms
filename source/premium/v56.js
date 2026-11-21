@@ -56,12 +56,14 @@ function ckMbDeath(e){L.mbAlive=0;const sp=eS(e),D=ckMbDef(L.i);
  window.ckBanner&&ckBanner(lvZ('小首领被击败','MINI-BOSS DEFEATED'),lvZ(D[0][0],D[0][1]),0);
  try{ckStat('mboss')}catch(_){}
  if(e.mbk==='split'){for(let k=0;k<2;k++){spawn('brute',{x:e.x+(k?.3:-.3),y:e.y+(Math.random()-.5)*.3});const c=L.en[L.en.length-1];if(c){c.hp=c.mx=e.mx*.18*e.mbs;c.pro=.35;c.el=0;c.rl=null}}ckLbl(e,lvZ('分裂！','SPLIT!'),'#ff9a5a')}
- const replay=!!(S.prog&&S.prog[L.i]),n=replay?4:Math.round(8+L.i/12),now=performance.now(),taken=[];L.loot=L.loot||[];
- for(let k=0;k<n;k++){let t=ckRoll([60,28,10,2,0,0]);if(replay&&t>1)t=1;const pc=ckPiece(t,true,replay);
-  // scatter around the spot where it fell (about 2.5 tiles), so a quick sweep can catch most of it
-  let x=0,y=0;for(let a=0;a<10;a++){const r=.4+Math.random()*2.3,an=Math.random()*6.283;x=Math.max(-.3,Math.min(L.cols-.7,e.x+Math.cos(an)*r));y=Math.max(-.3,Math.min(L.rows-.7,e.y+Math.sin(an)*r*.8));if(taken.every(q=>Math.hypot(q[0]-x,q[1]-y)>.42))break}taken.push([x,y]);
-  L.loot.push(Object.assign({x,y,tier:t,born:TM,life:3.6,mbw:1,fx:sp.x,fy:sp.y,ft0:now,fdur:380+Math.random()*260,boss:0},pc))}
- if(!replay&&Math.random()<.12)L.loot.push({x:e.x,y:e.y,tier:3,kind:'dia',amt:1,born:TM,life:3.6,mbw:1,fx:sp.x,fy:sp.y,ft0:now,fdur:500,boss:0});
+ // v5.8: same 8-second collection window as a major boss (the battle keeps going; victory waits for it)
+ const replay=!!(S.prog&&S.prog[L.i]),n=replay?6:Math.round(14+L.i/8),now=performance.now(),taken=[],FLY=520;L.loot=(L.loot||[]).filter(l=>!l.boss);
+ for(let k=0;k<n;k++){let t=ckRoll([56,28,12,4,0,0]);if(replay&&t>1)t=1;const pc=ckPiece(t,true,replay);
+  let x=0,y=0;for(let a=0;a<12;a++){const r=.4+Math.random()*3.6,an=Math.random()*6.283;x=Math.max(-.3,Math.min(L.cols-.7,e.x+Math.cos(an)*r));y=Math.max(-.3,Math.min(L.rows-.7,e.y+Math.sin(an)*r*.85));if(taken.every(q=>Math.hypot(q[0]-x,q[1]-y)>.42))break}taken.push([x,y]);
+  L.loot.push(Object.assign({x,y,tier:t,born:TM,life:null,fx:sp.x,fy:sp.y,ft0:now,fdur:FLY*(.75+Math.random()*.5),boss:1,ang:Math.random()*6.28},pc))}
+ if(!replay&&Math.random()<.15)L.loot.push({x:e.x,y:e.y,tier:3,kind:'dia',amt:1,born:TM,life:null,fx:sp.x,fy:sp.y,ft0:now,fdur:FLY,boss:1});
+ L.lw={t0:now+FLY,el:0,last:now,total:L.loot.filter(l=>l.boss).length,got:0,done:false,replay,mb:1};
+ try{ckLootUi(true);requestAnimationFrame(ckLootLoop)}catch(_){}
  try{CKS.lootBurst(2)}catch(_){}}
 // mini-boss drops stay solid, then fade in their last second (3.6 s on the field incl. the flight)
 (function(){const _al=ckLootAlpha;ckLootAlpha=function(l){if(l&&l.mbw){const a=l.age||0;return a>l.life?0:a>l.life-1?Math.max(0,l.life-a):1}return _al.apply(this,arguments)}})();
@@ -106,23 +108,5 @@ function ckHoardLayout(e){const P=L.loot.filter(l=>l.boss);if(P.length<60)return
 (function(){const _pp0=null;const _ld=ckLootDraw;ckLootDraw=function(){if(!L||!L.lw||!L.lw.hoard)return _ld.apply(this,arguments);
   const sv=[];for(const l of L.loot)if(l.hy){sv.push([l,l.y]);l.y-=l.hy}try{return _ld.apply(this,arguments)}finally{for(const[l,y]of sv)l.y=y}}})();
 
-// ---- realm art for VII-XII (and the Throne): the six base pictures, mirrored, re-framed and colour-graded ----
-// f mirror, z zoom, ox/oy framing, mix strength of the colour grade, fx particles; colours come from the realm's sky
-const CK_RGRADE={6:{f:1,z:1.25,ox:.1,oy:0,mix:.62,fx:'stars'},7:{f:0,z:1.3,ox:.9,oy:.2,mix:.82,lift:.5,fx:'embers'},8:{f:1,z:1.2,ox:.5,oy:.9,mix:.6,fx:'rain'},
- 9:{f:1,z:1.22,ox:.2,oy:.8,mix:.5,fx:'spores'},10:{f:1,z:1.28,ox:.8,oy:.1,mix:.66,fx:'sparks'},11:{f:1,z:1.25,ox:.15,oy:.5,mix:.55,fx:'embers'},12:{f:0,z:1.12,ox:.5,oy:.4,mix:.65,fx:'embers'}};
-const CK_RART={};
-function ckRArt(r){const i=R.indexOf(r),base=SPRD['m_'+r.m]||SPRD.m_sky;if(!CK_RGRADE[i])return base;if(CK_RART[i])return CK_RART[i];
- try{const im=SP['m_'+r.m]||SP.m_sky;if(!im||!im.width)return base;CK_RART[i]=ckGrade(im,Object.assign({sky:r.sky},CK_RGRADE[i]),i);return CK_RART[i]}catch(_){return base}}
-function ckGrade(im,G,seed){const S2=Math.min(420,im.width),cv=document.createElement('canvas');cv.width=cv.height=S2;const g=cv.getContext('2d');
- const sw=im.width/G.z,sh=im.height/G.z,sx=(im.width-sw)*G.ox,sy=(im.height-sh)*G.oy;g.save();if(G.f){g.translate(S2,0);g.scale(-1,1)}g.drawImage(im,sx,sy,sw,sh,0,0,S2,S2);g.restore();
- const d=g.getImageData(0,0,S2,S2),p=d.data,hx=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
- // gradient map: shadows -> deep sky colour, highlights -> light sky colour (lifted), blended over the original
- const c0=hx(G.sky[0]).map(v=>v*.55),c1=hx(G.sky[1]),c2=c1.map(v=>Math.min(255,v*.35+200*(G.lift==null?1:G.lift))),M=G.mix;
- for(let k=0;k<p.length;k+=4){const r=p[k],gg=p[k+1],b=p[k+2],lu=(r*.3+gg*.59+b*.11)/255;let t,A,B;if(lu<.6){t=lu/.6;A=c0;B=c1}else{t=(lu-.6)/.4;A=c1;B=c2}
-  p[k]=r+(A[0]+(B[0]-A[0])*t-r)*M;p[k+1]=gg+(A[1]+(B[1]-A[1])*t-gg)*M;p[k+2]=b+(A[2]+(B[2]-A[2])*t-b)*M}
- g.putImageData(d,0,0);
- g.globalCompositeOperation='source-over';g.globalAlpha=1;const vg=g.createRadialGradient(S2/2,S2/2,S2*.3,S2/2,S2/2,S2*.72);vg.addColorStop(0,'#0000');vg.addColorStop(1,'#000a');g.fillStyle=vg;g.fillRect(0,0,S2,S2);
- let z=seed*9301+49297;const rnd=()=>(z=(z*9301+49297)%233280)/233280;
- if(G.fx==='rain'){g.strokeStyle='#cfe8ff';g.lineWidth=1.2;for(let k=0;k<140;k++){const x=rnd()*S2,y=rnd()*S2;g.globalAlpha=.15+rnd()*.25;g.beginPath();g.moveTo(x,y);g.lineTo(x-6,y+18);g.stroke()}g.globalAlpha=.18;const lg=g.createLinearGradient(0,0,0,S2*.5);lg.addColorStop(0,'#e8f6ff');lg.addColorStop(1,'#e8f6ff00');g.fillStyle=lg;g.fillRect(0,0,S2,S2*.5)}
- else{const col={stars:'#e8dcff',embers:'#ffb060',spores:'#c8ffb0',sparks:'#d6a8ff'}[G.fx]||'#fff';g.fillStyle=col;for(let k=0;k<70;k++){const x=rnd()*S2,y=rnd()*S2,r=.6+rnd()*2.2;g.globalAlpha=.25+rnd()*.6;g.beginPath();g.arc(x,y,r,0,7);g.fill()}}
- g.globalAlpha=1;return cv.toDataURL('image/jpeg',.86)}
+// ---- realm art: v5.8 uses the painted realm cards (CK_RIMG, one per realm incl. the Throne) ----
+function ckRArt(r){const i=R.indexOf(r);return (typeof CK_RIMG!=='undefined'&&CK_RIMG[i])||SPRD['m_'+r.m]||SPRD.m_sky}

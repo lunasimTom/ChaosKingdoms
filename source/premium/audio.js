@@ -132,6 +132,38 @@ const CKS=(()=>{
   lootBurst:(best=0)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.5,0);boom(d,t,55,1,.6);noise(d,{t,dur:1.4,ft:'highpass',f0:4000,f1:7000,amp:.18,a:.02});
    for(let i=0;i<14;i++)tone(d,{t:t+.05+i*.045,type:'sine',f0:R(1400,3600),dur:.25,amp:.07});
    if(best>=4){[523,659,784,1047].forEach((f,i)=>tone(d,{t:t+.35+i*.11,type:'sawtooth',f0:f,dur:.6,amp:.05,lp:2600}))}return true},
+  // v5.8: every item has its own activation sound, themed on what it does
+  item:(id)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.45,0),T=(o)=>tone(d,o),N=(o)=>noise(d,o),arp=(fs,st,gap,o)=>fs.forEach((f,i)=>T(Object.assign({t:st+i*gap,type:'sine',f0:f,dur:.5,amp:.08},o||{})));
+   switch(id){
+   case'rep':for(let i=0;i<9;i++)N({t:t+i*.06*R(.7,1.3),dur:.05,f0:R(500,1400),f1:R(1500,2600),q:9,amp:.12});[523,659,784].forEach(f=>{T({t:t+.15,type:'sine',f0:f,dur:1.3,amp:.06,a:.25,vib:3});vox(d,{t:t+.15,f0:f/2,dur:1.2,fm:[700,1150],amp:.05,a:.3})});arp([1047,1319,1568,2093],t+.35,.09,{amp:.06});break;
+   case'frz':N({t,dur:.9,ft:'highpass',f0:9000,f1:2500,amp:.22,a:.01});[2093,2637,3136,3951].forEach((f,i)=>T({t:t+.04+i*.03,type:'sine',f0:f,f1:f*1.01,dur:1.1,amp:.05}));T({t,type:'sine',f0:90,f1:40,dur:.5,amp:.35});clicks(d,t+.1,10,.05,5200,.12);N({t:t+.25,dur:1.6,ft:'bandpass',f0:3000,f1:6000,q:3,amp:.06,a:.4});break;
+   case'met':N({t,dur:1.1,ft:'lowpass',f0:300,f1:3500,amp:.3,a:.9});for(let i=0;i<5;i++)boom(d,t+1+i*.16*R(.8,1.2),R(40,60),.9,.5);N({t:t+1,dur:2.2,ft:'lowpass',f0:500,f1:60,amp:.35,a:.05});break;
+   case'ovc':T({t,type:'sawtooth',f0:180,f1:1800,dur:.7,amp:.09,lp:700,lp1:6000,q:4});T({t:t+.05,type:'square',f0:360,f1:3600,dur:.55,amp:.03,lp:4000});clicks(d,t+.2,14,.035,6500,.1);arp([880,1175,1568,2349],t+.55,.06,{type:'triangle',amp:.06,dur:.3});break;
+   case'idol':for(let i=0;i<26;i++){const ft=t+i*.045*R(.6,1.4);T({t:ft,type:'sine',f0:R(2600,5200),dur:.18,amp:.05});T({t:ft,type:'sine',f0:R(1800,2400),dur:.12,amp:.03})}[1319,1661,1976].forEach(f=>T({t:t+.9,type:'sine',f0:f,dur:1,amp:.07}));N({t:t+.9,dur:.8,ft:'highpass',f0:6000,amp:.06});break;
+   case'fbomb':N({t,dur:.5,ft:'highpass',f0:4000,f1:7000,amp:.12});N({t:t+.35,dur:.35,ft:'bandpass',f0:600,f1:2400,q:2,amp:.2});boom(d,t+.62,48,1.1,.65);for(let i=0;i<16;i++)N({t:t+.7+i*.06*R(.5,1.5),dur:.04,f0:R(1500,4000),q:6,amp:.1});break;
+   case'ibomb':boom(d,t,70,.4,.35);N({t:t+.05,dur:1.8,ft:'bandpass',f0:5000,f1:1800,q:1.5,amp:.12,a:.2});arp([1568,1319,1047,880],t+.1,.12,{amp:.06,dur:.7});break;
+   case'scroll':N({t,dur:.12,ft:'highpass',f0:3000,amp:.45});N({t:t+.02,dur:1.8,ft:'lowpass',f0:900,f1:70,amp:.35,a:.03});boom(d,t+.05,38,1.6,.5);for(let i=0;i<6;i++){const zt=t+.15+i*.14;T({t:zt,type:'sawtooth',f0:R(900,1600),f1:R(80,200),dur:.12,amp:.06,drive:1});N({t:zt,dur:.08,ft:'highpass',f0:5000,amp:.15})}break;
+   case'horn':[[196,.0,1.0],[294,.55,1.4]].forEach(([f,o,du])=>{vox(d,{t:t+o,f0:f,f1:f*1.01,dur:du,fm:[520,1300],amp:.22,a:.08,q:4});T({t:t+o,type:'sawtooth',f0:f,dur:du,amp:.05,lp:1500,a:.08})});boom(d,t,60,.6,.4);boom(d,t+.55,55,.6,.45);boom(d,t+1.1,50,.9,.5);break;
+   case'trap':clicks(d,t,6,.012,3000,.25);T({t,type:'square',f0:300,f1:90,dur:.18,amp:.12});T({t:t+.03,type:'sine',f0:520,f1:180,dur:.6,amp:.1,vib:30,vr:18});N({t:t+.02,dur:.2,ft:'bandpass',f0:2500,q:5,amp:.18});break;
+   case'aid':[392,494,587,784].forEach((f,i)=>{vox(d,{t:t+i*.05,f0:f,dur:1.6,fm:[800,1200],amp:.07,a:.35,q:5});T({t:t+i*.05,type:'sine',f0:f*2,dur:1.6,amp:.025,a:.4})});arp([1568,2093,2637],t+.4,.12,{amp:.06});boom(d,t+.2,80,.5,.2);break;
+   case'shield':T({t,type:'sine',f0:220,f1:440,dur:1.2,amp:.12,a:.2});T({t,type:'sine',f0:330,f1:660,dur:1.2,amp:.08,a:.25,vib:5});N({t,dur:1.1,ft:'bandpass',f0:800,f1:3200,q:6,amp:.1,a:.3});arp([880,1109,1319,1760],t+.45,.07,{amp:.06,dur:.6});break;
+   case'river':for(let i=0;i<4;i++)N({t:t+i*.25,dur:1,ft:'bandpass',f0:R(500,900),f1:R(1200,2000),q:1.2,amp:.12,a:.2});for(let i=0;i<14;i++)T({t:t+R(0,1.4),type:'sine',f0:R(500,900),f1:R(1200,1800),dur:.06,amp:.05});break;
+   case'legion':for(let i=0;i<8;i++){boom(d,t+i*.18,i%2?75:60,.25,.3);clicks(d,t+i*.18+.05,2,.02,3500,.1)}[262,330,392,523].forEach((f,i)=>T({t:t+.2+i*.12,type:'sawtooth',f0:f,dur:.5,amp:.05,lp:2200}));break;
+   case'air':N({t,dur:1.6,ft:'bandpass',f0:500,f1:2600,q:1.5,amp:.22,a:.7});T({t:t+.8,type:'sine',f0:1800,f1:500,dur:.7,amp:.06});for(let i=0;i<5;i++)boom(d,t+1.5+i*.12,55,.6,.4);break;
+   case'bomb':for(let j=0;j<3;j++)N({t:t+j*.2,dur:1.8,ft:'bandpass',f0:400,f1:2200,q:1.3,amp:.14,a:.8});for(let i=0;i<10;i++)boom(d,t+1.4+i*.1,R(45,65),.5,.3);break;
+   case'heli':for(let i=0;i<22;i++)N({t:t+i*.075,dur:.05,ft:'lowpass',f0:420,amp:.25*Math.min(1,i/6)});T({t,type:'sawtooth',f0:110,dur:1.6,amp:.03,lp:500,a:.4});break;
+   case'r_chrono':T({t,type:'sine',f0:880,f1:110,dur:1.4,amp:.1});[1760,2217,2637].forEach((f,i)=>T({t:t+i*.2,type:'sine',f0:f,dur:1.2,amp:.05,vib:8}));clicks(d,t+.2,12,.11,4000,.08);break;
+   case'r_dragon':vox(d,{t,f0:110,f1:70,dur:1.4,fm:[400,900],amp:.3,drive:1,a:.08,q:3});N({t:t+.2,dur:1.6,ft:'bandpass',f0:800,f1:2600,q:1,amp:.25,a:.2});boom(d,t+.3,45,1.4,.6);break;
+   case'r_aegis':[262,330,392,523,659].forEach((f,i)=>T({t:t+i*.08,type:'sawtooth',f0:f,dur:1.4,amp:.04,lp:2200,a:.1}));T({t,type:'sine',f0:131,dur:1.6,amp:.15,a:.2});N({t:t+.5,dur:1,ft:'highpass',f0:6000,amp:.06});break;
+   case'r_forge':for(let i=0;i<3;i++){clicks(d,t+i*.22,3,.01,4200,.3);T({t:t+i*.22,type:'triangle',f0:1600,dur:.5,amp:.08});T({t:t+i*.22,type:'sine',f0:2400*1.003,dur:.5,amp:.05})}boom(d,t+.66,70,.5,.3);break;
+   case'r_midas':for(let i=0;i<34;i++)T({t:t+i*.035*R(.6,1.4),type:'sine',f0:R(2400,5600),dur:.16,amp:.05});[1047,1319,1568,2093].forEach((f,i)=>T({t:t+.9+i*.08,type:'sine',f0:f,dur:1.1,amp:.07}));break;
+   case'r_war':[[147,0,1.2],[220,.6,1.6]].forEach(([f,o,du])=>vox(d,{t:t+o,f0:f,dur:du,fm:[450,1100],amp:.28,a:.1,q:4,drive:1}));for(let i=0;i<6;i++)boom(d,t+i*.3,55,.5,.45);break;
+   default:arp([784,988,1175,1568],t,.07,{amp:.07});N({t,dur:.5,ft:'highpass',f0:5000,amp:.06})}
+   return true},
+  // v5.8 forge: shards gather (rising shimmer), the gem snaps together (bell + boom), or cracks apart
+  forge:(ok)=>{if(!on())return false;const t=au.currentTime+.01,d=out(1,.5,0);noise(d,{t,dur:.9,ft:'bandpass',f0:1500,f1:6000,q:2,amp:.1,a:.6});for(let i=0;i<10;i++)tone(d,{t:t+i*.07,type:'sine',f0:900*Math.pow(1.12,i),dur:.25,amp:.04});
+   if(ok){boom(d,t+.75,70,.7,.4);[1047,1319,1568,2093,2637].forEach((f,i)=>tone(d,{t:t+.78+i*.06,type:'sine',f0:f,dur:1.4,amp:.07}));noise(d,{t:t+.78,dur:1.2,ft:'highpass',f0:7000,amp:.06})}
+   else{clicks(d,t+.75,8,.02,2500,.3);tone(d,{t:t+.78,type:'sawtooth',f0:400,f1:70,dur:.8,amp:.08,lp:1500});noise(d,{t:t+.78,dur:.6,ft:'lowpass',f0:1500,f1:200,amp:.25})}return true},
   // test hook: render a voice into any context (used by the automated sound checks)
   _voices:()=>({monsters:Object.keys(MV),bosses:Object.keys(BV)})
  };

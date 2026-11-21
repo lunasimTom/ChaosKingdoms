@@ -7,7 +7,40 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.6.0.apk` | Android app (package `com.chaoskingdoms.game`, version 5.6.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v5.8.apk` | Android app (package `com.chaoskingdoms.game`, version 5.8, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in v5.8
+
+New code is in `source/premium/v58.js`. The web HTML is 9.6 MB (the limit is 10 MB).
+
+**World map.**
+- **Painted cards:** the realm picker uses the 13 painted realm cards: twelve realms in three columns and a full-width card for the Fourfold Throne. Each card shows its numeral, name and progress inside the gold frame. Locked realms are greyed out, and the selected realm glows.
+- **Matching:** I Forest, II Desert (bone dragon), III Ice, IV Lava, V Sky (airships), VI Underground (cyan caverns), VII Celestial Rift (orrery), VIII Abyssal Crown (ocean shell), IX Stormfront (storm arch), X Emerald Wilds (green portal), XI Obsidian Depths (red moon), XII Crimson Caldera (burning gate). The 5.6 recolours are gone.
+- **Battle colours:** each realm's ground hue, saturation and lightness now match its card. For example, Underground is teal, Abyssal Crown is ocean blue, Obsidian is dark crimson, Crimson Caldera is orange and the Throne is violet. No realm is darker than 28% lightness.
+- **Level badge:** tapping the level badge at the top left of a battle asks to confirm leaving, then opens the world map on the current realm with the current level marked "HERE".
+
+**Items.**
+- **Activation effects:** every item and rare treasure (23 in all) has its own synthesized sound: bubbling and choir for the Healing Potion, a crystal crack for Freeze, an incoming roar and impacts for Meteor, a coin cascade for the Gold Bag, a brass call and drums for the War Horn, rotor chop for the Attack Helicopter, and so on. The old shared "upgrade" blip is gone.
+- **Visuals:** each activation shows the item's icon and name with light rays over a dark halo, a themed screen-edge effect (frost, fire, gold, storm, holy light, shield, water, war), and a matching battlefield effect: falling meteors, bolts between towers, coin rain, light pillars, shield domes.
+- **Buy ×10:** every unlimited item in the shop has a ×10 button. The Healing Potion's price rises after each purchase, so its ×10 total includes those increases. Large totals are shortened, for example 10.8K.
+- **Auto-use fix:** auto-use now fires one item at a time and never uses the next item until the active item's effect has completely run out. The durations are Freeze 4 s, Speed Boost 20 s, Gold Bag 30 s, War Horn 15 s, Shield 15 s, Allied Legion 16 s, Attack Helicopter 14 s, and so on. Before, the "No Item Cooldowns" treasure let auto-use re-fire every 0.25 s, cutting effects short. When several items are on AUTO, the one that has waited longest goes first. The trade-off: auto Healing Potion also waits for an active effect to end.
+
+**Mini-boss treasure.** Defeating a Level 4 mini-boss now gives the same 8-second collection window as a major boss, with the countdown ring. It drops 14–26 pieces, and the level's victory waits until the window ends.
+
+**Diamond forge.** The forge plays the painted 16-frame sequence of shards gathering into a diamond, inside a spinning golden rune ring with light rays, a flash and a rising chime. A failed forge cracks the half-formed gem into tumbling shards, with a red flash, a shake and a breaking sound.
+
+**Main menu music.** The menu track is pre-rendered with the game's own composer (`tools/make_menu_music.sh`) and embedded as a 32 kbps MP3. It decodes in about 0.1–0.2 s and plays on the first tap. Before, it was composed on the phone each time, which could take close to a minute.
+
+**Home screen.**
+- **Medal hint:** a line above the three medal slots ("Tap to choose the medals shown on your card") opens a new medal picker, where you choose up to 3 unlocked medals and see their order.
+- **Help:** a new Help button holds all the gameplay guidance in eight tabs: Basics, Towers, Synergy, Enemies (roles, mini-bosses, bosses, the Throne), Items (including auto-use and ×10), Progress, Strategy (nine practical tips) and About. About shows the version (V5.8 · build 54). The tower synergy guide has moved here from Commander Record.
+- **Buttons:** the secondary buttons are one 3×3 grid of equal tiles: Battle history, Progress transfer, Redeem Code / Help, Settings, Music / Screen, Language, Install. In the Android app, where Install doesn't apply, Records takes its place. The tiles are a little shorter.
+- **No scrolling:** the whole home screen scales to fit on any phone, portrait or landscape. Tested at 412×839, 360×640 and 915×412.
+- **Watermark:** the old "Strategy Edition" watermark is gone; the version is shown in Help.
+
+**Size.** The original build carried an unused 1.06 MB tower sprite sheet, which is now dropped. The splash art and item artwork were recompressed slightly to make room for the realm cards, the forge sequence and the menu music.
+
+**Testing.** All earlier suites pass: the 42-step interface walk in portrait and landscape, inventory touch, item auto-use, boss and loot flows, monster AI, mini-bosses, treasure hoards, the world map, and save compatibility from v4.3 (including export codes). A new v5.8 suite checks every item's activation, Buy ×10, auto-use timing, the level badge, the mini-boss window, the forge, the Help tabs, the medal picker, music decode time and the home screen fit in both languages.
 
 ## What changed in v5.6
 
@@ -1044,7 +1077,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.6.0.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.8.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
