@@ -816,7 +816,7 @@ rep("c.globalAlpha=a*.34;c.fillStyle='#ff1010';c.fillRect(0,0,W,H);let g=c.creat
 rep("c.globalAlpha=a*.7;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy", "c.globalAlpha=a*.42;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy")
 # 68. v6.4: victory waits for the Ultimate Boss; floating bars keep only the fill (empty part transparent); 6 cached tracks
 rep("if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over&&!ckLootBusy())end(true)", "if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over&&!ckLootBusy()&&!L.ckMainHeld)end(true)")
-rep("c.fillStyle='#0a0f24';c.fillRect(p.x-bw/2-1,by-1,bw+2,6);c.fillStyle=bs?", "c.strokeStyle='rgba(8,12,28,.55)';c.lineWidth=1;c.strokeRect(p.x-bw/2-.5,by-.5,bw+1,5);c.fillStyle=bs?")
+rep("c.fillStyle='#0a0f24';c.fillRect(p.x-bw/2-1,by-1,bw+2,6);c.fillStyle=bs?'#ff5b7f':e.el?'#ffcf4a':'#8be05a';c.fillRect(p.x-bw/2,by,bw*Math.max(0,e.hp/e.mx),4);", "if(!bs&&!e.mb){c.strokeStyle='rgba(8,12,28,.55)';c.lineWidth=1;c.strokeRect(p.x-bw/2-.5,by-.5,bw+1,5);c.fillStyle=e.el?'#ffcf4a':'#8be05a';c.fillRect(p.x-bw/2,by,bw*Math.max(0,e.hp/e.mx),4)}")
 rep("c.fillStyle='#07101d';c.fillRect(p.x-w/2-1,y-1,w+2,7);c.fillStyle='#ffffff';c.fillRect(p.x-w/2,y,w,5);", "c.strokeStyle='rgba(7,16,29,.6)';c.lineWidth=1;c.strokeRect(p.x-w/2-.5,y-.5,w+1,6);")
 rep("c.strokeStyle='#1a2433';c.lineWidth=1;c.strokeRect(p.x-w/2,y,w,5)}};", "}};")
 rep("if(ks.length>3)", "if(ks.length>6)")

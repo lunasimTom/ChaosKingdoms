@@ -7,7 +7,7 @@ setTimeout(()=>{try{if(!mon&&!mOff)music(true)}catch(_){}},60);
 document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('#map .nd[data-i]');if(b){const k='L'+b.dataset.i;try{if(!MC[k])ckPrefetch(k)}catch(_){}}},true);
 
 // ---- 2. boss roles: the Main (Ultimate) Boss arrives last, only after every Secondary Boss has fallen ----
-const CK_DEF_MAIN=5,CK_DEF_SEC=1.5;
+const CK_DEF_MAIN=2.5,CK_DEF_SEC=1.5;
 (function(){const o=mkWave;mkWave=function(w){const q=o.apply(this,arguments);try{if(!L.demo&&L.boss&&w===L.waves){const n=q.filter(t=>t==='boss').length;
   if(n>=2){q.splice(q.indexOf('boss'),1);L.ckMainHeld=1;L.ckMainSp=spk('boss');L.ckSecN=0;L.ckMainQ=0}}}catch(_){}return q}})();
 let CK_MAINSPAWN=false;
@@ -64,4 +64,4 @@ ckBBRender=function(){let rows=(typeof L!=='undefined'&&L&&!L.demo&&S.mode==='pl
   if(!r.ghost){const e=r.e;f=Math.max(0,e.hp>0?e.hp/e.mx:0);if(f<r.f-.0005)r.hold=.45;r.f=f;if(!paused){if(r.hold>0)r.hold-=dt;else if(r.tr>f)r.tr=Math.max(f,r.tr-Math.max(.25,(r.tr-f)*1.8)*dt)}if(r.tr<f)r.tr=f;
    const dead=e.hp<=0;if(dead!==r.dead){r.dead=dead;row.classList.toggle('dead',dead)}row.classList.toggle('rage',!!e.rage&&!dead);row.classList.toggle('chan',(e.chan||0)>0&&!dead)}
   const col=`rgb(${ckBCol(f).join(',')})`,fl=row.querySelector('.ck-bbf'),tr=row.querySelector('.ck-bbtr');
-  row.style.setProperty('--c',col);fl.style.transform=`scaleX(${f})`;tr.style.transform=`scaleX(${r.tr})`})};
+  row.style.setProperty('--c',col);fl.style.setProperty('--c',col);tr.style.setProperty('--c',col);fl.style.transform=`scaleX(${f})`;tr.style.transform=`scaleX(${r.tr})`})};

@@ -7,7 +7,42 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v6.3.apk` | Android app (package `com.chaoskingdoms.game`, version 6.3, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v6.4.apk` | Android app (package `com.chaoskingdoms.game`, version 6.4, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in V6.4 (Android app build)
+
+APK only; `dist/ChaosKingdoms.html` stays at V6.0. New code is in `source/premium/v64.js`.
+
+**Ultimate Boss finale.**
+- **Order of arrival:** on levels with several bosses (Level 40+), the Secondary Bosses arrive first. The level's named boss, the Ultimate Boss, spawns only after every Secondary Boss has fallen.
+- **Warning:** a red warning and banner, "The Ultimate Boss is about to appear!", play first. The Ultimate Boss enters about 3 s later. Until then, its row shows dimmed at the top of the boss bars.
+- **Victory:** victory and the final treasure wait for the Ultimate Boss.
+- **Defence:** every Main Boss has ×2.5, Secondary Bosses ×1.5. Health ratios are unchanged. Measured with no items: Level 16 is won with 18 level-3 towers, Level 32 with 22 level-4 towers.
+- **Secondary Bosses:** they also rage and summon minions twice. Adaptive resistance is removed for all bosses.
+- **Secondary Boss loot:** each one drops its own loot when it dies, collectable for about 12 s: gold, stars, shards, a good chance of diamonds (better after Level 60), and small chances of a chest, an Enhancement Rune or an item.
+
+**Boss bars.**
+- **Shape:** square-cornered 8 px bars, all the same thickness. Longer: the Main Boss's spans the battlefield; Secondary bars are 82% of it.
+- **Placement:** the stack sits entirely inside the battlefield, and each bar starts right after its name.
+- **Language:** names always follow the current language.
+- **Colours:** the red stage is bright, vivid red. The damage trail is drawn in the bar's own colour, semi-transparent. Empty portions are transparent.
+- **Touch:** taps pass straight through to the battlefield, so you can build and select towers under the bars.
+- **Defeated bosses:** they stay blacked out.
+- **Floating bars:** bosses and mini-bosses no longer have a bar above their heads. Towers and monsters keep theirs, without the white or black background.
+
+**Music.** It starts automatically as soon as the game loads, with no tap needed in the app. Level tracks are composed while you browse the map (the selected realm's next level and any level you touch), and 6 tracks stay cached instead of 3.
+
+**Testing.**
+- **Regressions:** the full suite passes, with save compatibility from v4.3.
+- **New checks:**
+  - the boss order: Secondary Bosses first, then the warning, then the Ultimate Boss;
+  - victory waiting for the Ultimate Boss;
+  - loot from each Secondary Boss;
+  - the defence values;
+  - bars inside the board, taps reaching the battlefield and names in both languages;
+  - Level and Settings buttons the same height;
+  - music playing before any tap;
+  - a permanently frozen boss still dying, after about 72 s with the higher defence.
 
 ## What changed in V6.3 (Android app build)
 
@@ -1255,7 +1290,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.3.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.4.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

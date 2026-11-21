@@ -14,7 +14,7 @@ function ckAddBossRow(e,mini){const rows=ckBossRows();if(rows.some(r=>r.e===e))r
  rows.push({e,mini:!!mini,main,name:nm,sp:e.sp,f:1,tr:1,hold:0,dead:false});rows.sort((a,b)=>(b.main-a.main));CK_BB.dirty=true}
 (function(){const o=spawn;spawn=function(t,at){const n0=L.en.length;const r=o.apply(this,arguments);try{if(!L.demo&&L.en.length>n0){const e=L.en[L.en.length-1];if(t==='boss'&&e.t==='boss')ckAddBossRow(e,false);else if(t==='mboss'&&e.mb)ckAddBossRow(e,true)}}catch(_){}return r}})();
 // colour runs dark blue -> light blue -> dark green -> light green -> yellow -> red as health falls
-const CK_BCOL=[[1,[27,63,174]],[.82,[63,169,255]],[.64,[19,138,62]],[.46,[111,220,74]],[.28,[255,210,58]],[.12,[255,58,42]],[0,[230,30,30]]];
+const CK_BCOL=[[1,[27,63,174]],[.82,[63,169,255]],[.64,[19,138,62]],[.46,[111,220,74]],[.28,[255,210,58]],[.13,[255,40,30]],[0,[255,30,24]]];
 function ckBCol(f){for(let i=0;i<CK_BCOL.length-1;i++){const[a,ca]=CK_BCOL[i],[b,cb]=CK_BCOL[i+1];if(f<=a&&f>=b){const k=(a-f)/(a-b||1);return ca.map((v,j)=>Math.round(v+(cb[j]-v)*k))}}return CK_BCOL[CK_BCOL.length-1][1]}
 // ---- 3. the bar stack (DOM, above the board, below menus) ----
 const CK_BB={el:null,dirty:true,last:0,L:null};
