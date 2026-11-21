@@ -54,10 +54,7 @@ def _w59(name, size, q=84):
     buf = io.BytesIO(); im.save(buf, 'WEBP', quality=q, method=6)
     return 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
 def _ckframe():
-    import json as _j
-    d = os.path.join(SRC, 'frame'); meta = _j.load(open(os.path.join(d, 'meta.json')))
-    out = {n: ['data:image/webp;base64,' + _recode(os.path.join(d, n + '.png'), 9999, 86), wh[0], wh[1]] for n, wh in meta.items()}
-    return 'const CK_FRAME=' + _j.dumps(out) + ';'
+    return "const CK_FRAME='data:image/webp;base64," + _recode(os.path.join(SRC, 'frame', 'source-frame.png'), 900, 88) + "';"
 def _ckr():
     d = os.path.join(SRC, 'realms')
     out = ['data:image/webp;base64,' + _recode(os.path.join(d, f'realm{i}.webp'), 300 if i < 12 else 640, 80) for i in range(13)]
