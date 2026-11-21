@@ -7,7 +7,35 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v6.1.apk` | Android app (package `com.chaoskingdoms.game`, version 6.1, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v6.2.apk` | Android app (package `com.chaoskingdoms.game`, version 6.2, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in V6.2 (Android app build)
+
+APK only; `dist/ChaosKingdoms.html` stays at V6.0. New code is in `source/premium/v62.js`.
+
+**Effects move with the map.**
+- **Same render pass:** item effects are drawn as part of the battlefield itself, so they share its shake, scale and rounded corners exactly. The separate effects layer, which shook out of sync and showed square corners, is gone. Effects still pause and hide while a menu is open.
+- **No darkening:** Meteor no longer darkens the sky and Lightning no longer dims the screen. Impact glows are capped at about 2 tiles.
+- **Boss alert:** the "boss incoming" alert no longer flashes the whole screen red. A soft red edge inside the board remains.
+- **Event flashes:** clipped to the board's rounded shape and much lighter.
+- **Smaller visuals:** Gold Bag shows fewer coins for a shorter time. Holy Tower sky pillars appear on a quarter of hits and are fainter. A frozen boss's ice stays tower-sized, so you no longer get a giant white burst on an enraged boss.
+
+**Bosses can be frozen and never get stuck.** Before, a frozen boss skipped its phase checks, so constant auto-Freeze held it at a health floor (19% or 3%) forever. Its guards, rage trigger and 8-second rage timer now keep running while it's frozen. Test: a Level 64 boss kept permanently frozen under fire went through every phase (guards, both summons, rage) and died in about 36 s.
+
+**Audio no longer freezes in busy boss fights.**
+- **Voice limit:** at most 8 synthesized sounds at once; boss death, fanfare, rage and spawn always play.
+- **Item sounds:** at most one per 0.4 s, and each is rebuilt with fewer parts.
+- **Boss voices:** hurt sounds share one cooldown across all bosses (about 0.9 s, longer at 2×/3×), attack sounds 1.5 s; bone and fire textures are capped.
+- **Combat sounds:** the original combat synth (hits, booms, reinforcements), which bypassed every limiter, now has a 6-voice budget with per-sound gaps that widen at 2×/3×. Beeps are rate-limited.
+- **Reverb:** the shared reverb is 1.2 s instead of 2.8 s, so overload clears quickly.
+- **Measured:** in a 3× boss fight with 11 items on auto, sound sources dropped from 100–236 per second (spiking) to a steady 60–90.
+
+**Interface.**
+- **Wave banner:** a soft blood-red band (deeper red for boss and final waves) that fades out at every edge.
+- **Boss name:** the boss health bar replaces the realm label while it's shown, so the two names no longer overlap.
+- **Inventory:** Use (gold), Auto (gold when on, dimmed when off) and **Sell (red, "Sell 🪙320")**, all 32 px tall in fixed columns, so every row lines up.
+
+**Testing.** The full regression suite passes, along with save compatibility. New checks cover the frozen-boss kill, effects drawn in the map, the audio stress run, the red banner, the boss name and the inventory row layout.
 
 ## What changed in V6.1 (Android app build)
 
@@ -1193,7 +1221,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.1.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.2.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.

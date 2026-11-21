@@ -938,3 +938,16 @@ html body .ck-abn.ck-abn-battle{top:calc(var(--ck-menu-h,30px) + 18px)!important
 html body .ck-abn.ck-abn-out{opacity:0!important;transition:opacity .35s ease}
 /* final realm panel: same layout as the other realms (no four-boss block) */
 html body #map .realm-detail .throne-banner{display:none!important}
+/* ================= v6.2 ================= */
+/* wave banner: a soft blood-red band that fades out at every edge */
+#ck-banner .ckw-band{background:radial-gradient(ellipse 62% 100% at 50% 50%,rgba(120,10,16,.46) 0%,rgba(90,6,12,.30) 55%,rgba(60,4,8,0) 100%)!important}
+#ck-banner.boss .ckw-band{background:radial-gradient(ellipse 62% 100% at 50% 50%,rgba(150,8,14,.6) 0%,rgba(110,4,10,.4) 55%,rgba(70,2,6,0) 100%)!important}
+/* boss bar replaces the map label while it is shown (no overlapping names) */
+body:has(#ck-bossbar:not([hidden])) #ckmapn{display:none!important}
+/* inventory: Use (gold) | Auto (gold when on) | Sell (red) – same height, fixed columns */
+#mbox .ck-iva{grid-template-columns:72px 60px 104px!important;column-gap:6px!important}
+#mbox .ck-iva>.ck-ivu,#mbox .ck-iva>.ck-auto,#mbox .ck-iva>.ck-ivs{height:32px!important;min-height:32px!important;width:100%!important;padding:0 6px!important;border-radius:10px!important;font:900 12.5px/1 CKSans,sans-serif!important;display:inline-flex!important;align-items:center;justify-content:center;gap:3px;white-space:nowrap;box-sizing:border-box}
+#mbox .ck-iva>.ck-auto.ck-autor{min-width:0!important}
+#mbox .ck-iva>.ck-ivs{background:linear-gradient(180deg,#ff9a8a 0%,#e5483a 48%,#c42f22 52%,#a8241a 100%)!important;border:2px solid #6e1410!important;color:#fff5f0!important;text-shadow:0 1px 0 #6e1410!important;box-shadow:0 3px 0 #6e1410,inset 0 1px 0 rgba(255,255,255,.45)!important}
+#mbox .ck-iva>.ck-ivs.arm{filter:brightness(1.15);box-shadow:0 0 0 2px #ffd0c8,0 3px 0 #6e1410!important}
+#mbox .ck-iva>.ck-ivs img,#mbox .ck-iva>.ck-ivs .ic{width:14px!important;height:14px!important}

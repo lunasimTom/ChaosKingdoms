@@ -4,7 +4,7 @@
    shown) are optional: saves and transfer codes from any older version load unchanged, and older
    versions ignore the new fields. Before anything is converted the raw save is copied once to
    localStorage 'ck25_bak_v44'. */
-const CK_VER='6.1',CK_BUILD=57;
+const CK_VER='6.2',CK_BUILD=58;
 function ckVerTxt(){return lvZ('版本','Version')+' '+CK_VER+' ('+lvZ('构建 ','build ')+CK_BUILD+')'}
 // ---- level-up rewards: gold + stars every level, a chest at milestones ----
 const CK_LV_CHEST={15:0,20:1,25:2,30:3,40:4,50:5};
@@ -28,7 +28,7 @@ function ckSellGold(id){if(CK_RARE[id])return 32000;if(id==='rune')return 40000;
 function ckSellDia(t){return Math.floor(CK_CH[t].p*CK_SELL)}
 let CKINV={tab:'items',from:null,focus:null,arm:null};
 function ckInvRows(){const zh=LANG==='zh',inv=S.inv||{},T=CKINV.tab,inB=S.mode==='play'&&typeof L!=='undefined'&&L&&!L.over&&!L.demo;
- const sellBtn=(key,label)=>`<button type="button" class="ck-ivs${CKINV.arm===key?' arm':''}" data-ivsell="${key}">${CKINV.arm===key?(zh?'确认出售？':'Confirm?'):label}</button>`;
+ const sellBtn=(key,label)=>`<button type="button" class="ck-ivs${CKINV.arm===key?' arm':''}" data-ivsell="${key}">${CKINV.arm===key?(zh?'确认出售？':'Confirm?'):(zh?'出售 ':'Sell ')+label}</button>`;
  const coin=n=>`${ckImg('gold','ic')}${n.toLocaleString()}`,dia=n=>`${ckImg('dia','ic')}${n}`;
  let rows=[];
  if(T==='items'){for(const it of IT){if(it.rare||!(inv[it.id]>0))continue;rows.push(`<div class="ck-ivr${CKINV.focus===it.id?' focus':''}" data-ivrow="${it.id}"><img class="ck-ivi" src="${SPRD[it.sp]}" alt=""><div class="ck-ivn"><b>${it.n}</b><small>${it.d}</small></div><div class="ck-ivc">×${inv[it.id]}</div><div class="ck-iva">${inB?`<button type="button" class="ck-ivu" data-ivuse="${it.id}">${zh?'使用':'Use'}</button>`:''}${ckAutoBtn(it.id)}${sellBtn('i:'+it.id,coin(ckSellGold(it.id)))}</div></div>`)}}

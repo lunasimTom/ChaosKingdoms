@@ -386,7 +386,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v60.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v61.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v60.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v61.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v62.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -670,7 +670,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'6.1',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'6.2',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
@@ -788,6 +788,14 @@ rep("au=new(window.AudioContext||window.webkitAudioContext)();", "try{au=new(win
 rep("forEach(t=>{if(!ckPopTw(t))dTw(t)});", "forEach(t=>{if(!ckPopTw(t))dTw(t)});try{ckSelRing()}catch(_){}")
 rep("if(L.bf.horn>0||L.bf.ovc>0){c.globalCompositeOperation='lighter';L.tr.forEach", "if(false){c.globalCompositeOperation='lighter';L.tr.forEach")
 rep("if(L.bf.shield>0)L.goals.forEach(g=>{let p=pp(g[0],g[1]),al=", "if(false)L.goals.forEach(g=>{let p=pp(g[0],g[1]),al=")
+# 67. v6.2: frozen bosses keep their phase/rage timers; frozen-boss ice and holy pillars sized sanely;
+#     the low-lives vignette and event flashes stay inside the rounded board
+rep("if(e.fz>0){e.fz-=dt;return}", "if(e.fz>0){e.fz-=dt;if(e.t==='boss')try{ckBossFrozenTick(e,dt)}catch(_){}return}")
+rep("if(e.fz>0){vIce(p.x,p.y,r0);circ(p.x,p.y,r0,'#bff4ff66');c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,r0,0,7);c.stroke()}", "if(e.fz>0){const r1=e.t==='boss'?Math.min(r0,tw*.8):r0;vIce(p.x,p.y,r1);circ(p.x,p.y,r1,'#bff4ff44');c.strokeStyle='#ffffffcc';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,r1,0,7);c.stroke()}")
+rep("else if(k==='holy'){vPillar(x,y,'#fff0a0',.5);", "else if(k==='holy'){if(Math.random()<.25)vPillar(x,y,'#fff0a0',.3);")
+rep("c.globalAlpha=a;c.fillStyle=g;c.fillRect(0,0,W,H);c.restore()}if(L.fl){c.globalAlpha=Math.max(0,Math.min(.6,L.fl.a));c.fillStyle=L.fl.c;c.fillRect(0,0,W,H);c.globalAlpha=1}}", "c.globalAlpha=a*.7;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy,tw*(port?L.rows:L.cols),tw*(port?L.cols:L.rows),10);c.fill();c.restore()}if(L.fl){c.save();c.beginPath();c.roundRect(ox,oy,tw*(port?L.rows:L.cols),tw*(port?L.cols:L.rows),10);c.clip();c.globalAlpha=Math.max(0,Math.min(.25,L.fl.a*.5));c.fillStyle=L.fl.c;c.fillRect(0,0,W,H);c.restore()}}")
+rep("c.globalAlpha=a*.34;c.fillStyle='#ff1010';c.fillRect(0,0,W,H);let g=c.createRadialGradient", "let g=c.createRadialGradient")
+rep("c.globalAlpha=a*.7;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy", "c.globalAlpha=a*.42;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy")
 # 61. v5.8 size: the 1280x1260 'tower360' sheet in the original is never referenced (1.06 MB); drop it
 _n0=len(s);s=re.sub(r"SPRD\.tower360='[^']*';","",s);assert len(s)<_n0-500000,'tower360 not removed'
 # ---------------------------------------------------------------- premium layer
