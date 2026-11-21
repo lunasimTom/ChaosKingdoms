@@ -889,3 +889,33 @@ html body #shop .si .sb>.ck-qty{grid-row:1;grid-column:1}
 html body #shop .si .sb>.ck-auto{grid-row:1;grid-column:2}
 html body #shop .si .sb>small{grid-row:1;grid-column:3!important;text-align:right;align-self:center}
 html body #shop .si .sb>.bt.pay{grid-row:2;grid-column:1/-1!important}
+/* ================= v6.0 ================= */
+/* wave banners: quick in, short hold, quick out (~1.25 s); boss/final a little longer */
+#ck-banner.show{animation:ckBanner 1.25s var(--ck-ease) both!important}
+#ck-banner.show.boss{animation-duration:1.7s!important}
+#ck-banner .ckw-band:before{animation-duration:1.25s!important}
+/* effect layer sits right above the battlefield canvas, below the HUD and every menu */
+#ck-fxc{position:absolute!important;z-index:auto!important;pointer-events:none!important}
+/* realm panel: the realm's own colours show through (light veil, darker only behind the text) */
+.realm-detail::before{filter:blur(5px) saturate(1.1) brightness(.92)!important;inset:-8px!important;transform:scale(1.04)!important}
+.realm-detail::after{background:linear-gradient(180deg,#0b142a40 0%,#0a112466 45%,#0a1124c8 100%)!important}
+html body #map .realm-detail .rd-name,html body #map .realm-detail .realm-hint{text-shadow:0 1px 3px #000,0 0 8px #000a!important}
+/* Fourfold Throne card: big crown on the left, title + subtitle centred in the remaining space */
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-icon{left:5%!important;top:50%!important;right:auto!important;transform:translateY(-50%)!important}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-icon img.ck-crown{width:68px!important;height:68px!important;filter:drop-shadow(0 4px 8px #000c) drop-shadow(0 0 10px #ffd36a88)!important}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-name{left:22%!important;right:12%!important;top:38%!important;bottom:auto!important;transform:translateY(-50%);font-size:clamp(13px,4.2vw,18px)!important;text-align:center!important}
+html body #regs .world-scene .realm-pin.final-throne-pin .pin-meta{left:22%!important;right:12%!important;top:62%!important;bottom:auto!important;transform:translateY(-50%);text-align:center!important}
+html body #regs .world-scene .realm-pin.final-throne-pin::after{left:18%;right:9%;top:22%;bottom:auto;height:56%;border-radius:10px;background:radial-gradient(ellipse at center,#000a 0%,#0006 55%,#0000 80%)}
+/* Auto: a small classic gold-bevel button ("Auto" / "自动"); off = dimmed, on = bright with a glow */
+.ck-auto.ck-autor{width:auto!important;height:26px!important;min-width:44px!important;padding:0 8px!important;border-radius:9px!important;border:1.5px solid #7d4a0c!important;background:linear-gradient(180deg,#8a7a5a,#5d4f36)!important;box-shadow:0 2px 0 #4a2c08,inset 0 1px 0 #ffffff40!important;filter:saturate(.6)}
+.ck-auto.ck-autor b{font:900 11px/1 CKSans,sans-serif!important;color:#e6dcc4!important;letter-spacing:.02em}
+.ck-auto.ck-autor.on{background:var(--ub-bg)!important;border-color:#7d4a0c!important;box-shadow:0 2px 0 #7d4a0c,0 0 10px #ffd36a99,inset 0 1px 0 #fff9!important;filter:none}
+.ck-auto.ck-autor.on b{color:#4a2a06!important}
+.ck-auto.ck-autor.on::after{display:none!important}
+/* inventory rows: fixed slots (Use | Auto | Sell) so every Use button lines up, with or without Auto */
+#mbox .ck-iva{display:grid!important;grid-template-columns:auto 56px auto!important;justify-content:end!important;align-items:center!important;column-gap:6px!important}
+#mbox .ck-iva>.ck-ivu{grid-column:1}#mbox .ck-iva>.ck-auto{grid-column:2;justify-self:center;margin:0!important}#mbox .ck-iva>.ck-ivs{grid-column:3}
+/* item bar: room above the buttons so badges and edges are never clipped */
+html body #app #rail #inv{padding-top:6px!important;padding-bottom:2px!important;box-sizing:content-box}
+html body .ck-auto.ck-autor b,html body .sb .ck-auto.ck-autor b{display:inline!important;background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;animation:none!important}
+@media (orientation:landscape) and (max-height:620px){html body #app #rail #inv{padding-top:2px!important;padding-bottom:0!important}}

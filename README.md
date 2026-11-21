@@ -7,7 +7,45 @@ Tower-defense game in a single self-contained HTML file, plus an Android build.
 | File | What it is |
 | --- | --- |
 | `dist/ChaosKingdoms.html` | The game. Open it in any modern browser. Works offline because the fonts are embedded. |
-| `dist/ChaosKingdoms-v5.9.apk` | Android app (package `com.chaoskingdoms.game`, version 5.9, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+| `dist/ChaosKingdoms-v6.0.apk` | Android app (package `com.chaoskingdoms.game`, version 6.0, Android 7.0 or newer). Signed with APK Signature Scheme v2, with the same key as earlier versions, so it installs as an update. |
+
+## What changed in V6.0
+
+New code is in `source/premium/v60.js`. The web HTML is 9.86 MB.
+
+**Item effects never cover the interface.**
+- **Layer order:** the effect layer now sits directly above the battlefield and below every HUD element, the build bar, the item bar, toasts, banners and menus. Buttons always stay on top and stay tappable. (In 5.9 it was above everything, including Pause and Settings.)
+- **Menus:** effects are hidden, with their timers paused, whenever a menu, the shop, Pause, Settings or any popup is open. They resume when it closes.
+- **Board only:** every effect is clipped to the board. Glows and electric tendrils follow the board's border instead of the screen corners.
+- **Freeze, redesigned:** a frosted glaze with a crystal texture over the board, ice crystals growing on every frozen monster and drifting ice glints, opened by a cold flash with spinning shards. The ice branches that grew over the corner buttons are gone.
+- **Item bar:** it has room above its buttons, so badges and edges are no longer clipped. Landscape uses a smaller margin so the buttons still fit on screen.
+
+**Home screen.**
+- **Order:** Records, Battle History, Progress Transfer / Screen, Redeem Code, Music / Language, Settings, Help. In the browser, Install takes the place of Records.
+- **Slider flicker:** dragging the difficulty slider no longer flickers the bottom buttons. The fit-to-screen code no longer resets the zoom to measure, and the old Install code no longer fights the grid. Testing shows 0 changes to the buttons while dragging, down from 102.
+
+**Shop and inventory.**
+- **Auto button:** a small classic gold-bevel button reading "AUTO" (自动 in Chinese): dimmed when off, bright gold with a soft glow when on. Locked items no longer show it.
+- **Inventory:** rows use fixed slots (Use | Auto | Sell), so every Use button lines up whether or not the item has Auto.
+
+**Banners and map.**
+- **Wave banners:** they last about 1.25 s (boss and final waves 1.7 s), down from 2.1 s. Mini-boss and other special banners wait for a wave banner to finish instead of overlapping it.
+- **Realm panel:** the blue veil is much lighter, so the realm's own art colours show. It darkens only behind the text.
+- **Fourfold Throne card:** a 68 px crown on the left, with the title and subtitle centred in the remaining space.
+
+**Text.**
+- **Title Case:** applied to every English title, button, tab and label (249 replacements). Examples: Battle History, Progress Transfer, Commander Record, Restart Level, Select Level, Quit to Map, Main Menu, World Atlas, Unlock Map, Retry Level, Next Level, Copy Code, Auto Next Wave, Show Damage, Music: On/Off. Sentences such as hints and toasts keep normal sentence case. The Chinese translations follow automatically.
+- **Chinese leaks:** the 32 newer achievements now have Chinese names everywhere, so the Victory screen no longer mixes in English names such as "Against the Clock".
+
+**Ambient sound.**
+- **No harsh tones:** the old wind, rain and drone recordings (with their hiss and high frequencies) are replaced by softly generated beds: deep wind, muffled rain and a low pad. Nothing sits above roughly 300 Hz, and the loops cross-fade seamlessly.
+- **Volume:** even with the Ambient slider at maximum, ambience plays at 0.045 against the music's 0.85, about 19 times quieter.
+
+**Testing.**
+- **Every screen:** English and Chinese at 412×839, 360×640 and 915×412 landscape.
+- **Effects:** every item effect with Pause and the shop opened on top. The effects hide and come back.
+- **Grids:** browser and Android grids, the slider (no changes to the buttons), wave banner timing and ambient gain.
+- **Regressions:** the full suite (interface walk in both orientations, inventory touch, auto-use, bosses and loot, monster AI, mini-bosses, hoards), save compatibility from v4.3, and the 10 MB size check.
 
 ## What changed in v5.9
 
@@ -1125,7 +1163,7 @@ python3 apkbuild.py /tmp/classes.dex ic_launcher.png ../dist/ChaosKingdoms.html 
 javac -cp apksig-2.3.0.jar -d /tmp/signer signer/SignApk.java
 java --add-exports java.base/sun.security.x509=ALL-UNNAMED --add-exports java.base/sun.security.pkcs=ALL-UNNAMED \
      --add-exports java.base/sun.security.util=ALL-UNNAMED -cp apksig-2.3.0.jar:/tmp/signer \
-     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v5.9.apk
+     SignApk <keystore.p12> <password> <alias> /tmp/unsigned.apk ../dist/ChaosKingdoms-v6.0.apk
 ```
 
 `apkbuild.py` writes the binary `AndroidManifest.xml` and `resources.arsc` itself and stores the resource table 4-byte aligned, as Android 11+ requires. It does not need the Android SDK.
