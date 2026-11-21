@@ -3639,13 +3639,21 @@ ckHomeFit=function(){const t=document.getElementById('title'),card=t&&t.querySel
  hook();new MutationObserver(hook).observe(document.getElementById('title')||document.body,{childList:true,subtree:true});addEventListener('resize',()=>ckHomeFit())})();
 
 // ---- 3. load every font face once the game is idle, so the first language switch has nothing left to load ----
-setTimeout(()=>{try{document.fonts.forEach(f=>{if(f.status==='unloaded')f.load().catch(()=>{})})}catch(_){}},1200);
+setTimeout(()=>{try{document.fonts.forEach(f=>{if(f.status==='unloaded')f.load().catch(()=>{})})}catch(_){}},400);
 
 // ---- 4. map panel: the Fourfold Throne gets a boss line like every other map; tidy the kingdom title ----
 (function(){const o=buildMap;buildMap=function(){const r=o.apply(this,arguments);try{
   const d=document.querySelector('#map .realm-detail');if(d&&selectedRealm===12){let h=d.querySelector(':scope>.realm-hint');if(!h){h=document.createElement('div');h.className='realm-hint';d.querySelector('.realm-detail-head').after(h)}
    h.textContent=lvZ('终极首领：','Ultimate Bosses: ')+[13,14,15,16].map(i=>TL(BOSS[i])).join(' · ');h.style.setProperty('display','block','important');d.classList.add('ck-thr')}
   document.querySelectorAll('#map h1,#map h2,#map .map-title,#map .mt,#map b,#map span').forEach(e=>{if(e.children.length===0&&/’s kingdom$/.test(e.textContent))e.textContent=e.textContent.replace(/’s kingdom$/,"'s Kingdom")})}catch(_){}return r}})();
+
+// ---- 5. the medal hint line is always part of the commander card (startup used to draw the card without it,
+//         so the first language switch added a line and the menu changed size) ----
+(function(){const ensure=()=>{const box=document.getElementById('ckhc');if(!box)return;let h=box.querySelector('.ck-hhint');
+  const txt=`<span>${lvZ('点击选择要在主界面展示的勋章','Tap to choose the medals shown on your card')}</span><b>›</b>`;
+  if(!h){h=document.createElement('div');h.className='ck-hhint';box.insertBefore(h,box.firstChild)}if(h.innerHTML!==txt)h.innerHTML=txt};
+ const t=document.getElementById('title');if(t)new MutationObserver(ensure).observe(t,{childList:true,subtree:true});ensure();
+ setTimeout(()=>{try{ckHomeCard()}catch(_){}ensure()},1520)})();
 
 /* ===== Chaos Kingdoms v3.6 · audio engine =====
    Every sound is synthesized with Web Audio at play time (no extra files), through the game's own

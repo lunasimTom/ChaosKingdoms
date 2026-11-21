@@ -20,6 +20,7 @@ V7.0 brings together everything from V5.8 to V6.4 and adds the ornate gold frame
 - The Unlock Map button sits under the map name instead of over it.
 - The item bar no longer shows the Android scrollbar over the item counts.
 - The kingdom title reads "Name's Kingdom" with a normal apostrophe.
+- The medal hint line is always on the commander card, so the first language switch no longer changes the menu size or flashes.
 
 **New in V7.0: the home frame.**
 - **The frame:** the owner's gold frame with the blue gem crest now surrounds the home screen panel.
