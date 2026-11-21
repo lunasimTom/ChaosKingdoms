@@ -404,7 +404,7 @@ rep("function ckSummonTick(dt){",
 #     deterministic waves with a next-wave preview, visible tower combos (Shatter, Marked,
 #     Arcane Break), shrines and portal corruption, boss weaknesses
 #     and adaptation, and an optional crown challenge per level.
-rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v60.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v61.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v62.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v63.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
+rep("function ckSummonTick(dt){", open(os.path.join(SRC,'v3.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'loot.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'chest.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v44.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v5.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'a55.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v551.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v56.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v58.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v59.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v60.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v61.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v62.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v63.js'),encoding='utf8').read()+"\n"+open(os.path.join(SRC,'v64.js'),encoding='utf8').read()+"\nfunction ckSummonTick(dt){")
 rep("ckElite(L.en[L.en.length-1])}", "ckElite(L.en[L.en.length-1]);ckRole(L.en[L.en.length-1])}")
 rep("let t=L.q.shift();spawn(t);", "let t=L.q.shift();CK_NR=null;if(t.indexOf('|')>0){const _a=t.split('|');t=_a[0];CK_NR=_a[1]}spawn(t);CK_NR=null;")
 rep("function mkWave(w){", "function mkWave(w){if(!L.demo){let _q=ckWave(w);if(_q)return _q}")
@@ -688,7 +688,7 @@ rep("Lv.${lv}/10", "Lv.${lv}/${RANKS.length}")
 rep("function ld(){", "function ld(){try{const _r=localStorage.getItem('ck25');if(_r&&!localStorage.getItem('ck25_bak_v44'))localStorage.setItem('ck25_bak_v44',_r)}catch(e){}")
 rep("S.frag=Math.max(0,Math.min(3,s.fr|0));", "S.frag=Math.max(0,s.fr|0);S.lvr=s.lr==null?null:Math.max(1,s.lr|0);S.v44=!!s.v44;")
 rep(",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{}}))", ",ch:S.chests||[],md:S.medals|0,ai:S.autoIt||{},lr:S.lvr==null?null:S.lvr,v44:S.v44?1:0}))")
-rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'6.3',lr:S.lvr==null?null:S.lvr}}")
+rep(",md:S.medals|0,ai:S.autoIt||{}}}", ",md:S.medals|0,ai:S.autoIt||{},ver:'6.4',lr:S.lvr==null?null:S.lvr}}")
 rep("S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);", "S.medals=Math.max(0,j.md|0);S.autoIt=o(j.ai);S.lvr=j.lr==null?rankAt(Math.max(0,+j.xp||0))+1:Math.max(1,j.lr|0);S.v44=true;")
 rep("if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;return}", "if(!pending){pending=1;$('xg').textContent=XT('Tap again to overwrite','再点一次确认覆盖');window._xj=j;try{ckXPrev(j)}catch(_){}return}")
 rep("<div class=\"pause-settings\">${sl()}${tg()}</div>", "<div class=\"pause-settings\">${sl()}${tg()}<div class=\"ck-ver\">${ckVerTxt()}</div></div>")
@@ -814,6 +814,12 @@ rep("else if(k==='holy'){vPillar(x,y,'#fff0a0',.5);", "else if(k==='holy'){if(Ma
 rep("c.globalAlpha=a;c.fillStyle=g;c.fillRect(0,0,W,H);c.restore()}if(L.fl){c.globalAlpha=Math.max(0,Math.min(.6,L.fl.a));c.fillStyle=L.fl.c;c.fillRect(0,0,W,H);c.globalAlpha=1}}", "c.globalAlpha=a*.7;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy,tw*(port?L.rows:L.cols),tw*(port?L.cols:L.rows),10);c.fill();c.restore()}if(L.fl){c.save();c.beginPath();c.roundRect(ox,oy,tw*(port?L.rows:L.cols),tw*(port?L.cols:L.rows),10);c.clip();c.globalAlpha=Math.max(0,Math.min(.25,L.fl.a*.5));c.fillStyle=L.fl.c;c.fillRect(0,0,W,H);c.restore()}}")
 rep("c.globalAlpha=a*.34;c.fillStyle='#ff1010';c.fillRect(0,0,W,H);let g=c.createRadialGradient", "let g=c.createRadialGradient")
 rep("c.globalAlpha=a*.7;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy", "c.globalAlpha=a*.42;c.fillStyle=g;c.beginPath();c.roundRect(ox,oy")
+# 68. v6.4: victory waits for the Ultimate Boss; floating bars keep only the fill (empty part transparent); 6 cached tracks
+rep("if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over&&!ckLootBusy())end(true)", "if(L.wave>=L.waves&&!L.q.length&&!L.en.length&&!L.over&&!ckLootBusy()&&!L.ckMainHeld)end(true)")
+rep("c.fillStyle='#0a0f24';c.fillRect(p.x-bw/2-1,by-1,bw+2,6);c.fillStyle=bs?", "c.strokeStyle='rgba(8,12,28,.55)';c.lineWidth=1;c.strokeRect(p.x-bw/2-.5,by-.5,bw+1,5);c.fillStyle=bs?")
+rep("c.fillStyle='#07101d';c.fillRect(p.x-w/2-1,y-1,w+2,7);c.fillStyle='#ffffff';c.fillRect(p.x-w/2,y,w,5);", "c.strokeStyle='rgba(7,16,29,.6)';c.lineWidth=1;c.strokeRect(p.x-w/2-.5,y-.5,w+1,6);")
+rep("c.strokeStyle='#1a2433';c.lineWidth=1;c.strokeRect(p.x-w/2,y,w,5)}};", "}};")
+rep("if(ks.length>3)", "if(ks.length>6)")
 # 61. v5.8 size: the 1280x1260 'tower360' sheet in the original is never referenced (1.06 MB); drop it
 _n0=len(s);s=re.sub(r"SPRD\.tower360='[^']*';","",s);assert len(s)<_n0-500000,'tower360 not removed'
 # ---------------------------------------------------------------- premium layer

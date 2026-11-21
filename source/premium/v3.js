@@ -282,7 +282,7 @@ function ckTipsHtml(){
  // bosses
  if(L.boss){const n=np,ty=['m','p','e'][(i/8|0)%3],nm=i>=96?BOSS[13+(i-96)]:BOSS[i/8|0];
   boss.push(li('💀',Z('首领：','Boss: ')+TL(nm)+(n>1?' ×'+n:''),Z(`最后一波出现${n>1?n+'个首领，每个出怪口一个':'首领'}。首领无视建筑，直线冲向基地；到达后会持续攻击基地直到被击败。`,`Arrives in the final wave${n>1?': '+n+' bosses, one from each portal':''}. Bosses ignore buildings and march straight at a base, then besiege it until killed.`)));
-  boss.push(li('🎯',Z('弱点：','Weakness: ')+ckZ(CKDTN[ty]),Z(`${CKDTN[ty][0]}伤害 +30%。`,`${CKDTN[ty][1]} damage deals +30%.`)+(i>=39?Z('它每 10 秒会适应受到最多的伤害类型（-35%）——混合使用不同的塔。',' Every 10 s it adapts to the damage type hurting it most (-35%): mix your towers.'):'')));
+  boss.push(li('🎯',Z('弱点：','Weakness: ')+ckZ(CKDTN[ty]),Z(`${CKDTN[ty][0]}伤害 +30%。`,`${CKDTN[ty][1]} damage deals +30%.`)));
   if(i>=32)boss.push(li('📣',Z('召唤援军','Reinforcements'),Z('生命降到 50% 和 25% 时，首领会在金色护盾中召唤援军 5 秒（期间无敌）。','At 50% and 25% health the boss channels reinforcements for 5 s behind a golden shield (invulnerable).')));
   if(i>=39)boss.push(li('🔥',Z('狂暴模式','Rage Mode'),Z('生命降到 20% 时，首领体型暴涨三倍，8 秒内满地图横冲直撞、践踏防御塔（期间受到的伤害 -40%），之后恢复正常。','At 20% health it swells to 3x size and stampedes across the map for 8 s, trampling towers (taking 40% less damage), then calms down.')));
   boss.push(li('💥',Z('践踏','Stomp'),Z('首领会定期践踏，击晕附近的塔——把塔分散开。','It stomps regularly, stunning nearby towers: spread your defences.')))}

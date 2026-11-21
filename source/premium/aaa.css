@@ -980,3 +980,22 @@ body.ck-bbon #ckmapn{display:none!important}
 .ck-bbn{flex:0 0 92px!important;width:92px;max-width:92px!important}
 html body.ck-bbon #toast{margin-top:var(--ck-bb-h,0px)!important}
 html body.ck-bbon .ck-abn{margin-top:var(--ck-bb-h,0px)!important}
+/* ================= v6.4 boss bars ================= */
+html body #ck-bbars{left:0;top:0;width:auto;transform:none!important;display:grid!important;grid-template-columns:15px max-content minmax(0,1fr);column-gap:4px;row-gap:4px;align-items:center;pointer-events:none!important;filter:drop-shadow(0 1px 2px #000c)}
+html body:not(.pt) #ck-bbars{top:0;width:auto}
+html body #ck-bbars *{pointer-events:none!important}
+html body .ck-bbr{display:contents!important}
+html body .ck-bbp{border-radius:1px!important;grid-column:1}
+html body .ck-bbn{grid-column:2;flex:none!important;width:auto!important;max-width:120px!important;font-size:10px!important}
+html body #ck-bbars.noname{grid-template-columns:15px minmax(0,1fr)}
+html body #ck-bbars.noname .ck-bbn{display:none!important}
+html body .ck-bbt{grid-column:3;height:8px!important;border-radius:0!important;background:transparent!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 0 0 1px rgba(0,0,0,.45)!important;justify-self:start;width:100%}
+html body #ck-bbars.noname .ck-bbt{grid-column:2}
+html body .ck-bbr.sec .ck-bbt,html body .ck-bbr.mini .ck-bbt{width:82%}
+html body .ck-bbt em{border-radius:0!important}
+html body .ck-bbf{background:linear-gradient(180deg,color-mix(in srgb,var(--c) 50%,#fff) 0%,var(--c) 40%,color-mix(in srgb,var(--c) 72%,#000) 100%)!important;box-shadow:0 0 5px color-mix(in srgb,var(--c) 60%,transparent)!important}
+html body .ck-bbtr{background:color-mix(in srgb,var(--c) 70%,#fff)!important;opacity:.45!important}
+html body .ck-bbr.ghost .ck-bbp{filter:brightness(.35) saturate(.4)}
+html body .ck-bbr.ghost .ck-bbn{opacity:.55}
+html body .ck-bbr.ghost .ck-bbt{opacity:.35}
+html body .ck-bbr.rage .ck-bbt{animation:ckBBRage .6s ease-in-out infinite}
